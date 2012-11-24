@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "Dac.hpp"
+
 using namespace std;
 
 const int DAC_PORT_BCAST = 7654;
@@ -56,8 +58,18 @@ string find_dac()
 
 int main()
 {
-	string a = find_dac();
+	Dac* dac = new Dac(find_dac(), DAC_PORT_COMMS);
 
-	cout << a;
+	cout << dac->address << endl;
+
+	cout << "Test send... 1" << endl;
+	dac->send();
+
+	cout << "Test send... 2" << endl;
+	dac->send();
+
+	cout << "Test send... 3" << endl;
+	dac->send();
+
 	return EXIT_SUCCESS;
 }

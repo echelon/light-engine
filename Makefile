@@ -19,15 +19,13 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp
+main: source/main.cpp source/dac.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 	@$(L) build/*.o $(LIBS) -o main 
 	@chmod +x main 
 
-test: source/test.cpp
-	@echo "[compile] test"
-	@$(CD) ./build && $(C) $(INC) -c ../source/test.cpp
-	@$(L) build/*.o $(LIBS) -o test
-	@chmod +x test
+source/dac.o: source/Dac.hpp
+	@echo "[compile] dac"
+	@$(CD) ./build && $(C) $(INC) -c ../source/Dac.cpp
 
