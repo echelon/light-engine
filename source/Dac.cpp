@@ -97,7 +97,7 @@ void Dac::connect()
 	}
 }
 
-void Dac::prepare()
+bool Dac::prepare()
 {
 	prepare_command cmd; // TODO: Could be constant
 	dac_response rsp;
@@ -110,10 +110,12 @@ void Dac::prepare()
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not prepare DAC" << endl;
 		rsp.print();
+		return false;
 	}
+	return true;
 }
 
-void Dac::begin()
+bool Dac::begin()
 {
 	begin_command cmd; // TODO: Could be constant
 	dac_response rsp;
@@ -126,10 +128,12 @@ void Dac::begin()
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not begin DAC" << endl;
 		rsp.print();
+		return false;
 	}
+	return true;
 }
 
-void Dac::stop()
+bool Dac::stop()
 {
 	stop_command cmd; // TODO: Could be constant
 	dac_response rsp;
@@ -142,77 +146,26 @@ void Dac::stop()
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not stop DAC" << endl;
 		rsp.print();
+		return false;
 	}
+	return true;
 }
 
-/*void Dac::send()
+bool Dac::clear_estop()
 {
-	// TODO
-	//
-	//ssize_t send(int sockfd, const void *buf, size_t len, int flags);
-	
-	char buf [1024];
+	clear_estop_command cmd; // TODO: Could be constant
+	dac_response rsp;
 
-	memset(&buf, 0, sizeof(buf));
+	cout << "[dac] clearing e-stop..." << endl;
 
-	cout << buf << endl;
+	send(fd, &cmd, sizeof cmd, 0);
+	recv(fd, &rsp, sizeof rsp, 0);
 
-	write(fd, buf, strlen(buf));
-
-
-	cout << buf << endl;
-}*/
-
-
-/*void Dac::sendchar(char cmd)
-{
-	char buf [4096]; //char buf [512];
-	string s = "";
-	int r = 0;
-
-	cout << cmd << endl;
-
-	s.push_back(cmd);
-
-	cout << "CMD: " << s << endl;
-
-	r = write(fd, s.c_str(), s.length());
-	//sendto(fd, s.c_str(), s.length(), 0, 0, 0);
-
-	cout << "Bytes sent: " << r << endl;
-}*/
-
-/*string Dac::read(unsigned int len)
-{
-	char buf [4096]; //char buf [512];
-	string ret;
-
-	cout << "BUFFER: " << endl;
-	for(int i = 0; i < buffer.size(); i++) {
-		cout << buffer[i] << ",";
+	if(!rsp.isAck() || cmd.command != rsp.command) {
+		cerr << "[!] Could not clear e-stop" << endl;
+		rsp.print();
+		return false;
 	}
-
-	while (len > buffer.size()) {
-		cout << "\t iter\n";
-		memset(&buf, 0, sizeof buf);
-		::read(fd, buf, sizeof buf);
-
-		cout << buf << endl;
-		
-		// FIXME INEFFICIENT
-		//for(unsigned int i = 0; i < sizeof buf; i++) {
-		//	buffer.push_back(buf[i]);
-		//}
-		for(unsigned int i = 0; i < strlen(buf); i++) {
-			buffer.push_back(buf[i]);
-		}
-	}
-
-	for(unsigned int i = 0; i < len; i++) {
-		ret += buffer[i];
-	}
-
-	buffer.erase(buffer.begin(), buffer.begin()+len);
-	return ret;
-}*/
+	return true;
+}
 

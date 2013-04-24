@@ -49,6 +49,7 @@ class Dac {
 
 		/**
 		 * CTOR
+		 *  - string addr ip_address
 		 */
 		Dac(string addr);
 
@@ -58,24 +59,18 @@ class Dac {
 		~Dac();
 
 		/**
-		 * Establish TCP connection.
+		 * Establish TCP connection
 		 */
 		void connect();
 
 		/**
-		 * Commands
+		 * Commands 
+		 * TODO: DOC
 		 */
-		void prepare();
-		void begin();
-		void stop();
-
-		/**
-		 * Send data.
-		 * TODO
-		 */
-		//void send();
-		//void sendchar(char cmd);
-		//string read(unsigned int len);
+		bool prepare();
+		bool begin();
+		bool stop();
+		bool clear_estop();
 };
 
 #endif

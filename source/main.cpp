@@ -23,9 +23,13 @@ int main()
 	cout << "Dac is: " << dac.address << endl;
 
 	dac.connect();
-	dac.stop(); // Stop any existing state!
-	dac.prepare();
-	//dac.begin();
+ 
+	// Stop any existing state!
+	if(!dac.clear_estop()) {
+		return EXIT_FAILURE; 
+	}
+	if(!dac.prepare()) { return EXIT_FAILURE; }
+	if(!dac.begin()) { return EXIT_FAILURE; }
 
 	// Receive '?'
 	/*r = dac.read(2);

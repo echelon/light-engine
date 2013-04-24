@@ -103,6 +103,13 @@ struct stop_command {
 		command('s') {};
 };
 
+struct clear_estop_command {
+	uint8_t command; // 'c'
+
+	clear_estop_command():
+		command('c') {};
+};
+
 /**
  * Keep Alive
  *  - for when DAC not actively streaming
