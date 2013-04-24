@@ -169,3 +169,69 @@ bool Dac::clear_estop()
 	return true;
 }
 
+void Dac::test_send_data()
+{
+	//data_command* cmd = 0;
+	data_command cmd;
+	dac_response rsp;
+	dac_point pt;
+
+	pt.x = 100;
+	pt.y = 100;
+	pt.i = CMAX;
+	pt.r = CMAX;
+	pt.g = CMAX;
+	pt.b = CMAX;
+
+	//cmd = (data_command*)malloc(sizeof(data_command) + sizeof(dac_point)*5);
+
+	/*cmd->npoints = 1;
+	cmd->data[0] = pt;
+	cmd->data[1] = pt;
+	cmd->data[2] = pt;*/
+
+	cmd.command = (uint8_t)'d';
+	cmd.npoints = 1;
+
+	cout << endl;
+	for(int i = 0; i < sizeof(cmd.data)/sizeof(dac_point); i++) {
+		cout << i << " ";
+		pt.x = i;
+		pt.y = i;
+		cmd.data[i] = pt;
+		cmd.npoints = (i+1);
+	}
+	cout << endl;
+
+	cout << "sizeof struct total " << sizeof cmd << endl;
+	cout << "sizeof npoints " << sizeof cmd.npoints << endl;
+	cout << "sizeof data array " << sizeof cmd.data << endl;
+	cout << "npoints = " << cmd.npoints << endl;
+
+	/*cout << sizeof cmd << endl;
+	cout << sizeof cmd->npoints << endl;
+	cout << sizeof cmd->data << endl;
+	cout << endl << "MALLOC!" << endl;*/
+
+	//*cmd.data = (dac_point*) malloc(sizeof(dac_point) * 1);
+
+    //Packet *output = (Packet*) malloc((length+1)*sizeof(unsigned int));
+
+	/*cout << sizeof cmd << endl;
+	cout << sizeof cmd->npoints << endl;
+	cout << sizeof cmd->data << endl;*/
+
+	cout << "[dac] sending data points!!!" << endl;
+
+	cout << cmd.command << endl;
+
+	int r = send(fd, &cmd, sizeof cmd, 0);
+	cout << "SENT DATA PTS" << sizeof cmd << endl;
+	cout << r;
+	recv(fd, &rsp, sizeof rsp, 0);
+
+	if(!rsp.isAck() || cmd.command != rsp.command) {
+		cerr << "[!] Could not send point" << endl;
+		rsp.print();
+	}
+}

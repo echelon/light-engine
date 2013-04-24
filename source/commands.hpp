@@ -59,6 +59,7 @@ struct dac_point {
 	uint16_t control; // TODO: Should we change rate at turns, etc?
 	uint16_t x;
 	uint16_t y;
+	uint16_t i;
 	uint16_t r;
 	uint16_t g;
 	uint16_t b;
@@ -69,6 +70,7 @@ struct dac_point {
 		control(0),
 		x(0),
 		y(0),
+		i(0),
 		r(0),
 		g(0),
 		b(0),
@@ -83,7 +85,12 @@ struct dac_point {
 struct data_command {
 	uint8_t command; // 'd'
 	uint16_t npoints;
-	struct dac_point data[];
+	dac_point data[2000]; // XXX: Good c99, *BAD* C++!
+
+	// Since C++ creates these for us, prevent misuse
+	//private:
+		//void data_command(const data_command&) {};
+		//void operator=(const data_command&) {};
 };
 
 // !!! scanrate != pointrate

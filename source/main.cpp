@@ -29,7 +29,16 @@ int main()
 		return EXIT_FAILURE; 
 	}
 	if(!dac.prepare()) { return EXIT_FAILURE; }
-	if(!dac.begin()) { return EXIT_FAILURE; }
+	//if(!dac.begin()) { return EXIT_FAILURE; }
+
+	bool started = false;
+	while(true) {
+		dac.test_send_data();
+		if(!started) {
+			started = true;
+			dac.begin();
+		}
+	}
 
 	// Receive '?'
 	/*r = dac.read(2);

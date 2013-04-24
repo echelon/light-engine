@@ -8,6 +8,8 @@
 
 // ================================ HW CONSTANTS =============== //
 
+const int CMAX = 65535; // Max color value
+
 enum LIGHT_ENGINE_STATE {
 	READY		= 0,
 	WARMUP		= 1,

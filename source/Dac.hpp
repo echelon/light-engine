@@ -71,6 +71,8 @@ class Dac {
 		bool begin();
 		bool stop();
 		bool clear_estop();
+
+		void test_send_data();
 };
 
 #endif

@@ -37,11 +37,6 @@ struct dac_status {
 		buffer_fullness('x'),
 		point_rate('x'),
 		point_count('x') {};
-
-	void print() {
-		cout << "asdf" << endl;
-		cout << "proto::" << protocol << endl;
-	};
 };
 
 /**
