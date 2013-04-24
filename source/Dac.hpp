@@ -58,11 +58,16 @@ class Dac {
 		~Dac();
 
 		/**
-		 * Connect, Prepare, Begin
+		 * Establish TCP connection.
 		 */
 		void connect();
+
+		/**
+		 * Commands
+		 */
 		void prepare();
 		void begin();
+		void stop();
 
 		/**
 		 * Send data.

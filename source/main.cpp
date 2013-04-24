@@ -23,6 +23,7 @@ int main()
 	cout << "Dac is: " << dac.address << endl;
 
 	dac.connect();
+	dac.stop(); // Stop any existing state!
 	dac.prepare();
 	//dac.begin();
 

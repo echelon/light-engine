@@ -73,6 +73,9 @@ Dac::~Dac()
 void Dac::connect()
 {
 	int r = 0;
+	dac_response rsp;
+
+	cout << "[dac] connecting..." << endl;
 
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = inet_addr(address.c_str());
@@ -86,76 +89,61 @@ void Dac::connect()
 		return;
 	}
 
-	// Must read '?'
-	dac_response rp;
-
-	cout << "LENGTH: " << sizeof rp << endl;
-
-	//recv(fd, &rp, sizeof rp, 0);
-	recv(fd, &rp, 22, 0);
-	if(!rp.isAck() || rp.command != '?') {
+	// Must read hello
+	recv(fd, &rsp, sizeof rsp, 0);
+	if(!rsp.isAck() || rsp.command != '?') {
 		cerr << "[!] Could not connect to DAC" << endl;
+		rsp.print();
 	}
-
-	rp.print();
-	cout << endl << endl;
 }
 
 void Dac::prepare()
 {
-	prepare_command c; // TODO: Could be constant
-	dac_response rp;
+	prepare_command cmd; // TODO: Could be constant
+	dac_response rsp;
 
-	cout << "Preparing..." << endl;
+	cout << "[dac] preparing..." << endl;
 
-	//uint8_t command('p');
-	//::send(fd, &command, sizeof command, 0);
-	
-	::send(fd, &c, sizeof c, 0);
-	
-	cout << "sent..." << endl;
-	cout << "LENGTH: " << sizeof rp << endl;
+	send(fd, &cmd, sizeof cmd, 0);
+	recv(fd, &rsp, sizeof rsp, 0);
 
-	//recv(fd, &rp, sizeof rp, 0);
-	recv(fd, &rp, 22, 0);
-
-	cout << "recv'd..." << endl;
-
-	rp.print();
-
-	if(!rp.isAck()) {
-		cout << "NOT ACK!!!!!" << endl;
+	if(!rsp.isAck() || cmd.command != rsp.command) {
+		cerr << "[!] Could not prepare DAC" << endl;
+		rsp.print();
 	}
-	//if(rp.command != c.command) {
-		//cerr << "[!] Could not prepare DAC" << endl;
-		//cout << rp.command << endl;
-		//cout << c.command << endl;
-	//}
 }
 
 void Dac::begin()
 {
-	begin_command c; // TODO: Could be constant
-	dac_response rp;
+	begin_command cmd; // TODO: Could be constant
+	dac_response rsp;
 
-	cout << "Beginning..." << endl;
+	cout << "[dac] beginning..." << endl;
 
-	::send(fd, &c, sizeof c, 0);
-	recv(fd, &rp, sizeof rp, 0);
+	send(fd, &cmd, sizeof cmd, 0);
+	recv(fd, &rsp, sizeof rsp, 0);
 
-	if(!rp.isAck()) {
-		cout << "Response: " << rp.response << endl;
+	if(!rsp.isAck() || cmd.command != rsp.command) {
+		cerr << "[!] Could not begin DAC" << endl;
+		rsp.print();
 	}
-	//if(rp.command != c.command) {
-		//cerr << "[!] Could not prepare DAC" << endl;
-		cout << rp.command << endl;
-		cout << c.command << endl;
-	//}
 }
 
+void Dac::stop()
+{
+	stop_command cmd; // TODO: Could be constant
+	dac_response rsp;
 
+	cout << "[dac] stopping..." << endl;
 
+	send(fd, &cmd, sizeof cmd, 0);
+	recv(fd, &rsp, sizeof rsp, 0);
 
+	if(!rsp.isAck() || cmd.command != rsp.command) {
+		cerr << "[!] Could not stop DAC" << endl;
+		rsp.print();
+	}
+}
 
 /*void Dac::send()
 {
