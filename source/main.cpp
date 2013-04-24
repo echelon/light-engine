@@ -11,65 +11,47 @@
 
 using namespace std;
 
-const int DAC_PORT_BCAST = 7654;
-const int DAC_PORT_COMMS = 7765;
-
-/**
- * Find the DAC by listening for UDP packets.
- * This is a blocking call. 
- */
-string find_dac()
-{
-	int fd = 0, 
-		r = 0;
-	char buf[1024];
-	char ipstr[INET_ADDRSTRLEN];
-
-	sockaddr_in client, 
-				sender;
-	socklen_t sendsize = sizeof sender;
-
-	memset(&sender, 0, sizeof sender);
-	memset(&client, 0, sizeof client);
-	memset(&buf, 0, sizeof buf);
-
-	client.sin_family = AF_INET;
-	client.sin_port = htons(DAC_PORT_BCAST);
-	client.sin_addr.s_addr = INADDR_ANY;
-
-	fd = socket(AF_INET, SOCK_DGRAM, 0);
-	
-	if (fd < 0) {
-		return ""; // TODO ERROR
-	}
-
-	r = bind(fd, (sockaddr*)&client, sizeof(client));
-
-	if (r < 0) {
-		return ""; // TODO ERROR
-	}
-
-	recvfrom(fd, buf, sizeof buf, 0, 
-			(sockaddr*)&sender, &sendsize);
-	
-	return inet_ntop(AF_INET, &sender.sin_addr, 
-			ipstr, sizeof ipstr);
-}
-
 int main()
 {
-	Dac* dac = new Dac(find_dac(), DAC_PORT_COMMS);
+	string ip;
+	string r;
 
-	cout << dac->address << endl;
+	ip = find_dac();
 
-	cout << "Test send... 1" << endl;
+	Dac dac = Dac(ip);
+
+	cout << "Dac is: " << dac.address << endl;
+
+	cout << "Connecting..." << endl;
+
+	dac.connect();
+
+	cout << "Preparing..." << endl;
+
+	dac.prepare();
+
+	// Receive '?'
+	r = dac.read(2);
+	cout << r << endl;
+
+	// Send 'p'
+	cout << "Sending 'p'" << endl;
+	//dac->prepare();
+	r = dac.read(2);
+	cout << r << endl;
+
+	/*dac->prepare();
+	r = dac->read(22);
+	cout << r << endl;*/
+
+	/*cout << "Test send... 1" << endl;
 	dac->send();
 
 	cout << "Test send... 2" << endl;
 	dac->send();
 
 	cout << "Test send... 3" << endl;
-	dac->send();
+	dac->send();*/
 
 	return EXIT_SUCCESS;
 }
