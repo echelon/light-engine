@@ -42,6 +42,10 @@ struct begin_command {
 struct queue_change_command {
 	uint8_t command;		// 'q'
 	uint32_t point_rate;	// *NOT* hw scan rate! streamed pps.
+
+	queue_change_command():
+		command('q'),
+		point_rate(0) {};
 };
 
 /**
@@ -60,6 +64,16 @@ struct dac_point {
 	uint16_t b;
 	uint16_t u1;
 	uint16_t u2;
+
+	dac_point():
+		control(0),
+		x(0),
+		y(0),
+		r(0),
+		g(0),
+		b(0),
+		u1(0),
+		u2(0) {};
 };
 
 /**
@@ -84,6 +98,9 @@ struct data_command {
  */
 struct stop_command {
 	uint8_t command; // 's'
+
+	stop_command():
+		command('s') {};
 };
 
 /**
@@ -92,6 +109,9 @@ struct stop_command {
  */
 struct keep_alive_command {
 	uint8_t command; // '?'
+
+	keep_alive_command():
+		command('?') {};
 };
 
 #endif

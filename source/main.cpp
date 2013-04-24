@@ -22,16 +22,12 @@ int main()
 
 	cout << "Dac is: " << dac.address << endl;
 
-	cout << "Connecting..." << endl;
-
 	dac.connect();
-
-	cout << "Preparing..." << endl;
-
 	dac.prepare();
+	//dac.begin();
 
 	// Receive '?'
-	r = dac.read(2);
+	/*r = dac.read(2);
 	cout << r << endl;
 
 	// Send 'p'
@@ -40,7 +36,7 @@ int main()
 	r = dac.read(2);
 	cout << r << endl;
 
-	/*dac->prepare();
+	dac->prepare();
 	r = dac->read(22);
 	cout << r << endl;*/
 

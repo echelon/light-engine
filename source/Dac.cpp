@@ -75,9 +75,8 @@ void Dac::connect()
 	int r = 0;
 
 	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = inet_addr(address.c_str());
 	server.sin_port = htons(port);
-	inet_pton(AF_INET, address.c_str(), 
-			&server.sin_addr);
 
     r = ::connect(fd, (sockaddr*)&server, sizeof server);
 
@@ -86,17 +85,79 @@ void Dac::connect()
 		cerr << "Could not connect() to DAC!" << endl;
 		return;
 	}
+
+	// Must read '?'
+	dac_response rp;
+
+	cout << "LENGTH: " << sizeof rp << endl;
+
+	//recv(fd, &rp, sizeof rp, 0);
+	recv(fd, &rp, 22, 0);
+	if(!rp.isAck() || rp.command != '?') {
+		cerr << "[!] Could not connect to DAC" << endl;
+	}
+
+	rp.print();
+	cout << endl << endl;
 }
 
 void Dac::prepare()
 {
-	prepare_command c;
-	//COMMAND::PREPARE;
-	//sendchar('p');
+	prepare_command c; // TODO: Could be constant
+	dac_response rp;
+
+	cout << "Preparing..." << endl;
+
+	//uint8_t command('p');
+	//::send(fd, &command, sizeof command, 0);
+	
 	::send(fd, &c, sizeof c, 0);
+	
+	cout << "sent..." << endl;
+	cout << "LENGTH: " << sizeof rp << endl;
+
+	//recv(fd, &rp, sizeof rp, 0);
+	recv(fd, &rp, 22, 0);
+
+	cout << "recv'd..." << endl;
+
+	rp.print();
+
+	if(!rp.isAck()) {
+		cout << "NOT ACK!!!!!" << endl;
+	}
+	//if(rp.command != c.command) {
+		//cerr << "[!] Could not prepare DAC" << endl;
+		//cout << rp.command << endl;
+		//cout << c.command << endl;
+	//}
 }
 
-void Dac::send()
+void Dac::begin()
+{
+	begin_command c; // TODO: Could be constant
+	dac_response rp;
+
+	cout << "Beginning..." << endl;
+
+	::send(fd, &c, sizeof c, 0);
+	recv(fd, &rp, sizeof rp, 0);
+
+	if(!rp.isAck()) {
+		cout << "Response: " << rp.response << endl;
+	}
+	//if(rp.command != c.command) {
+		//cerr << "[!] Could not prepare DAC" << endl;
+		cout << rp.command << endl;
+		cout << c.command << endl;
+	//}
+}
+
+
+
+
+
+/*void Dac::send()
 {
 	// TODO
 	//
@@ -112,10 +173,10 @@ void Dac::send()
 
 
 	cout << buf << endl;
-}
+}*/
 
 
-void Dac::sendchar(char cmd)
+/*void Dac::sendchar(char cmd)
 {
 	char buf [4096]; //char buf [512];
 	string s = "";
@@ -131,9 +192,9 @@ void Dac::sendchar(char cmd)
 	//sendto(fd, s.c_str(), s.length(), 0, 0, 0);
 
 	cout << "Bytes sent: " << r << endl;
-}
+}*/
 
-string Dac::read(unsigned int len)
+/*string Dac::read(unsigned int len)
 {
 	char buf [4096]; //char buf [512];
 	string ret;
@@ -151,9 +212,9 @@ string Dac::read(unsigned int len)
 		cout << buf << endl;
 		
 		// FIXME INEFFICIENT
-		/*for(unsigned int i = 0; i < sizeof buf; i++) {
-			buffer.push_back(buf[i]);
-		}*/
+		//for(unsigned int i = 0; i < sizeof buf; i++) {
+		//	buffer.push_back(buf[i]);
+		//}
 		for(unsigned int i = 0; i < strlen(buf); i++) {
 			buffer.push_back(buf[i]);
 		}
@@ -165,9 +226,5 @@ string Dac::read(unsigned int len)
 
 	buffer.erase(buffer.begin(), buffer.begin()+len);
 	return ret;
-}
+}*/
 
-void Dac::readresp(char cmd)
-{
-
-}

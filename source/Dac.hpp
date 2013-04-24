@@ -58,22 +58,19 @@ class Dac {
 		~Dac();
 
 		/**
-		 * Prepare the connection.
+		 * Connect, Prepare, Begin
 		 */
+		void connect();
 		void prepare();
+		void begin();
 
 		/**
 		 * Send data.
 		 * TODO
 		 */
-		void send();
-		void sendchar(char cmd);
-
-		void connect();
-
-		void readresp(char cmd);
-
-		string read(unsigned int len);
+		//void send();
+		//void sendchar(char cmd);
+		//string read(unsigned int len);
 };
 
 #endif
