@@ -28,7 +28,15 @@ int main()
 	if(!dac.clear_estop()) {
 		return EXIT_FAILURE; 
 	}
-	if(!dac.prepare()) { return EXIT_FAILURE; }
+
+	// If can't prepare, perhaps the last run has it confused.
+	// Try to stop...
+	if(!dac.prepare()) { 
+		dac.stop();
+		if(!dac.prepare()) {
+			return EXIT_FAILURE; 
+		}
+	}
 	//if(!dac.begin()) { return EXIT_FAILURE; }
 
 	bool started = false;

@@ -85,7 +85,7 @@ struct dac_point {
 struct data_command {
 	uint8_t command; // 'd'
 	uint16_t npoints;
-	dac_point data[2000]; // XXX: Good c99, *BAD* C++!
+	dac_point data[200]; // XXX: Good c99, *BAD* C++!
 
 	// Since C++ creates these for us, prevent misuse
 	//private:
