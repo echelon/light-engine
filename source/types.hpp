@@ -8,7 +8,18 @@
 
 // ================================ HW CONSTANTS =============== //
 
-const int CMAX = 65535; // Max color value
+/**
+ * DAC Communication Ports
+ *  - UDP broadcast and TCP data comms
+ */
+const int DAC_PORT_BCAST = 7654;
+const int DAC_PORT_COMMS = 7765;
+
+/**
+ * Color and dimension magnitude ranges.
+ */
+const int CMAX = 65535; // Max color value (unsigned)
+const int DMAX = 65535; // TODO: This is wrong. (signed)
 
 enum LIGHT_ENGINE_STATE {
 	READY		= 0,

@@ -19,7 +19,7 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp source/dac.o
+main: source/main.cpp source/dac.o source/misc.o source/find.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 	@$(L) build/*.o $(LIBS) -o main 
@@ -28,4 +28,12 @@ main: source/main.cpp source/dac.o
 source/dac.o: source/Dac.hpp
 	@echo "[compile] dac"
 	@$(CD) ./build && $(C) $(INC) -c ../source/Dac.cpp
+
+source/find.o: source/find.hpp
+	@echo "[compile] find"
+	@$(CD) ./build && $(C) $(INC) -c ../source/find.cpp
+
+source/misc.o: source/misc.hpp
+	@echo "[compile] misc"
+	@$(CD) ./build && $(C) $(INC) -c ../source/misc.cpp
 

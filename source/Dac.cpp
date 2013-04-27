@@ -7,46 +7,9 @@
 #include <arpa/inet.h>
 
 #include <iostream>
+#include <vector>
 
 using namespace std;
-
-string find_dac()
-{
-	int fd = 0, 
-		r = 0;
-	char buf[1024];
-	char ipstr[INET_ADDRSTRLEN];
-
-	sockaddr_in client, 
-				sender;
-	socklen_t sendsize = sizeof sender;
-
-	memset(&sender, 0, sizeof sender);
-	memset(&client, 0, sizeof client);
-	memset(&buf, 0, sizeof buf);
-
-	client.sin_family = AF_INET;
-	client.sin_port = htons(DAC_PORT_BCAST);
-	client.sin_addr.s_addr = INADDR_ANY;
-
-	fd = socket(AF_INET, SOCK_DGRAM, 0);
-	
-	if (fd < 0) {
-		return ""; // TODO ERROR
-	}
-
-	r = bind(fd, (sockaddr*)&client, sizeof(client));
-
-	if (r < 0) {
-		return ""; // TODO ERROR
-	}
-
-	recvfrom(fd, buf, sizeof buf, 0, 
-			(sockaddr*)&sender, &sendsize);
-	
-	return inet_ntop(AF_INET, &sender.sin_addr, 
-			ipstr, sizeof ipstr);
-}
 
 Dac::Dac(string addr) :
 	fd(0),
@@ -90,11 +53,12 @@ void Dac::connect()
 	}
 
 	// Must read hello
-	recv(fd, &rsp, sizeof rsp, 0);
+	/*recv(fd, &rsp, sizeof rsp, 0);
 	if(!rsp.isAck() || rsp.command != '?') {
 		cerr << "[!] Could not connect to DAC" << endl;
 		rsp.print();
-	}
+	}*/
+	checkResponse('?');
 }
 
 bool Dac::prepare()
@@ -105,13 +69,17 @@ bool Dac::prepare()
 	cout << "[dac] preparing..." << endl;
 
 	send(fd, &cmd, sizeof cmd, 0);
-	recv(fd, &rsp, sizeof rsp, 0);
+	//recv(fd, &rsp, sizeof rsp, 0);
 
-	if(!rsp.isAck() || cmd.command != rsp.command) {
+	checkResponse('p');
+
+	/*if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not prepare DAC" << endl;
 		rsp.print();
 		return false;
 	}
+	return true;*/
+
 	return true;
 }
 
@@ -120,17 +88,24 @@ bool Dac::begin()
 	begin_command cmd; // TODO: Could be constant
 	dac_response rsp;
 
+	vector<uint8_t> cmdBuf(7, 0);
+
 	cout << "[dac] beginning..." << endl;
 
-	send(fd, &cmd, sizeof cmd, 0);
-	recv(fd, &rsp, sizeof rsp, 0);
+	// Messy serialization
+	cmdBuf = cmd.serialize();
+
+	send(fd, &cmdBuf[0], cmdBuf.size(), 0);
+	/*recv(fd, &rsp, sizeof rsp, 0);
 
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not begin DAC" << endl;
 		rsp.print();
 		return false;
 	}
-	return true;
+	return true;*/
+
+	return checkResponse('b');
 }
 
 bool Dac::stop()
@@ -141,14 +116,16 @@ bool Dac::stop()
 	cout << "[dac] stopping..." << endl;
 
 	send(fd, &cmd, sizeof cmd, 0);
-	recv(fd, &rsp, sizeof rsp, 0);
+	/*recv(fd, &rsp, sizeof rsp, 0);
 
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not stop DAC" << endl;
 		rsp.print();
 		return false;
 	}
-	return true;
+	return true;*/
+
+	return checkResponse('s');
 }
 
 bool Dac::clear_estop()
@@ -159,17 +136,19 @@ bool Dac::clear_estop()
 	cout << "[dac] clearing e-stop..." << endl;
 
 	send(fd, &cmd, sizeof cmd, 0);
-	recv(fd, &rsp, sizeof rsp, 0);
+	/*recv(fd, &rsp, sizeof rsp, 0);
 
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not clear e-stop" << endl;
 		rsp.print();
 		return false;
 	}
-	return true;
+	return true;*/
+
+	return checkResponse('c');
 }
 
-void Dac::test_send_data()
+void Dac::test_send_data(int num)
 {
 	//data_command* cmd = 0;
 	data_command cmd;
@@ -194,7 +173,7 @@ void Dac::test_send_data()
 	cmd.npoints = 1;
 
 	cout << endl;
-	for(int i = 0; i < sizeof(cmd.data)/sizeof(dac_point); i++) {
+	for(uint i = 0; i < sizeof(cmd.data)/sizeof(dac_point); i++) {
 		cout << i << " ";
 		pt.x = i;
 		pt.y = i;
@@ -203,10 +182,10 @@ void Dac::test_send_data()
 	}
 	cout << endl;
 
-	cout << "sizeof struct total " << sizeof cmd << endl;
-	cout << "sizeof npoints " << sizeof cmd.npoints << endl;
-	cout << "sizeof data array " << sizeof cmd.data << endl;
-	cout << "npoints = " << cmd.npoints << endl;
+	//cout << "sizeof struct total " << sizeof cmd << endl;
+	//cout << "sizeof npoints " << sizeof cmd.npoints << endl;
+	//cout << "sizeof data array " << sizeof cmd.data << endl;
+	//cout << "npoints = " << cmd.npoints << endl;
 
 	/*cout << sizeof cmd << endl;
 	cout << sizeof cmd->npoints << endl;
@@ -225,13 +204,37 @@ void Dac::test_send_data()
 
 	cout << cmd.command << endl;
 
-	int r = send(fd, &cmd, sizeof cmd, 0);
-	cout << "SENT DATA PTS" << sizeof cmd << endl;
-	cout << r;
-	recv(fd, &rsp, sizeof rsp, 0);
+	send(fd, &cmd, sizeof cmd, 0);
+
+	checkResponse('d');
+
+	cout << "SENT..." << endl;
+
+
+	cout << "RECV'd..." << endl;
 
 	if(!rsp.isAck() || cmd.command != rsp.command) {
 		cerr << "[!] Could not send point" << endl;
 		rsp.print();
 	}
+}
+
+bool Dac::checkResponse(char command) 
+{
+	dac_response rsp;
+
+	cout << "checkResponse()" << endl;
+
+	recv(fd, &rsp, sizeof rsp, 0);
+
+	rsp.print();
+
+	lastStatus = rsp.status;
+
+	if(!rsp.isAck() || command != rsp.command) {
+		cerr << "[!] Could not do whatever: " << command << endl;
+		//rsp.print();
+		return false;
+	}
+	return true;
 }

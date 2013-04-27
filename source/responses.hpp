@@ -2,6 +2,8 @@
 #define LASER_RESPONSES_HPP
 
 #include <iostream>
+#include <vector>
+#include "misc.hpp"
 
 using namespace std;
 
@@ -37,6 +39,31 @@ struct dac_status {
 		buffer_fullness('x'),
 		point_rate('x'),
 		point_count('x') {};
+
+	void print() {
+		cout << endl;
+		cout << "DAC Status" << endl;
+		cout << "  protocol:\t\t" << protocol << endl;
+		cout << "  light_engine_state:\t"
+			 << light_engine_state << endl;
+		cout << "  playback_state:\t"
+			 << playback_state << endl;
+		cout << "  light_engine_flags:\t"
+			 << get_flags(light_engine_flags) << endl;
+		cout << "  playback_flags:\t"
+			 << get_flags(playback_flags) << endl;
+		cout << "  source_flags:\t\t"
+			 << get_flags(source_flags) << endl;
+		cout << "  buffer_fullness:\t"
+			 << buffer_fullness << endl;
+		cout << "  source:\t\t"
+			 << source << endl;
+		cout << "  point_rate:\t\t" 
+			 << point_rate << endl;
+		cout << "  point_count:\t\t"
+			 << point_count << endl;
+		cout << endl;
+	};
 };
 
 /**
@@ -78,6 +105,7 @@ struct dac_response {
 	bool isAck() { return response == 'a'; };
 
 	void print() {
+		cout << endl;
 		cout << "DAC Response" << endl;
 		cout << "  response:\t\t" << response << endl;
 		cout << "  command:\t\t" << command << endl;
@@ -88,11 +116,11 @@ struct dac_response {
 		cout << "    playback_state:\t"
 			 << status.playback_state << endl;
 		cout << "    light_engine_flags:\t"
-			 << status.light_engine_flags << endl;
+			 << get_flags(status.light_engine_flags) << endl;
 		cout << "    playback_flags:\t"
-			 << status.playback_flags << endl;
+			 << get_flags(status.playback_flags) << endl;
 		cout << "    source_flags:\t"
-			 << status.source_flags << endl;
+			 << get_flags(status.source_flags) << endl;
 		cout << "    buffer_fullness:\t"
 			 << status.buffer_fullness << endl;
 		cout << "    source:\t\t"
@@ -101,6 +129,7 @@ struct dac_response {
 			 << status.point_rate << endl;
 		cout << "    point_count:\t"
 			 << status.point_count << endl;
+		cout << endl;
 	};
 };
 

@@ -31,6 +31,20 @@ struct begin_command {
 		command('b'),
 		low_water_mark(0),
 		point_rate(30000) {};
+
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(7,0);
+
+		buf[0] = command;
+		buf[1] = low_water_mark >> 0;
+		buf[2] = low_water_mark >> 8;
+		buf[3] = point_rate >> 0;
+		buf[4] = point_rate >> 8;
+		buf[5] = point_rate >> 16;
+		buf[6] = point_rate >> 24;
+
+		return buf;
+	}
 };
 
 /**
@@ -85,7 +99,7 @@ struct dac_point {
 struct data_command {
 	uint8_t command; // 'd'
 	uint16_t npoints;
-	dac_point data[200]; // XXX: Good c99, *BAD* C++!
+	dac_point data[50]; // XXX: Good c99, *BAD* C++!
 
 	// Since C++ creates these for us, prevent misuse
 	//private:

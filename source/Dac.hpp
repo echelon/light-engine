@@ -11,21 +11,6 @@
 using namespace std;
 
 /**
- * DAC Communication Ports
- *  - UDP broadcast and TCP data comms
- */
-const int DAC_PORT_BCAST = 7654;
-const int DAC_PORT_COMMS = 7765;
-
-/**
- * Find the DAC by listening for UDP packets.
- * This is a blocking call. 
- *
- * Returns string ip_address.
- */
-string find_dac();
-
-/**
  * DAC 
  * Communicate with the DAC.
  */
@@ -42,10 +27,15 @@ class Dac {
 		//string buffer;
 		vector<char> buffer;
 
+
 	public:
 		// These are for ease of use
 		const string address;
 		const unsigned int port;
+
+		// Last status sent from DAC
+		// TODO: Temporary public
+		dac_status lastStatus;
 
 		/**
 		 * CTOR
@@ -72,7 +62,12 @@ class Dac {
 		bool stop();
 		bool clear_estop();
 
-		void test_send_data();
+		void test_send_data(int num);
+
+		/**
+		 * Parse Response.
+		 */
+		bool checkResponse(char command);
 };
 
 #endif
