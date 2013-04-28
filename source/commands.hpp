@@ -32,8 +32,9 @@ struct begin_command {
 		low_water_mark(0),
 		point_rate(30000) {};
 
+	// Sent over socket
 	vector<uint8_t> serialize() {
-		vector<uint8_t> buf(7,0);
+		vector<uint8_t> buf(7, 0);
 
 		buf[0] = command;
 		buf[1] = low_water_mark >> 0;
@@ -90,6 +91,32 @@ struct dac_point {
 		b(0),
 		u1(0),
 		u2(0) {};
+
+	// Sent over socket
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(18, 0);
+
+		buf[0] = control >> 0;
+		buf[1] = control >> 8;
+		buf[2] = x >> 0;
+		buf[3] = x >> 8;
+		buf[4] = y >> 0;
+		buf[5] = y >> 8;
+		buf[6] = i >> 0;
+		buf[7] = i >> 8;
+		buf[8] = r >> 0;
+		buf[9] = r >> 8;
+		buf[10] = g >> 0;
+		buf[11] = g >> 8;
+		buf[12] = b >> 0;
+		buf[13] = b >> 8;
+		buf[14] = u1 >> 0;
+		buf[15] = u1 >> 8;
+		buf[16] = u2 >> 0;
+		buf[17] = u2 >> 8;
+
+		return buf;
+	}
 };
 
 /**
@@ -105,6 +132,29 @@ struct data_command {
 	//private:
 		//void data_command(const data_command&) {};
 		//void operator=(const data_command&) {};
+
+
+	// Sent over socket
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(3 + 50*18, 0);
+		vector<uint8_t> ptBuf(18, 0);
+
+		buf[0] = command;
+		buf[1] = npoints >> 0;
+		buf[2] = npoints >> 8;
+
+		for(unsigned int i = 0; i < 50; i++) {
+			data[i].r = CMAX;
+			data[i].g = CMAX;
+			data[i].b = CMAX;
+			ptBuf = data[i].serialize();
+			for(unsigned int j = 0; j < 18; j++) {
+				buf[3 + i*18 + j] = ptBuf[j];
+			}
+
+		}
+		return buf;
+	}
 };
 
 // !!! scanrate != pointrate

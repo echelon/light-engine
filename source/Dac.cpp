@@ -150,7 +150,6 @@ bool Dac::clear_estop()
 
 void Dac::test_send_data(int num)
 {
-	//data_command* cmd = 0;
 	data_command cmd;
 	dac_response rsp;
 	dac_point pt;
@@ -169,6 +168,7 @@ void Dac::test_send_data(int num)
 	cmd->data[1] = pt;
 	cmd->data[2] = pt;*/
 
+	/*
 	cmd.command = (uint8_t)'d';
 	cmd.npoints = 1;
 
@@ -180,7 +180,7 @@ void Dac::test_send_data(int num)
 		cmd.data[i] = pt;
 		cmd.npoints = (i+1);
 	}
-	cout << endl;
+	cout << endl;*/
 
 	//cout << "sizeof struct total " << sizeof cmd << endl;
 	//cout << "sizeof npoints " << sizeof cmd.npoints << endl;
@@ -202,9 +202,17 @@ void Dac::test_send_data(int num)
 
 	cout << "[dac] sending data points!!!" << endl;
 
-	cout << cmd.command << endl;
+	//cout << cmd.command << endl;
 
-	send(fd, &cmd, sizeof cmd, 0);
+	vector<uint8_t> cmdBuf = cmd.serialize();
+
+	cout << cmdBuf.size() << endl;
+	cout << cmdBuf.size() << endl;
+	cout << cmdBuf.size() << endl;
+	cout << cmdBuf.size() << endl;
+	cout << cmdBuf.size() << endl;
+
+	send(fd, &cmdBuf[0], cmdBuf.size(), 0);
 
 	checkResponse('d');
 
@@ -222,10 +230,13 @@ void Dac::test_send_data(int num)
 bool Dac::checkResponse(char command) 
 {
 	dac_response rsp;
+	vector<uint8_t> cmdBuf(22, 0);
 
 	cout << "checkResponse()" << endl;
 
-	recv(fd, &rsp, sizeof rsp, 0);
+	recv(fd, &cmdBuf[0], cmdBuf.size(), 0);
+
+	rsp.setFromBuffer(cmdBuf);
 
 	rsp.print();
 

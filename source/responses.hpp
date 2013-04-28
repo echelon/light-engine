@@ -99,6 +99,40 @@ struct dac_response {
 		command('x'),
 		status() {}; 
 
+	dac_response(vector<uint8_t> buf) {
+		setFromBuffer(buf);
+	};
+
+	void setFromBuffer(vector<uint8_t> buf) {
+		if(buf.size() != 22) {
+			// TODO EXCEPTION
+			cerr << "WRONG SIZE BUFFER FOR DAC_RESPONSE" << endl;
+		}
+			
+		response 					= buf[0];
+		command						= buf[1];
+		status.protocol				= buf[2];
+		status.light_engine_state	= buf[3];
+		status.playback_state		= buf[4];
+		status.source				= buf[5];
+		status.light_engine_flags = (uint16_t) buf[6] << 8 |
+									(uint16_t) buf[7];
+		status.playback_flags =		(uint16_t) buf[8] << 8 |
+									(uint16_t) buf[9];
+		status.source_flags =		(uint16_t) buf[10] << 8 |
+									(uint16_t) buf[11];
+		status.buffer_fullness =	(uint16_t) buf[12] << 8 |
+									(uint16_t) buf[13];
+		status.point_rate = 		(uint32_t) buf[14] << 24 |
+									(uint32_t) buf[15] << 16 |
+									(uint32_t) buf[16] << 8  |
+									(uint32_t) buf[17];
+		status.point_count = 		(uint32_t) buf[18] << 24 |
+									(uint32_t) buf[19] << 16 |
+									(uint32_t) buf[20] << 8  |
+									(uint32_t) buf[21];
+	};
+
 	/**
 	 * Whether the response is an Ack.
 	 */

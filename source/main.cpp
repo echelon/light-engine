@@ -73,7 +73,7 @@ int main()
 
 	bool started = false;
 
-	while(false) {
+	while(true) {
 		int cap = 1799 - dac.lastStatus.buffer_fullness;
 
 		cout << "Send #points: " << cap << endl;
@@ -84,6 +84,8 @@ int main()
 			started = true;
 			dac.begin();
 		}
+
+		break;
 	}
 
 	// Receive '?'
