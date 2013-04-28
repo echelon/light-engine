@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 
 #include <string.h>
 #include <sys/types.h>
@@ -8,9 +9,28 @@
 #include <arpa/inet.h>
 
 #include "find.hpp"
+#include "types.hpp"
+#include "commands.hpp"
 #include "Dac.hpp"
 
 using namespace std;
+
+vector<dac_point> makePoints(unsigned int num) 
+{
+	vector<dac_point> points;
+	dac_point pt;
+
+	for(unsigned int i = 0; i < num; i++) {
+		pt.x = 0;
+		pt.y = 0;
+		pt.r = CMAX;
+		pt.g = CMAX;
+		pt.b = CMAX;
+		points.push_back(pt);
+	}
+
+	return points;
+}
 
 int main()
 {
@@ -24,10 +44,6 @@ int main()
 	//cout << "Dac is: " << dac.address << endl;
 
 	dac.connect();
-
-	cout << "Last Status: ";
-	cout << dac.lastStatus.playback_state << endl;
-	dac.lastStatus.print();
 
 	// If can't prepare, perhaps the last run has it confused.
 	// Try to stop...
@@ -43,7 +59,7 @@ int main()
 		}
 	}
 
-	dac.begin();
+	//dac.begin();
 
 	/*switch(dac.lastStatus.playback_state) {
 		case 2:
@@ -73,19 +89,29 @@ int main()
 
 	bool started = false;
 
-	while(true) {
-		int cap = 1799 - dac.lastStatus.buffer_fullness;
+	//cout << endl << endl;
 
-		cout << "Send #points: " << cap << endl;
+	vector<dac_point> points;
 
-		dac.test_send_data(cap);
+	//for(unsigned int i = 0; i < 10; i++) 
+	while(true)
+	{
+		int npoints = 1799 - dac.lastStatus.buffer_fullness;
+		if(npoints < 20) {
+			npoints = 1799;
+		}
+
+		//npoints = 2;
+
+		cout << "Send #points: " << npoints << endl;
+
+		points = makePoints(npoints);
+		dac.test_send_data(points);
 
 		if(!started) {
 			started = true;
 			dac.begin();
 		}
-
-		break;
 	}
 
 	// Receive '?'

@@ -62,7 +62,7 @@ class Dac {
 		bool stop();
 		bool clear_estop();
 
-		void test_send_data(int num);
+		void test_send_data(vector<dac_point> pts);
 
 		/**
 		 * Parse Response.

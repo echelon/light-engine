@@ -1,6 +1,10 @@
 #ifndef LASER_COMMANDS_HPP
 #define LASER_COMMANDS_HPP
 
+#include <vector>
+
+using namespace std;
+
 // These types are largely defined by Jacob Potter's documentation.
 // http://ether-dream.com/protocol.html
 
@@ -14,6 +18,13 @@ struct prepare_command {
 	uint8_t command; // 'p'
 
 	prepare_command(): command('p') {};
+
+	// Sent over socket
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(1, 0);
+		buf[0] = command;
+		return buf;
+	};
 };
 
 /**
@@ -85,10 +96,10 @@ struct dac_point {
 		control(0),
 		x(0),
 		y(0),
-		i(0),
-		r(0),
-		g(0),
-		b(0),
+		i(CMAX),
+		r(CMAX),
+		g(CMAX),
+		b(CMAX),
 		u1(0),
 		u2(0) {};
 
@@ -116,7 +127,14 @@ struct dac_point {
 		buf[17] = u2 >> 8;
 
 		return buf;
-	}
+	};
+
+	void print() {
+		cout << "point: ";
+		cout << "loc(" << x << ", " << y << ") ";
+		cout << "rgb(" << r << ", " << g << ", " << b << ") ";
+		cout << endl;
+	};
 };
 
 /**
@@ -126,7 +144,13 @@ struct dac_point {
 struct data_command {
 	uint8_t command; // 'd'
 	uint16_t npoints;
-	dac_point data[50]; // XXX: Good c99, *BAD* C++!
+	//dac_point data[500]; // XXX: Good c99, *BAD* C++!
+	// Okay, breaking with the struct stuff here. Ugh.
+	vector<dac_point> points;
+
+	data_command() :
+		command('d'),
+		npoints(0) {};
 
 	// Since C++ creates these for us, prevent misuse
 	//private:
@@ -134,27 +158,32 @@ struct data_command {
 		//void operator=(const data_command&) {};
 
 
+	void set_points(vector<dac_point> pts) {
+		npoints = pts.size();
+		points = pts;
+	};
+
 	// Sent over socket
 	vector<uint8_t> serialize() {
-		vector<uint8_t> buf(3 + 50*18, 0);
+		npoints = points.size();
+
+		vector<uint8_t> buf(3 + npoints*18, 0);
 		vector<uint8_t> ptBuf(18, 0);
 
 		buf[0] = command;
 		buf[1] = npoints >> 0;
 		buf[2] = npoints >> 8;
 
-		for(unsigned int i = 0; i < 50; i++) {
-			data[i].r = CMAX;
-			data[i].g = CMAX;
-			data[i].b = CMAX;
-			ptBuf = data[i].serialize();
+		for(unsigned int i = 0; i < points.size(); i++) {
+			ptBuf = points[i].serialize();
+			//points[i].print();
 			for(unsigned int j = 0; j < 18; j++) {
 				buf[3 + i*18 + j] = ptBuf[j];
 			}
-
 		}
+
 		return buf;
-	}
+	};
 };
 
 // !!! scanrate != pointrate
@@ -172,6 +201,13 @@ struct stop_command {
 
 	stop_command():
 		command('s') {};
+
+	// Sent over socket
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(1, 0);
+		buf[0] = command;
+		return buf;
+	};
 };
 
 struct clear_estop_command {
@@ -179,6 +215,13 @@ struct clear_estop_command {
 
 	clear_estop_command():
 		command('c') {};
+
+	// Sent over socket
+	vector<uint8_t> serialize() {
+		vector<uint8_t> buf(1, 0);
+		buf[0] = command;
+		return buf;
+	};
 };
 
 /**
