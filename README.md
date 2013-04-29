@@ -3,6 +3,12 @@ Light Engine
 **A graphics system for laser projectors using the Ether Dream DAC** 
 (new project/work in progress)
 
+Current Status
+--------------
+
+1. Networking and Buffering -- incomplete
+2. (TODO)
+
 Goals
 -----
 I want to built a laser projector daemon that handles multiple 
