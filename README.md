@@ -7,6 +7,8 @@ This project aims to support research projects and laser projector hacking. As s
 
 _I'm very interested in finding collaborators for this project._
 
+**Keywords:** laser projector, projection, scanning, DAC, EtherDream, Ether Dream.
+
 Goals
 -----
 I want to built a laser projector daemon that handles multiple 
