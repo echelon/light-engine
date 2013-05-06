@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <math.h>
 
 #include "find.hpp"
 #include "types.hpp"
@@ -15,18 +16,25 @@
 
 using namespace std;
 
+#define PI 3.14159265
+const int SAMPLE = 100;
+const int RADIUS = 10000;
+
 vector<dac_point> makePoints(unsigned int num) 
 {
 	vector<dac_point> points;
 	dac_point pt;
+	static int c = 0;
 
 	for(unsigned int i = 0; i < num; i++) {
-		pt.x = 0;
-		pt.y = 0;
+		double j = c / (double)SAMPLE * 2 * PI;
+		pt.x = (int)(cos(j) * RADIUS);
+		pt.y = (int)(sin(j) * RADIUS);
 		pt.r = CMAX;
 		pt.g = CMAX;
 		pt.b = CMAX;
 		points.push_back(pt);
+		c = (c + 1) % SAMPLE;
 	}
 
 	return points;
