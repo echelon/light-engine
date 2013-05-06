@@ -19,19 +19,21 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp source/dac.o source/misc.o source/find.o
+main: source/main.cpp source/etherdream/dac.o source/misc.o source/etherdream/find.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
-	@$(L) build/*.o $(LIBS) -o main 
+	@$(L) build/*.o build/etherdream/*.o $(LIBS) -o main 
 	@chmod +x main 
 
-source/dac.o: source/Dac.hpp
-	@echo "[compile] dac"
-	@$(CD) ./build && $(C) $(INC) -c ../source/Dac.cpp
+source/etherdream/dac.o: source/etherdream/Dac.hpp
+	@echo "[compile] etherdream/dac"
+	@$(CD) ./build/etherdream && $(C) $(INC) \
+		-c ../../source/etherdream/Dac.cpp
 
-source/find.o: source/find.hpp
-	@echo "[compile] find"
-	@$(CD) ./build && $(C) $(INC) -c ../source/find.cpp
+source/etherdream/find.o: source/etherdream/find.hpp
+	@echo "[compile] etherdream/find"
+	@$(CD) ./build/etherdream && $(C) $(INC) \
+		-c ../../source/etherdream/find.cpp
 
 source/misc.o: source/misc.hpp
 	@echo "[compile] misc"

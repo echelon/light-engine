@@ -9,10 +9,10 @@
 #include <arpa/inet.h>
 #include <math.h>
 
-#include "find.hpp"
-#include "types.hpp"
-#include "commands.hpp"
-#include "Dac.hpp"
+#include "etherdream/find.hpp"
+#include "etherdream/types.hpp"
+#include "etherdream/commands.hpp"
+#include "etherdream/Dac.hpp"
 
 using namespace std;
 

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include "misc.hpp"
+#include "../misc.hpp"
 
 using namespace std;
 
