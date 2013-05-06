@@ -19,23 +19,36 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp source/etherdream/dac.o source/misc.o source/etherdream/find.o
+main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/gfx/streamer.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
-	@$(L) build/*.o build/etherdream/*.o $(LIBS) -o main 
+	@echo "[linking] main"
+	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
+		build/gfx/*.o \
+		$(LIBS) -o main 
 	@chmod +x main 
 
-source/etherdream/dac.o: source/etherdream/Dac.hpp
+build/etherdream/dac.o: source/etherdream/Dac.cpp
 	@echo "[compile] etherdream/dac"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/Dac.cpp
 
-source/etherdream/find.o: source/etherdream/find.hpp
+build/etherdream/find.o: source/etherdream/find.cpp
 	@echo "[compile] etherdream/find"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/find.cpp
 
-source/misc.o: source/misc.hpp
+build/asset/circle.o: source/asset/circle.cpp
+	@echo "[compile] asset/circle"
+	@$(CD) ./build/asset && $(C) $(INC) \
+		-c ../../source/asset/circle.cpp
+
+build/gfx/streamer.o: source/gfx/streamer.cpp
+	@echo "[compile] gfx/streamer"
+	@$(CD) ./build/gfx && $(C) $(INC) \
+		-c ../../source/gfx/streamer.cpp
+
+build/misc.o: source/misc.cpp
 	@echo "[compile] misc"
 	@$(CD) ./build && $(C) $(INC) -c ../source/misc.cpp
 

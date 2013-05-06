@@ -1,4 +1,7 @@
 #include "Dac.hpp"
+#include "../gfx/object.hpp"
+#include "../gfx/point.hpp"
+#include "../gfx/streamer.hpp"
 
 #include <string.h>
 #include <sys/types.h>
@@ -11,8 +14,32 @@
 
 using namespace std;
 
+// TODO: This is inefficient. 
+vector<dac_point> Dac::convertPoints(vector<Point> pts)
+{
+	vector<dac_point> newPts;
+
+
+
+	for(unsigned int i = 0; i < pts.size(); i++) {
+		Point pt = pts[i];
+		dac_point newPt;
+
+		newPt.x = pt.x;
+		newPt.y = pt.y;
+		newPt.r = pt.r;
+		newPt.g = pt.g;
+		newPt.b = pt.b;
+
+		newPts.push_back(newPt);
+	}
+
+	return newPts;
+}
+
 Dac::Dac(string addr) :
 	fd(0),
+	streamer(0),
 	address(addr),
 	port(DAC_PORT_COMMS)
 {
@@ -115,11 +142,10 @@ bool Dac::clear_estop()
 	return checkResponse('d');
 }
 
+// TODO: Fix messiness
 void Dac::test_send_data(vector<dac_point> pts)
 {
 	data_command cmd;
-
-	//cout << "[dac] sending data points!!!" << endl;
 
 	cmd.set_points(pts);
 	vector<uint8_t> cmdBuf = cmd.serialize();
@@ -153,3 +179,78 @@ bool Dac::checkResponse(char command)
 	}
 	return true;
 }
+
+void Dac::setStreamer(Streamer* s)
+{
+	streamer = s;
+}
+
+void Dac::stream()
+{
+	// TODO: Check if connected. 
+	connect();
+
+	// If can't prepare, perhaps the last run has it confused.
+	// Try to stop...
+	if(!prepare()) { 
+		// Clear any existing state!
+		if(!clear_estop()) {
+			// TODO: Raise critical exception
+			return;
+		}
+
+		stop();
+		if(!prepare()) {
+			// TODO: Raise critical exception
+			return;
+		}
+	}
+
+	// TODO: Fuller protocol compliance. 
+	/*switch(dac.lastStatus.playback_state) {
+		case 2:
+			cout << "DAC.lastStatus = 2" << endl;
+			cout << endl;
+			return EXIT_FAILURE;
+			break;
+		case 0:
+			cout << "DAC.lastStatus = 0" << endl;
+			cout << endl;
+			
+			// If can't prepare, perhaps the last run has it confused.
+			// Try to stop...
+			if(!dac.prepare()) { 
+			// Stop any existing state!
+				if(!dac.clear_estop()) {
+					return EXIT_FAILURE; 
+				}
+
+				dac.stop();
+				if(!dac.prepare()) {
+					return EXIT_FAILURE; 
+				}
+			}
+			break;
+	}*/
+
+	bool started = false;
+	vector<dac_point> points;
+
+	while(true) {
+		int npoints = 1799 - lastStatus.buffer_fullness;
+		if(npoints < 20) {
+			npoints = 1799;
+		}
+
+		points = convertPoints(streamer->getPoints(npoints));
+
+		// TODO: points = makePoints(npoints);
+		test_send_data(points);
+
+		if(!started) {
+			started = true;
+			begin();
+		}
+	}
+}
+

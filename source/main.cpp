@@ -13,6 +13,8 @@
 #include "etherdream/types.hpp"
 #include "etherdream/commands.hpp"
 #include "etherdream/Dac.hpp"
+#include "gfx/streamer.hpp"
+#include "asset/circle.hpp"
 
 using namespace std;
 
@@ -40,6 +42,9 @@ vector<dac_point> makePoints(unsigned int num)
 	return points;
 }
 
+Circle* circle = new Circle(3000.0f);
+Streamer* streamer = new Streamer();
+
 int main()
 {
 	string ip;
@@ -52,6 +57,13 @@ int main()
 	//cout << "Dac is: " << dac.address << endl;
 
 	dac.connect();
+
+	streamer->addObject(circle);
+
+	dac.setStreamer(streamer);
+	dac.stream();
+
+	return EXIT_SUCCESS;
 
 	// If can't prepare, perhaps the last run has it confused.
 	// Try to stop...

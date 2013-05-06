@@ -7,6 +7,10 @@
 #include "types.hpp"
 #include "responses.hpp"
 #include "commands.hpp"
+#include "../gfx/point.hpp"
+
+class Object;
+class Streamer;
 
 using namespace std;
 
@@ -26,6 +30,11 @@ class Dac {
 		// Message buffer
 		//string buffer;
 		vector<char> buffer;
+
+		// Streamer object
+		Streamer* streamer;
+
+		vector<dac_point> convertPoints(vector<Point> pts);
 
 
 	public:
@@ -68,6 +77,13 @@ class Dac {
 		 * Parse Response.
 		 */
 		bool checkResponse(char command);
+
+		/**
+		 * Start the stream
+		 * TODO: These should live outside of EtherDream code.
+		 */
+		void stream();
+		void setStreamer(Streamer* s);
 };
 
 #endif
