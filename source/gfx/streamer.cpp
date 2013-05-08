@@ -20,7 +20,7 @@ void Streamer::freezeFrame()
 	// Get all the points for the frame
 	for(unsigned int i = 0; i < objects.size(); i++) {
 		Object* obj = objects[i];
-		if(!obj->isVisible) {
+		if(!obj->isVisible()) {
 			continue;
 		}
 		ppts.push_back(obj->getAllPoints());
@@ -32,10 +32,10 @@ void Streamer::freezeFrame()
 		Points trk;
 		trk= calculate_tracking_pts(ppts[i], ppts[i+1]);
 
-		framePts.append(ppts[i]);
-		framePts.append(trk);
+		framePts.push_back(ppts[i]);
+		framePts.push_back(trk);
 	}
-	framePts.append(ppts.back());
+	framePts.push_back(ppts.back());
 }
 
 Points Streamer::getPoints(unsigned int numPoints)
@@ -47,19 +47,19 @@ Points Streamer::getPoints(unsigned int numPoints)
 
 	if(!isInFrame) {
 		isInFrame = true;
-		cachePoints();
+		freezeFrame();
 	}
 
 	// TODO: Consider 'flattening' frame :
 	// Convert 2D vec<vec<Pt>> to 1D vec<Pt>.
 	// No reason to have it be 2D at this point. 
 	for(; framePtsIdx < framePts.size(); framePtsIdx++) {
-		Points pts = framePts[i];
+		Points pts = framePts[framePtsIdx];
 
 		// FIXME FIXME FIXME I can't be this bad at C++ STL
 		// TODO: Use <vector> properly. Do some math. This sucks.
 		for(unsigned int j = 0; j < pts.size(); j++) {
-			points.push_back(pts[i]);
+			points.push_back(pts[j]);
 			if(points.size() >= numPoints) {
 				return points;
 			}

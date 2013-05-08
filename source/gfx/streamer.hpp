@@ -14,7 +14,7 @@ class Streamer
 		/**
 		 * CTOR. 
 		 */
-		Streamer(): curObject(0), isInFrame(false) {};
+		Streamer(): framePtsIdx(0), isInFrame(false) {};
 
 		/**
 		 * Add an object to be streamed
