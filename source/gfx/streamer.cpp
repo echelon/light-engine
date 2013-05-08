@@ -1,5 +1,6 @@
 #include "streamer.hpp"
 #include "object.hpp"
+#include "tracking.hpp"
 
 #include <iostream>
 
@@ -9,10 +10,12 @@ void Streamer::addObject(Object* obj)
 	objects.push_back(obj);
 }
 
-void Streamer::cachePoints()
+void Streamer::freezeFrame()
 {
-	allObjPoints.clear();
-	allObjPtsIdx = 0;
+	vector<Points> ppts;
+
+	framePts.clear();
+	framePtsIdx = 0;
 
 	// Get all the points for the frame
 	for(unsigned int i = 0; i < objects.size(); i++) {
@@ -20,16 +23,25 @@ void Streamer::cachePoints()
 		if(!obj->isVisible) {
 			continue;
 		}
-		allObjPoints.push_back(obj->getAllPoints());
+		ppts.push_back(obj->getAllPoints());
 	}
 
-	// TODO: Blanking should be applied here...
+	// Add tracking between objects in current frame
+	// Doesn't account for blanking between frames
+	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
+		Points trk;
+		trk= calculate_tracking_pts(ppts[i], ppts[i+1]);
+
+		framePts.append(ppts[i]);
+		framePts.append(trk);
+	}
+	framePts.append(ppts.back());
 }
 
 Points Streamer::getPoints(unsigned int numPoints)
 {
-	// No blanking or other path optimizations are performed 
-	// in this algorithm. The only job here is to send points. 
+	// No tracking, blanking or other path optimizations are 
+	// performed in this algo. The only job here is to yield points. 
 	
 	Points points;
 
@@ -41,8 +53,8 @@ Points Streamer::getPoints(unsigned int numPoints)
 	// TODO: Consider 'flattening' frame :
 	// Convert 2D vec<vec<Pt>> to 1D vec<Pt>.
 	// No reason to have it be 2D at this point. 
-	for(; allObjPtsIdx < allObjPoints.size(); allObjPtsIdx++) {
-		Points pts = allObjPoints[i];
+	for(; framePtsIdx < framePts.size(); framePtsIdx++) {
+		Points pts = framePts[i];
 
 		// FIXME FIXME FIXME I can't be this bad at C++ STL
 		// TODO: Use <vector> properly. Do some math. This sucks.
