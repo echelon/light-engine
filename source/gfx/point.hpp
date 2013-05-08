@@ -1,6 +1,8 @@
 #ifndef LIGHT_ENGINE_GFX_POINT_HPP
 #define LIGHT_ENGINE_GFX_POINT_HPP
 
+#include <vector>
+
 struct Point 
 {
 	/**
@@ -39,5 +41,7 @@ struct Point
 			x(_x), y(_y), r(_r), g(_g), b(_b), i(_i),
 			isBlank(_isBlank) {};
 };
+
+typedef std::vector<Point> Points;
 
 #endif

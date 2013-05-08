@@ -15,7 +15,7 @@
 using namespace std;
 
 // TODO: This is inefficient. 
-vector<dac_point> Dac::convertPoints(vector<Point> pts)
+vector<dac_point> Dac::convertPoints(Points pts)
 {
 	vector<dac_point> newPts;
 
@@ -65,7 +65,7 @@ void Dac::connect()
 	int r = 0;
 	dac_response rsp;
 
-	cout << "[dac] connecting..." << endl;
+	cout << "[dac] connecting... (" << address << ")" << endl;
 
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = inet_addr(address.c_str());
@@ -193,15 +193,19 @@ void Dac::stream()
 	// If can't prepare, perhaps the last run has it confused.
 	// Try to stop...
 	if(!prepare()) { 
+		cerr << "DAC: FIRST 'PREPARE' NOT ACKNOWLEDGED!" << endl;
+
 		// Clear any existing state!
 		if(!clear_estop()) {
 			// TODO: Raise critical exception
+			cerr << "DAC: COULD NOT CLEAR ESTOP!" << endl;
 			return;
 		}
 
 		stop();
 		if(!prepare()) {
 			// TODO: Raise critical exception
+			cerr << "DAC: SECOND 'PREPARE' NOT ACKNOWLEDGED!" << endl;
 			return;
 		}
 	}
@@ -237,9 +241,10 @@ void Dac::stream()
 	vector<dac_point> points;
 
 	while(true) {
-		int npoints = 1799 - lastStatus.buffer_fullness;
+		const int SEND = 1999;
+		int npoints = SEND - lastStatus.buffer_fullness;
 		if(npoints < 20) {
-			npoints = 1799;
+			npoints = SEND;
 		}
 
 		points = convertPoints(streamer->getPoints(npoints));

@@ -14,18 +14,34 @@ using namespace std;
 class Object {
 
 	public:
-		Object() {};
+		Object() : visible(true) {};
 
 		/**
 		 * Request numPoints for the object.
-		 *  - Can return less.
-		 *  FIXME: Should be virtual interface only
+		 *  - XXX: Can return less.
 		 */
-		virtual vector<Point> getPoints(unsigned int numPoints) {
+		virtual Points getPoints(unsigned int numPoints) {
 			cerr << "Wrong getPoints!!!" << endl;
-			vector<Point> pts;
+			Points pts;
 			return pts;
 		};
+		
+		/**
+		 * Request all points for the object.
+		 */
+		virtual Points getAllPoints() {
+			cerr << "Wrong getAllPoints!!!" << endl;
+			Points pts;
+			return pts;
+		};
+
+		void setVisible(bool v) { visible = v; };
+		bool isVisible() { return visible; };
+
+	private:
+		// If object is currently visible
+		bool visible;
+
 };
 
 #endif

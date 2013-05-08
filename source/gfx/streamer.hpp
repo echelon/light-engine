@@ -10,16 +10,8 @@ class Object;
 
 class Streamer
 {
-
-	private:
-		vector<Object*> objects;
-
-		// Current object index
-		unsigned int curObject;
-
 	public:
-
-		Streamer(): curObject(0) {};
+		Streamer(): curObject(0), isInFrame(false) {};
 
 		/**
 		 * Add an object to stream
@@ -28,9 +20,34 @@ class Streamer
 		void addObject(Object* obj);
 
 		/**
-		 * Return the number of points requested
+		 * Get the next numPoints points in the stream.
 		 */
-		vector<Point> getPoints(unsigned int numPoints);
+		Points getPoints(unsigned int numPoints);
+
+	private:
+		vector<Object*> objects;
+
+
+		// Current object index
+		unsigned int curObject;
+
+		// --------- OR ----------
+
+		// Current frame cache
+		vector<Points> allObjPoints;
+
+		// Index into frame cache
+		unsigned int allObjPtsIdx;
+
+		// If currently drawing a frame
+		// False if done or not started
+		bool isInFrame;
+
+		/**
+		 * Cache all the points for this frame.
+		 * TODO: Rename -- doesn't adequately convey what this does!
+		 */
+		void cachePoints();
 };
 
 #endif
