@@ -14,6 +14,10 @@ void Streamer::freezeFrame()
 {
 	vector<Points> ppts;
 
+	if(framePts.size() > 0 && framePts.back().size() > 0) {
+		oldFramePt = framePts.back().back();
+	}
+
 	framePts.clear();
 	framePtsIdx = 0;
 
@@ -25,6 +29,10 @@ void Streamer::freezeFrame()
 		}
 		ppts.push_back(obj->getAllPoints());
 	}
+
+	// Old last point tracks to new frame
+	Points trk = calculate_tracking_pts(oldFramePt, ppts[0]);
+	framePts.push_back(trk);
 
 	// Add tracking between objects in current frame
 	// Doesn't account for blanking between frames
@@ -50,6 +58,8 @@ Points Streamer::getPoints(unsigned int numPoints)
 		freezeFrame();
 	}
 
+	// TODO/FIXME: DO tracking between last frame and current frame!
+
 	// TODO: Consider 'flattening' frame :
 	// Convert 2D vec<vec<Pt>> to 1D vec<Pt>.
 	// No reason to have it be 2D at this point. 
@@ -58,15 +68,35 @@ Points Streamer::getPoints(unsigned int numPoints)
 
 		// FIXME FIXME FIXME I can't be this bad at C++ STL
 		// TODO: Use <vector> properly. Do some math. This sucks.
-		for(unsigned int j = 0; j < pts.size(); j++) {
-			points.push_back(pts[j]);
+		for(;framePtsObjIdx < pts.size(); framePtsObjIdx++) {
+			points.push_back(pts[framePtsObjIdx]);
 			if(points.size() >= numPoints) {
 				return points;
 			}
 		}
+
+		framePtsObjIdx = 0;
 	}
 
 	isInFrame = false;
+
+	return points;
+}
+
+Points Streamer::getPoints2(int numPoints)
+{
+	Points points;
+	int required = numPoints;
+
+	while(required >= 0) {
+		Points pts = getPoints(required);
+		required -= pts.size();
+
+		// FIXME FIXME TODO: Terrible code
+		for(unsigned int i = 0; i < pts.size(); i++) {
+			points.push_back(pts[i]);
+		}
+	}
 
 	return points;
 }

@@ -20,4 +20,10 @@ const unsigned int TRACKING_SAMPLE_PTS = 10;
  */
 Points calculate_tracking_pts(const Points& a, const Points& b);
 
+Points calculate_tracking_pts(const Point& a, const Points& b);
+
+Points calculate_tracking_pts(const Points& a, const Point& b);
+
+Points calculate_tracking_pts(const Point& a, const Point& b);
+
 #endif

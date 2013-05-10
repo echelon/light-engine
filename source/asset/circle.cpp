@@ -10,7 +10,7 @@ Points Circle::getPoints(unsigned int num)
 
 	for(unsigned int i = drawPosition; i < numPoints; i++) 
 	{
-		double j = 2 * PI * drawPosition / np;
+		double j = 2 * PI * i / np;
 		Point pt;
 
 		drawPosition++;
@@ -45,7 +45,7 @@ Points Circle::getAllPoints()
 
 	for(unsigned int i = 0; i < numPoints; i++) 
 	{
-		double j = 2 * PI * drawPosition / np;
+		double j = 2 * PI * i / np;
 		Point pt;
 
 		pt.x = (int)(cos(j) * radius);

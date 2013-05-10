@@ -238,16 +238,29 @@ void Dac::stream()
 	}*/
 
 	bool started = false;
-	vector<dac_point> points;
 
 	while(true) {
-		const int SEND = 1999;
+		const int SEND = 5000;
+		const int LESS = 2000;
+		vector<dac_point> points;
 		int npoints = SEND - lastStatus.buffer_fullness;
+
+		cout << npoints << endl;
+
 		if(npoints < 20) {
-			npoints = SEND;
+			cout << "Reset send..." << endl;
+			npoints = LESS;
 		}
 
-		points = convertPoints(streamer->getPoints(npoints));
+		if(npoints < 20 ) {
+			cout << "Sending less: " << npoints << endl;
+		}
+		else {
+			cout << "Sending : " << npoints << endl;
+		}
+
+		//points = convertPoints(streamer->getPoints(npoints));
+		points = convertPoints(streamer->getPoints2(npoints));
 
 		// TODO: points = makePoints(npoints);
 		test_send_data(points);

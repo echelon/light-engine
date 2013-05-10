@@ -18,8 +18,11 @@
 
 using namespace std;
 
-Circle* circle1 = new Circle(20000.0f, 100);
-//Circle* circle2 = new Circle(20000.0f, 100);
+vector<Circle*> circles;
+
+//Circle* circle1 = new Circle(20000.0f, 100);
+//Circle* circle2 = new Circle(1000.0f, 100);
+
 Streamer* streamer = new Streamer();
 
 int main()
@@ -31,10 +34,12 @@ int main()
 
 	Dac dac = Dac(ip);
 
+	for(unsigned int i = 0; i < 10; i++) {
+		Circle* c = new Circle(1000.f * (i+1), 2000);
+		circles.push_back(c);
+		streamer->addObject(c);
+	}
 	//cout << "Dac is: " << dac.address << endl;
-
-	streamer->addObject(circle1);
-	//streamer->addObject(circle2);
 
 	dac.setStreamer(streamer);
 	dac.stream();
