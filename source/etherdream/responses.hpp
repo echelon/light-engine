@@ -42,8 +42,9 @@ struct dac_status {
 
 	// Not sure what this flag is, but I think that it gets
 	// set whenever the dac is too flooded to continue
+	// FIXME: Actually, more like 'not playing'
 	bool isDacFlooded() {
-		return (bool)(m & 0x0200); // dec #512
+		return (bool)(playback_flags & 0x0200); // dec #512
 	};
 
 	void print() {
@@ -114,7 +115,7 @@ struct dac_response {
 			// TODO EXCEPTION
 			cerr << "WRONG SIZE BUFFER FOR DAC_RESPONSE" << endl;
 		}
-			
+
 		response 					= buf[0];
 		command						= buf[1];
 		status.protocol				= buf[2];

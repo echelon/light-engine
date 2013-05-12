@@ -1,4 +1,5 @@
 #include "tracking.hpp"
+#include "../etherdream/types.hpp"
 
 Points calculate_tracking_pts(const Points& a, const Points& b,
 	unsigned int num) {
@@ -31,7 +32,8 @@ Points calculate_tracking_pts(const Point& a, const Point& b,
 		float perc = i/(float)num;
 		float xb = (float)(lastX - xDiff*perc);
 		float yb = (float)(lastY - yDiff*perc);
-		blankPts.push_back(Point(xb, yb, 10000.0f, 0.0f, 0.0f));
+		blankPts.push_back(Point(xb, yb, 0, 0, 0));
+		//blankPts.push_back(Point(xb, yb, CMAX, CMAX, CMAX));
 	}
 
 	return blankPts;

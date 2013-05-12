@@ -104,7 +104,6 @@ Points Streamer::getPoints2(int numPoints)
 	Points points;
 	int required = numPoints;
 
-
 	//cout << "getPointsTwo(" << numPoints << ")";
 	//cout << " @ " << frameStreamIdx << endl;
 

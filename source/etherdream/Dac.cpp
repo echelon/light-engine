@@ -44,8 +44,6 @@ vector<dac_point> Dac::convertPoints(Points pts)
 {
 	vector<dac_point> newPts;
 
-
-
 	for(unsigned int i = 0; i < pts.size(); i++) {
 		Point pt = pts[i];
 		dac_point newPt;
@@ -192,86 +190,56 @@ void Dac::stream()
 	// TODO: Check if connected. 
 	connect();
 
-	// If can't prepare, perhaps the last run has it confused.
-	// Try to stop...
-	if(!prepare()) { 
-		cerr << "DAC: FIRST 'PREPARE' NOT ACKNOWLEDGED!" << endl;
-
-		// Clear any existing state!
-		if(!clear_estop()) {
-			// TODO: Raise critical exception
-			cerr << "DAC: COULD NOT CLEAR ESTOP!" << endl;
-			return;
-		}
-
-		stop();
-		if(!prepare()) {
-			// TODO: Raise critical exception
-			cerr << "DAC: SECOND 'PREPARE' NOT ACKNOWLEDGED!" << endl;
-			return;
+	// Only need to prepare if not already prepared
+	// If then can't prepare, perhaps the last run has 
+	// it confused, so try a shutdown / state refresh.
+	if(lastStatus.playback_state == 0) {
+		if(!prepare()) { 
+			cerr << "DAC: FIRST 'PREPARE' NOT ACKNOWLEDGED!" << endl;
+			if(!clear_estop()) {
+				// TODO: Raise critical exception
+				cerr << "DAC: COULD NOT CLEAR ESTOP!" << endl;
+				return;
+			}
+			stop();
+			if(!prepare()) {
+				// TODO: Raise critical exception
+				cerr << "DAC: 'PREPARE' NOT ACKNOWLEDGED!" << endl;
+				return;
+			}
 		}
 	}
 
-	// TODO: Fuller protocol compliance. 
-	/*switch(dac.lastStatus.playback_state) {
-		case 2:
-			cout << "DAC.lastStatus = 2" << endl;
-			cout << endl;
-			return EXIT_FAILURE;
-			break;
-		case 0:
-			cout << "DAC.lastStatus = 0" << endl;
-			cout << endl;
-			
-			// If can't prepare, perhaps the last run has it confused.
-			// Try to stop...
-			if(!dac.prepare()) { 
-			// Stop any existing state!
-				if(!dac.clear_estop()) {
-					return EXIT_FAILURE; 
-				}
-
-				dac.stop();
-				if(!dac.prepare()) {
-					return EXIT_FAILURE; 
-				}
-			}
-			break;
-	}*/
+	// TODO: Idea [!]
+	// do a connect(), restart(), etc. functions that run through
+	// all the commands necessary for a healthy connection
 
 	started = false;
 
 	while(true) {
-		const int SEND = 10000;
-		const int LESS = 5000;
+		const int SEND = 1000;
+		const int LESS = 2000;
 		vector<dac_point> points;
-		int npoints = SEND - lastStatus.buffer_fullness;
+		int npoints = SEND; //- lastStatus.buffer_fullness;
 
 		// Sometimes we can flood the DAC
-		/*if(started && lastStatus.buffer_fullness == 0) {
-			lastStatus.print();
-			refreshStream();
-			npoints = SEND;
-		}*/
-
+		//if(started && lastStatus.buffer_fullness == 0) {
 		if(started && lastStatus.isDacFlooded()) {
-			cout << "DAC FLOOD" << endl;
-			lastStatus.print();
 			refreshStream();
-			npoints = SEND;
 		}
 
-		// TODO: Optimize how buffer fills
-		if(lastStatus.buffer_fullness > 30000) {
+		// TODO: Optimize how buffer fills (IMPORTANT!)
+		// TODO: Optimize how buffer fills (IMPORTANT!)
+		/*if(lastStatus.buffer_fullness > 30000) {
 			npoints = LESS;
 		}
 		if(npoints < 20) {
 			npoints = LESS;
-		}
+		}*/
 
 		points = convertPoints(streamer->getPoints2(npoints));
 
-		// TODO: These functions suck.
+		// FIXME: These functions suck.
 		test_send_data(points);
 
 		if(!started) {
@@ -283,7 +251,6 @@ void Dac::stream()
 
 void Dac::refreshStream()
 {
-	stop();
 	prepare();
 	started = false;
 }

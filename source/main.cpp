@@ -31,31 +31,18 @@ int main()
 	string ip;
 	string r;
 
-	int m = 513 + 256;
-
-	cout << get_flags(m) << endl;
-	cout << "Num: " << m << endl;
-	cout << (m & 0x0200) << endl;
-	cout << (m & 0x0100) << endl;
-	cout << (m & 0x00ff) << endl;
-
-
-	return EXIT_SUCCESS;
-
-
 	ip = find_dac();
 
 	Dac dac = Dac(ip);
 
-	for(unsigned int i = 0; i < 6; i++) {
-		Circle* c = new Circle(3000.f * (i+1), 100000);
+	for(unsigned int i = 0; i < 10; i++) {
+		Circle* c = new Circle(1000.f * (i+1), 100);
 		circles.push_back(c);
 		streamer->addObject(c);
 
-		// g, b, r
 		switch(i % 3) {
 			case 0:
-				c->setColor(CMAX, 0, 0);
+				c->setColor(CMAX, CMAX, CMAX);
 				break;
 			case 1:
 				c->setColor(0, CMAX, 0);
@@ -68,7 +55,6 @@ int main()
 				break;
 		}
 	}
-	//cout << "Dac is: " << dac.address << endl;
 
 	dac.setStreamer(streamer);
 	dac.stream();

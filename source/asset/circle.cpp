@@ -57,6 +57,11 @@ Points Circle::getAllPoints()
 
 		points.push_back(pt);
 	}
+
+	for(unsigned int i = 0; i < 40; i++) {
+		points.push_back(points[0]);
+	}
+
 	return points;
 }
 
