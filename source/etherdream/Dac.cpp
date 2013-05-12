@@ -217,7 +217,13 @@ void Dac::stream()
 	started = false;
 
 	while(true) {
-		const int SEND = 1000;
+		// Analysis of 'SEND' -- 
+		// 2.5k beautiful and vibrant, BUT slower and laser artifacts
+		// 5k beautiful and vibrant, BUT slow and artifacts
+		// 10k is awesome
+		// 20k connection thrashes (p/b/p/b/... memalloc OR buffer)
+		// 100k CORE DUMP! WHOA!!1
+		const int SEND = 7500; // 10k is awesome
 		const int LESS = 2000;
 		vector<dac_point> points;
 		int npoints = SEND; //- lastStatus.buffer_fullness;
@@ -239,7 +245,7 @@ void Dac::stream()
 
 		points = convertPoints(streamer->getPoints2(npoints));
 
-		// FIXME: These functions suck.
+		// FIXME: These functions and their names suck.
 		test_send_data(points);
 
 		if(!started) {
