@@ -29,16 +29,16 @@ struct dac_status {
 	uint32_t point_count;		// Num points played so far
 
 	dac_status():
-		protocol('x'),
-		light_engine_state('x'),
-		playback_state('x'),
-		source('x'),
-		light_engine_flags('x'),
-		playback_flags('x'),
-		source_flags('x'),
-		buffer_fullness('x'),
-		point_rate('x'),
-		point_count('x') {};
+		protocol(0),
+		light_engine_state(0),
+		playback_state(0),
+		source(0),
+		light_engine_flags(0),
+		playback_flags(0),
+		source_flags(0),
+		buffer_fullness(0),
+		point_rate(0),
+		point_count(0) {};
 
 	// Not sure what this flag is, but I think that it gets
 	// set whenever the dac is too flooded to continue
@@ -101,8 +101,8 @@ struct dac_response {
 	dac_status status;
 
 	dac_response():
-		response('x'),
-		command('x'),
+		response(0),
+		command(0),
 		status() {}; 
 
 	dac_response(vector<uint8_t> buf) {
