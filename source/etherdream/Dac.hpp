@@ -20,25 +20,6 @@ using namespace std;
  */
 class Dac {
 
-	private:
-		// Socket file descriptor
-		int fd;
-
-		// Dac address info
-		sockaddr_in server; 
-
-		// Message buffer
-		//string buffer;
-		vector<char> buffer;
-
-		// Streamer object
-		Streamer* streamer;
-
-		// Whether stream has started
-		bool started;
-
-		vector<dac_point> convertPoints(vector<Point> pts);
-
 
 	public:
 		// These are for ease of use
@@ -77,7 +58,34 @@ class Dac {
 		void test_send_data(vector<dac_point> pts);
 
 		/**
-		 * Sometimes the buffer fills.
+		 * Start the stream
+		 * TODO: These should live outside of EtherDream code.
+		 */
+		void stream();
+		void setStreamer(Streamer* s);
+
+
+	private:
+		// Socket file descriptor
+		int fd;
+
+		// Dac address info
+		sockaddr_in server; 
+
+		// Message buffer
+		//string buffer;
+		vector<char> buffer;
+
+		// Streamer object
+		Streamer* streamer;
+
+		// Whether stream has started
+		bool started;
+
+		vector<dac_point> convertPoints(vector<Point> pts);
+
+		/**
+		 * Sometimes the DAC gets flooded or buffer fills.
 		 * We need to reset the streaming.
 		 */
 		void refreshStream();
@@ -87,12 +95,8 @@ class Dac {
 		 */
 		bool checkResponse(char command);
 
-		/**
-		 * Start the stream
-		 * TODO: These should live outside of EtherDream code.
-		 */
-		void stream();
-		void setStreamer(Streamer* s);
+
+
 };
 
 #endif

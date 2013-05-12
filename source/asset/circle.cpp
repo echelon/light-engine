@@ -2,7 +2,7 @@
 #include "../etherdream/types.hpp"
 #include <math.h>
 
-Points Circle::getPoints(unsigned int num)
+/*Points Circle::getPoints(unsigned int num)
 {
 	const double PI = 3.14159265;
 	Points points;
@@ -35,7 +35,7 @@ Points Circle::getPoints(unsigned int num)
 	}
 
 	return points;
-}
+}*/
 
 Points Circle::getAllPoints()
 {
@@ -51,12 +51,11 @@ Points Circle::getAllPoints()
 		pt.x = (int)(cos(j) * radius);
 		pt.y = (int)(sin(j) * radius);
 
-		pt.r = CMAX;
-		pt.g = CMAX;
-		pt.b = CMAX;
+		pt.r = r;
+		pt.g = g;
+		pt.b = b;
 
 		points.push_back(pt);
 	}
-
 	return points;
 }

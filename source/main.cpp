@@ -34,10 +34,26 @@ int main()
 
 	Dac dac = Dac(ip);
 
-	for(unsigned int i = 0; i < 2; i++) {
-		Circle* c = new Circle(5000.f * (i+1), 1000);
+	for(unsigned int i = 0; i < 6; i++) {
+		Circle* c = new Circle(3000.f * (i+1), 100000);
 		circles.push_back(c);
 		streamer->addObject(c);
+
+		// g, b, r
+		switch(i % 3) {
+			case 0:
+				c->setColor(CMAX, 0, 0);
+				break;
+			case 1:
+				c->setColor(0, CMAX, 0);
+				break;
+			case 2:
+				c->setColor(0, 0, CMAX);
+				break;
+			default:
+				c->setColor(CMAX, CMAX, CMAX);
+				break;
+		}
 	}
 	//cout << "Dac is: " << dac.address << endl;
 

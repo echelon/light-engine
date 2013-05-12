@@ -35,14 +35,14 @@ void Streamer::freezeFrame()
 	}
 
 	// Old last point tracks to new frame
-	Points trk = calculate_tracking_pts(oldFramePt, ppts[0]);
+	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 100);
 	trks.push_back(trk);
 	sz += trk.size();
 
 	// Add tracking between objects in current frame
 	// Doesn't account for blanking between frames
 	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
-		Points t = calculate_tracking_pts(ppts[i], ppts[i+1]);
+		Points t = calculate_tracking_pts(ppts[i], ppts[i+1], 100);
 		trks.push_back(t);
 		sz += t.size();
 	}

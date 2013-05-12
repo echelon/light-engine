@@ -14,6 +14,31 @@
 
 using namespace std;
 
+
+Dac::Dac(string addr) :
+	address(addr),
+	port(DAC_PORT_COMMS),
+	fd(0),
+	streamer(0),
+	started(false)
+{
+	memset(&server, 0, sizeof server);
+
+	//fd = socket(AF_INET, SOCK_STREAM, 0);
+	fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	
+	if (fd < 0) {
+		// TODO: ERROR
+	}
+
+	//connect();
+}
+
+Dac::~Dac()
+{
+	// TODO
+}
+
 // TODO: This is inefficient. 
 vector<dac_point> Dac::convertPoints(Points pts)
 {
@@ -35,30 +60,6 @@ vector<dac_point> Dac::convertPoints(Points pts)
 	}
 
 	return newPts;
-}
-
-Dac::Dac(string addr) :
-	fd(0),
-	streamer(0),
-	address(addr),
-	port(DAC_PORT_COMMS),
-	started(false)
-{
-	memset(&server, 0, sizeof server);
-
-	//fd = socket(AF_INET, SOCK_STREAM, 0);
-	fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	
-	if (fd < 0) {
-		// TODO: ERROR
-	}
-
-	//connect();
-}
-
-Dac::~Dac()
-{
-	// TODO
 }
 
 void Dac::connect()
@@ -241,35 +242,29 @@ void Dac::stream()
 	started = false;
 
 	while(true) {
-		const int SEND = 5000;
-		const int LESS = 10000;
+		const int SEND = 10000;
+		const int LESS = 5000;
 		vector<dac_point> points;
 		int npoints = SEND - lastStatus.buffer_fullness;
 
-		if(lastStatus.buffer_fullness == 0) {
+		// Sometimes we can flood the DAC
+		if(started && lastStatus.buffer_fullness == 0) {
 			lastStatus.print();
 			refreshStream();
+			npoints = SEND;
 		}
 
-		cout << "Buffer: " << lastStatus.buffer_fullness << endl;
-		//cout << npoints << endl;
-
+		// TODO: Optimize how buffer fills
+		if(lastStatus.buffer_fullness > 30000) {
+			npoints = LESS;
+		}
 		if(npoints < 20) {
-			//cout << "Reset send..." << endl;
 			npoints = LESS;
 		}
 
-		/*if(npoints < 20 ) {
-			cout << "Sending less: " << npoints << endl;
-		}
-		else {
-			cout << "Sending : " << npoints << endl;
-		}*/
-
-		//points = convertPoints(streamer->getPoints(npoints));
 		points = convertPoints(streamer->getPoints2(npoints));
 
-		// TODO: points = makePoints(npoints);
+		// TODO: These functions suck.
 		test_send_data(points);
 
 		if(!started) {

@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "point.hpp"
+#include "../etherdream/types.hpp"
 
 using namespace std;
 
@@ -17,7 +18,11 @@ class Object {
 		Object() : 
 			visible(true),
 			blankingPtsIn(10),
-			blankingPtsOut(10) {};
+			blankingPtsOut(10),
+			r(CMAX),
+			g(CMAX),
+			b(CMAX),
+			i(0) {};
 
 		/**
 		 * Request numPoints for the object.
@@ -58,14 +63,25 @@ class Object {
 		unsigned int getBlankingPtsIn() { return blankingPtsIn; };
 		unsigned int getBlankingPtsOut() { return blankingPtsOut; };
 
+		void setColor(unsigned int _r, unsigned int _g, 
+			unsigned int _b) {
+					r = _r;
+					g = _g;
+					b = _b;
+		};
 
-	private:
+	protected:
 		// If object is currently visible
 		bool visible;
 
 		unsigned int blankingPtsIn;
 		unsigned int blankingPtsOut;
 
+		// TODO: Appropriate level to handle color?
+		unsigned int r;
+		unsigned int g;
+		unsigned int b;
+		unsigned int i;
 };
 
 #endif

@@ -104,6 +104,7 @@ struct dac_point {
 		u2(0) {};
 
 	// Sent over socket
+	// FIXME: Remapped RGB -> GBR (Dac error?)
 	vector<uint8_t> serialize() {
 		vector<uint8_t> buf(18, 0);
 
@@ -115,12 +116,12 @@ struct dac_point {
 		buf[5] = y >> 8;
 		buf[6] = i >> 0;
 		buf[7] = i >> 8;
-		buf[8] = r >> 0;
-		buf[9] = r >> 8;
-		buf[10] = g >> 0;
-		buf[11] = g >> 8;
-		buf[12] = b >> 0;
-		buf[13] = b >> 8;
+		buf[8] = g >> 0;  // r (should be)
+		buf[9] = g >> 8;  // r
+		buf[10] = b >> 0; // g
+		buf[11] = b >> 8; // g
+		buf[12] = r >> 0; // b
+		buf[13] = r >> 8; // b
 		buf[14] = u1 >> 0;
 		buf[15] = u1 >> 8;
 		buf[16] = u2 >> 0;

@@ -23,12 +23,12 @@ class Circle : public Object
 			Object(),
 			radius(_radius), numPoints(npoints), drawPosition(0) {};
 
-		virtual Points getPoints(unsigned int num);
+		//virtual Points getPoints(unsigned int num);
 
 		virtual Points getAllPoints();
 
 
-	private:
+	protected:
 		// Radius <= (0.0, 1.0] 
 		// TODO: enforce size
 		float radius;
