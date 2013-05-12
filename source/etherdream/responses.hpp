@@ -40,6 +40,12 @@ struct dac_status {
 		point_rate('x'),
 		point_count('x') {};
 
+	// Not sure what this flag is, but I think that it gets
+	// set whenever the dac is too flooded to continue
+	bool isDacFlooded() {
+		return (bool)(m & 0x0200); // dec #512
+	};
+
 	void print() {
 		cout << endl;
 		cout << "DAC Status" << endl;

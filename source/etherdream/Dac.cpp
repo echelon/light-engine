@@ -248,7 +248,14 @@ void Dac::stream()
 		int npoints = SEND - lastStatus.buffer_fullness;
 
 		// Sometimes we can flood the DAC
-		if(started && lastStatus.buffer_fullness == 0) {
+		/*if(started && lastStatus.buffer_fullness == 0) {
+			lastStatus.print();
+			refreshStream();
+			npoints = SEND;
+		}*/
+
+		if(started && lastStatus.isDacFlooded()) {
+			cout << "DAC FLOOD" << endl;
 			lastStatus.print();
 			refreshStream();
 			npoints = SEND;

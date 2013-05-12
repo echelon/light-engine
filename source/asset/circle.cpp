@@ -59,3 +59,4 @@ Points Circle::getAllPoints()
 	}
 	return points;
 }
+

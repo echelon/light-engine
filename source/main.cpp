@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 
+#include "misc.hpp" // XXX TEMP
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -29,6 +30,18 @@ int main()
 {
 	string ip;
 	string r;
+
+	int m = 513 + 256;
+
+	cout << get_flags(m) << endl;
+	cout << "Num: " << m << endl;
+	cout << (m & 0x0200) << endl;
+	cout << (m & 0x0100) << endl;
+	cout << (m & 0x00ff) << endl;
+
+
+	return EXIT_SUCCESS;
+
 
 	ip = find_dac();
 
