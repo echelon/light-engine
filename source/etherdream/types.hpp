@@ -19,7 +19,7 @@ const int DAC_PORT_COMMS = 7765;
  * Color and dimension magnitude ranges.
  */
 const int CMAX = 65535; // Max color value (unsigned)
-const int DMAX = 65535; // TODO: This is wrong. (signed)
+const int DMAX = 32760; // TODO: This is wrong! (signed)
 
 enum LIGHT_ENGINE_STATE {
 	READY		= 0,

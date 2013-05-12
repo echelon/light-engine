@@ -19,12 +19,12 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/gfx/streamer.o build/gfx/tracking.o
+main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/gfx/streamer.o build/gfx/tracking.o build/game/entity.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 	@echo "[linking] main"
 	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
-		build/gfx/*.o \
+		build/gfx/*.o build/game/*.o \
 		$(LIBS) -o main 
 	@chmod +x main 
 
@@ -52,6 +52,11 @@ build/gfx/tracking.o: source/gfx/tracking.cpp
 	@echo "[compile] gfx/tracking"
 	@$(CD) ./build/gfx && $(C) $(INC) \
 		-c ../../source/gfx/tracking.cpp
+
+build/game/entity.o: source/game/entity.cpp
+	@echo "[compile] game/entity"
+	@$(CD) ./build/game && $(C) $(INC) \
+		-c ../../source/game/entity.cpp
 
 build/misc.o: source/misc.cpp
 	@echo "[compile] misc"

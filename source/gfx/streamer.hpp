@@ -9,8 +9,8 @@ using namespace std;
 class Object;
 
 // 1250 pts/frame is equivalent to 24 fps @ 30kpps
-const int DEFAULT_POINTS_PER_SEND = 1250;
-const int MAX_POINTS_PER_SEND = 15000; // XXX: No basis for this
+const unsigned int DEFAULT_POINTS_PER_SEND = 1250;
+const unsigned int MAX_POINTS_PER_SEND = 15000; // XXX: No basis 
 
 class Streamer
 {

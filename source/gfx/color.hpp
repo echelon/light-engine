@@ -32,6 +32,9 @@ struct Color
 			isBlank(_isBlank) {};
 };
 
+/**
+ * Some useful const color defines
+ */
 const Color INVISIBLE = Color(0.0f, 0.0f, 0.0f, 0.0f, true);
 const Color RED   = Color(100000.0f, 0.0f, 0.0f);
 const Color GREEN = Color(0.0f, 100000.0f, 0.0f);

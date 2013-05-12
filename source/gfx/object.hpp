@@ -23,7 +23,10 @@ class Object {
 			r(CMAX),
 			g(CMAX),
 			b(CMAX),
-			i(0) {};
+			i(0),
+			x(0),
+			y(0)
+			{};
 
 		/**
 		 * Request numPoints for the object.
@@ -78,6 +81,15 @@ class Object {
 					i = c.i;
 		};
 
+		void setX(int _x) { x = _x; };
+		void setY(int _y) { y = _y; };
+		void setPosition(int _x, int _y) { 
+			x = _x;
+			y = _y;
+		};
+		// TODO
+		// void setPosition(Position p);
+
 
 	protected:
 		// If object is currently visible
@@ -91,6 +103,10 @@ class Object {
 		unsigned int g;
 		unsigned int b;
 		unsigned int i;
+
+		// TODO: Not formal reference frame yet
+		int x;
+		int y;
 };
 
 #endif
