@@ -14,7 +14,10 @@ using namespace std;
 class Object {
 
 	public:
-		Object() : visible(true) {};
+		Object() : 
+			visible(true),
+			blankingPtsIn(10),
+			blankingPtsOut(10) {};
 
 		/**
 		 * Request numPoints for the object.
@@ -35,12 +38,33 @@ class Object {
 			return pts;
 		};
 
+		/**
+		 * Set object visibility
+		 */
 		void setVisible(bool v) { visible = v; };
 		bool isVisible() { return visible; };
+
+		/**
+		 * Set blanking
+		 */
+		void setBlankingPtsIn(unsigned int n) {
+			blankingPtsIn = n;
+		};
+
+		void setBlankingPtsOut(unsigned int n) {
+			blankingPtsOut = n;
+		};
+
+		unsigned int getBlankingPtsIn() { return blankingPtsIn; };
+		unsigned int getBlankingPtsOut() { return blankingPtsOut; };
+
 
 	private:
 		// If object is currently visible
 		bool visible;
+
+		unsigned int blankingPtsIn;
+		unsigned int blankingPtsOut;
 
 };
 

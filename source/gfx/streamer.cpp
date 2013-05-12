@@ -3,6 +3,7 @@
 #include "tracking.hpp"
 
 #include <iostream>
+#include <iterator>
 
 void Streamer::addObject(Object* obj)
 {
@@ -13,13 +14,15 @@ void Streamer::addObject(Object* obj)
 void Streamer::freezeFrame()
 {
 	vector<Points> ppts;
+	vector<Points> trks;
 
-	if(framePts.size() > 0 && framePts.back().size() > 0) {
-		oldFramePt = framePts.back().back();
+	unsigned int sz;
+
+	if(frameStream.size() > 0) {
+		oldFramePt = frameStream.back();
 	}
 
-	framePts.clear();
-	framePtsIdx = 0;
+	frameStream.clear();
 
 	// Get all the points for the frame
 	for(unsigned int i = 0; i < objects.size(); i++) {
@@ -28,22 +31,38 @@ void Streamer::freezeFrame()
 			continue;
 		}
 		ppts.push_back(obj->getAllPoints());
+		sz += ppts.back().size();
 	}
 
 	// Old last point tracks to new frame
 	Points trk = calculate_tracking_pts(oldFramePt, ppts[0]);
-	framePts.push_back(trk);
+	trks.push_back(trk);
+	sz += trk.size();
 
 	// Add tracking between objects in current frame
 	// Doesn't account for blanking between frames
 	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
-		Points trk;
-		trk= calculate_tracking_pts(ppts[i], ppts[i+1]);
-
-		framePts.push_back(ppts[i]);
-		framePts.push_back(trk);
+		Points t = calculate_tracking_pts(ppts[i], ppts[i+1]);
+		trks.push_back(t);
+		sz += t.size();
 	}
-	framePts.push_back(ppts.back());
+
+	//sz += ppts.back().size();
+
+	// TODO: Make this efficient!!
+	//frameStream.reserve(sz);
+
+	for(unsigned int i = 0; i < ppts.size(); i++) {
+		frameStream.insert(frameStream.end(), 
+							trks[i].begin(), trks[i].end());
+
+		frameStream.insert(frameStream.end(), 
+							ppts[i].begin(), ppts[i].end());
+	}
+
+	frameStreamIdx = 0;
+	frameStreamIt = frameStream.begin();
+	//cout << " [Reset Frame: with " << frameStream.size() << "] ";
 }
 
 Points Streamer::getPoints(unsigned int numPoints)
@@ -53,33 +72,30 @@ Points Streamer::getPoints(unsigned int numPoints)
 	
 	Points points;
 
+	//cout << "\tgetPoints(" << numPoints << "), ";
+
 	if(!isInFrame) {
 		isInFrame = true;
 		freezeFrame();
 	}
 
-	// TODO/FIXME: DO tracking between last frame and current frame!
+	points.reserve(numPoints);
 
-	// TODO: Consider 'flattening' frame :
-	// Convert 2D vec<vec<Pt>> to 1D vec<Pt>.
-	// No reason to have it be 2D at this point. 
-	for(; framePtsIdx < framePts.size(); framePtsIdx++) {
-		Points pts = framePts[framePtsIdx];
-
-		// FIXME FIXME FIXME I can't be this bad at C++ STL
-		// TODO: Use <vector> properly. Do some math. This sucks.
-		for(;framePtsObjIdx < pts.size(); framePtsObjIdx++) {
-			points.push_back(pts[framePtsObjIdx]);
-			if(points.size() >= numPoints) {
-				return points;
-			}
+	// FIXME/TODO: Use resize, reserve, etc.
+	// FIXME/TODO: If more points than exist are requested,
+	// then we need to run algo again!
+	for(; frameStreamIdx < frameStream.size(); frameStreamIdx++) {
+		points.push_back(frameStream[frameStreamIdx]);
+		if(points.size() >= numPoints) {
+			++frameStreamIdx;
+			//cout << "retA: " << points.size() << endl;
+			return points;
 		}
-
-		framePtsObjIdx = 0;
 	}
 
 	isInFrame = false;
 
+	//cout << "retB: " << points.size() << endl;
 	return points;
 }
 
@@ -88,7 +104,11 @@ Points Streamer::getPoints2(int numPoints)
 	Points points;
 	int required = numPoints;
 
-	while(required >= 0) {
+
+	//cout << "getPointsTwo(" << numPoints << ")";
+	//cout << " @ " << frameStreamIdx << endl;
+
+	while(required > 0) {
 		Points pts = getPoints(required);
 		required -= pts.size();
 
@@ -97,6 +117,8 @@ Points Streamer::getPoints2(int numPoints)
 			points.push_back(pts[i]);
 		}
 	}
+
+	//cout << "<-- Returning: " << points.size() << endl << endl;
 
 	return points;
 }

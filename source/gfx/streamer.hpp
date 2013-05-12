@@ -14,9 +14,9 @@ class Streamer
 		/**
 		 * CTOR. 
 		 */
-		Streamer(): framePtsIdx(0), 
-					framePtsObjIdx(0),
-					isInFrame(false) {};
+		Streamer(): 
+			isInFrame(false),
+			frameStreamIdx(0) {};
 
 		/**
 		 * Add an object to be streamed
@@ -39,20 +39,24 @@ class Streamer
 		vector<Object*> objects;
 
 		// Frame cache 
-		vector<Points> framePts;
 
 		// Last frame last point
 		Point oldFramePt;
 
 		// Index into frame cache 
-		unsigned int framePtsIdx;
+		//unsigned int framePtsIdx;
 
 		// Index into frame cache object
-		unsigned int framePtsObjIdx;
+		//unsigned int framePtsObjIdx;
 
 		// If currently drawing a frame
 		// False if done or not started
 		bool isInFrame;
+
+		// Flattened stream
+		Points frameStream;
+		Points::iterator frameStreamIt;
+		unsigned int frameStreamIdx; // TODO: iterator
 
 		/**
 		 * Cache all the points for this frame, and calculate

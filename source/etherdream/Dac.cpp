@@ -41,7 +41,8 @@ Dac::Dac(string addr) :
 	fd(0),
 	streamer(0),
 	address(addr),
-	port(DAC_PORT_COMMS)
+	port(DAC_PORT_COMMS),
+	started(false)
 {
 	memset(&server, 0, sizeof server);
 
@@ -237,27 +238,33 @@ void Dac::stream()
 			break;
 	}*/
 
-	bool started = false;
+	started = false;
 
 	while(true) {
 		const int SEND = 5000;
-		const int LESS = 2000;
+		const int LESS = 10000;
 		vector<dac_point> points;
 		int npoints = SEND - lastStatus.buffer_fullness;
 
-		cout << npoints << endl;
+		if(lastStatus.buffer_fullness == 0) {
+			lastStatus.print();
+			refreshStream();
+		}
+
+		cout << "Buffer: " << lastStatus.buffer_fullness << endl;
+		//cout << npoints << endl;
 
 		if(npoints < 20) {
-			cout << "Reset send..." << endl;
+			//cout << "Reset send..." << endl;
 			npoints = LESS;
 		}
 
-		if(npoints < 20 ) {
+		/*if(npoints < 20 ) {
 			cout << "Sending less: " << npoints << endl;
 		}
 		else {
 			cout << "Sending : " << npoints << endl;
-		}
+		}*/
 
 		//points = convertPoints(streamer->getPoints(npoints));
 		points = convertPoints(streamer->getPoints2(npoints));
@@ -270,5 +277,12 @@ void Dac::stream()
 			begin();
 		}
 	}
+}
+
+void Dac::refreshStream()
+{
+	stop();
+	prepare();
+	started = false;
 }
 

@@ -34,6 +34,9 @@ class Dac {
 		// Streamer object
 		Streamer* streamer;
 
+		// Whether stream has started
+		bool started;
+
 		vector<dac_point> convertPoints(vector<Point> pts);
 
 
@@ -72,6 +75,12 @@ class Dac {
 		bool clear_estop();
 
 		void test_send_data(vector<dac_point> pts);
+
+		/**
+		 * Sometimes the buffer fills.
+		 * We need to reset the streaming.
+		 */
+		void refreshStream();
 
 		/**
 		 * Parse Response.

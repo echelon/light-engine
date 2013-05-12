@@ -34,8 +34,8 @@ int main()
 
 	Dac dac = Dac(ip);
 
-	for(unsigned int i = 0; i < 10; i++) {
-		Circle* c = new Circle(1000.f * (i+1), 2000);
+	for(unsigned int i = 0; i < 2; i++) {
+		Circle* c = new Circle(5000.f * (i+1), 1000);
 		circles.push_back(c);
 		streamer->addObject(c);
 	}
