@@ -44,6 +44,8 @@ vector<dac_point> Dac::convertPoints(Points pts)
 {
 	vector<dac_point> newPts;
 
+	newPts.reserve(pts.size());
+
 	for(unsigned int i = 0; i < pts.size(); i++) {
 		Point pt = pts[i];
 		dac_point newPt;
@@ -55,6 +57,19 @@ vector<dac_point> Dac::convertPoints(Points pts)
 		newPt.b = pt.b;
 
 		newPts.push_back(newPt);
+
+		/*int k = 1;
+		while(k) {
+			// XXX: Just an experiment to waste CPU cycles
+			for(unsigned int j = 0; j < newPts.size(); j++) {
+				pt.x = newPt.x;
+				pt.y = newPt.y;
+				pt.r = newPt.r;
+				pt.g = newPt.g;
+				pt.b = newPt.b;
+			}
+			k--;
+		}*/
 	}
 
 	return newPts;
@@ -216,41 +231,32 @@ void Dac::stream()
 
 	started = false;
 
-	while(true) {
-		// Analysis of 'SEND' -- 
-		// 2.5k beautiful and vibrant, BUT slower and laser artifacts
-		// 5k beautiful and vibrant, BUT slow and artifacts
-		// 10k is awesome
-		// 20k connection thrashes (p/b/p/b/... memalloc OR buffer)
-		// 100k CORE DUMP! WHOA!!1
-		//
-		// Further analysis --
-		// 	* 30,000 point/sec galvos
-		// 	* 24 frame/sec film 
-		// Thus,
-		// 	* 1250 points/frame mimics film
-		//
-		const int SEND = 1171; // 10k is awesome
-		const int LESS = 2000;
+	unsigned int send = 1000;
+	unsigned int guessRate = DEFAULT_POINTS_PER_SEND;
+
+	while(true) 
+	{
 		vector<dac_point> points;
-		int npoints = SEND; //- lastStatus.buffer_fullness;
+
+		// XXX: Not a perfect heuristic
+		// Send based on buffer fullness, as some fraction of 30kpps
+		guessRate = 5000; // streamer->getRecommendedSendRate();
+		send = (int)(guessRate * 
+				(lastStatus.buffer_fullness/30000.0f));
+
+		if(send < 1) {
+			cout << "SEND ZERO? I THINK NOT!" << endl;
+			send = 1000;
+		}
 
 		// Sometimes we can flood the DAC
 		//if(started && lastStatus.buffer_fullness == 0) {
 		if(started && lastStatus.isDacFlooded()) {
+			cout << "**FLOOD**" << endl;
 			refreshStream();
 		}
 
-		// TODO: Optimize how buffer fills (IMPORTANT!)
-		// TODO: Optimize how buffer fills (IMPORTANT!)
-		/*if(lastStatus.buffer_fullness > 30000) {
-			npoints = LESS;
-		}
-		if(npoints < 20) {
-			npoints = LESS;
-		}*/
-
-		points = convertPoints(streamer->getPoints2(npoints));
+		points = convertPoints(streamer->getPoints2(send));
 
 		// FIXME: These functions and their names suck.
 		test_send_data(points);

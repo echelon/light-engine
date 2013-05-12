@@ -15,6 +15,7 @@
 #include "etherdream/commands.hpp"
 #include "etherdream/Dac.hpp"
 #include "gfx/streamer.hpp"
+#include "gfx/color.hpp"
 #include "asset/circle.hpp"
 
 using namespace std;
@@ -39,7 +40,6 @@ int main()
 		Circle* c = new Circle(1000.f * (i+1), 70);
 		circles.push_back(c);
 		streamer->addObject(c);
-
 		switch(i % 3) {
 			case 0:
 				c->setColor(CMAX, CMAX, CMAX);

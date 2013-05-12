@@ -8,6 +8,10 @@ using namespace std;
 
 class Object;
 
+// 1250 pts/frame is equivalent to 24 fps @ 30kpps
+const int DEFAULT_POINTS_PER_SEND = 1250;
+const int MAX_POINTS_PER_SEND = 15000; // XXX: No basis for this
+
 class Streamer
 {
 	public:
@@ -16,7 +20,9 @@ class Streamer
 		 */
 		Streamer(): 
 			isInFrame(false),
-			frameStreamIdx(0) {};
+			frameStreamIdx(0),
+			recommendedSendRate(DEFAULT_POINTS_PER_SEND) 
+			{};
 
 		/**
 		 * Add an object to be streamed
@@ -33,6 +39,18 @@ class Streamer
 
 		// Absolutely returns numPoints
 		Points getPoints2(int numPoints);
+
+		// Recommended rate heuristic 
+		// FIXME/TODO/URGENT: Need to research if this works...
+		// TODO/TODO/TODO: 
+		// This should be an equation based on frame size, 
+		// complexity, and object distances! This will need to be
+		// sophisticated. DAC itself will then adjust this based on 
+		// its own experience--history of reconnects, send rates,
+		// buffer use, etc.
+		unsigned int getRecommendedSendRate() {
+			return recommendedSendRate;
+		}
 
 	private:
 		// Objects in the stream
@@ -58,12 +76,33 @@ class Streamer
 		Points::iterator frameStreamIt;
 		unsigned int frameStreamIdx; // TODO: iterator
 
+		// Recommended rate heuristic 
+		unsigned int recommendedSendRate;
+
 		/**
 		 * Cache all the points for this frame, and calculate
 		 * necessary tracking between objects.
 		 * 	- Saved in framePts.
 		 */
 		void freezeFrame();
+
+		/**
+		 * Set recommended send rate, which DAC can choose to 
+		 * obey. Don't allow to drop below 24fps heuristic.
+		 * FIXME/TODO/URGENT: Need to research if this works.
+		 */
+		void setRecommendedSendRate(unsigned int rate) {
+			if(rate < DEFAULT_POINTS_PER_SEND) {
+				//recommendedSendRate = DEFAULT_POINTS_PER_SEND;
+				recommendedSendRate = rate;
+			}
+			else if(rate > MAX_POINTS_PER_SEND) {
+				recommendedSendRate = MAX_POINTS_PER_SEND;
+			}
+			else {
+				recommendedSendRate = rate;
+			}
+		};
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "point.hpp"
+#include "color.hpp"
 #include "../etherdream/types.hpp"
 
 using namespace std;
@@ -69,6 +70,14 @@ class Object {
 					g = _g;
 					b = _b;
 		};
+
+		void setColor(Color c) {
+					r = c.r;
+					g = c.g;
+					b = c.b;
+					i = c.i;
+		};
+
 
 	protected:
 		// If object is currently visible

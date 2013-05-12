@@ -38,38 +38,21 @@ void Streamer::freezeFrame()
 	}
 
 	// Old last point tracks to new frame
-	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 7,
-			RED);
+	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 
+						7, INVISIBLE);
 	trks.push_back(trk);
 	sz += trk.size();
 
 	// Add tracking between objects in current frame
 	// Doesn't account for blanking between frames
 	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
-		Color c;
-		switch(i%3) {
-			case 0:
-				c = RED;
-				break;
-			case 1:
-				c = GREEN;
-				break;
-			case 2:
-				c = BLUE;
-				break;
-			default:
-				c = WHITE;
-				break;
-		}
 		Points t = calculate_tracking_pts(ppts[i], ppts[i+1], 
-				7, c);
+					7, INVISIBLE);
 		trks.push_back(t);
 		sz += t.size();
 	}
 
-	//sz += ppts.back().size();
-
-	// TODO: Make this efficient!!
+	// FIXME/TODO: Make this efficient!!
 	//frameStream.reserve(sz);
 
 	for(unsigned int i = 0; i < ppts.size(); i++) {
@@ -83,7 +66,8 @@ void Streamer::freezeFrame()
 	frameStreamIdx = 0;
 	frameStreamIt = frameStream.begin();
 
-	cout << "Frame Size: " << frameStream.size() << endl;
+	// No basis for "# frames".
+	//setRecommendedSendRate(frameStream.size() * 5); 
 }
 
 Points Streamer::getPoints(unsigned int numPoints)
@@ -92,8 +76,6 @@ Points Streamer::getPoints(unsigned int numPoints)
 	// performed in this algo. The only job here is to yield points. 
 	
 	Points points;
-
-	//cout << "\tgetPoints(" << numPoints << "), ";
 
 	if(!isInFrame) {
 		isInFrame = true;
@@ -109,14 +91,12 @@ Points Streamer::getPoints(unsigned int numPoints)
 		points.push_back(frameStream[frameStreamIdx]);
 		if(points.size() >= numPoints) {
 			++frameStreamIdx;
-			//cout << "retA: " << points.size() << endl;
 			return points;
 		}
 	}
 
 	isInFrame = false;
 
-	//cout << "retB: " << points.size() << endl;
 	return points;
 }
 
@@ -124,9 +104,6 @@ Points Streamer::getPoints2(int numPoints)
 {
 	Points points;
 	int required = numPoints;
-
-	//cout << "getPointsTwo(" << numPoints << ")";
-	//cout << " @ " << frameStreamIdx << endl;
 
 	while(required > 0) {
 		Points pts = getPoints(required);
@@ -137,8 +114,6 @@ Points Streamer::getPoints2(int numPoints)
 			points.push_back(pts[i]);
 		}
 	}
-
-	//cout << "<-- Returning: " << points.size() << endl << endl;
 
 	return points;
 }
