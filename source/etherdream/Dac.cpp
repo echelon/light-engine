@@ -223,7 +223,14 @@ void Dac::stream()
 		// 10k is awesome
 		// 20k connection thrashes (p/b/p/b/... memalloc OR buffer)
 		// 100k CORE DUMP! WHOA!!1
-		const int SEND = 7500; // 10k is awesome
+		//
+		// Further analysis --
+		// 	* 30,000 point/sec galvos
+		// 	* 24 frame/sec film 
+		// Thus,
+		// 	* 1250 points/frame mimics film
+		//
+		const int SEND = 1171; // 10k is awesome
 		const int LESS = 2000;
 		vector<dac_point> points;
 		int npoints = SEND; //- lastStatus.buffer_fullness;

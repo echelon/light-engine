@@ -2,6 +2,7 @@
 #define LIGHT_ENGINE_GFX_POINT_HPP
 
 #include <vector>
+#include "color.hpp"
 
 struct Point 
 {
@@ -40,6 +41,11 @@ struct Point
 		  float _i, bool _isBlank):
 			x(_x), y(_y), r(_r), g(_g), b(_b), i(_i),
 			isBlank(_isBlank) {};
+
+	Point(float _x, float _y, Color c) :
+			x(_x), y(_y), 
+			r(c.r), g(c.g), b(c.b), i(c.i), isBlank(c.isBlank) {};
+
 };
 
 typedef std::vector<Point> Points;

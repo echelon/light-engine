@@ -1,6 +1,7 @@
 #include "streamer.hpp"
 #include "object.hpp"
 #include "tracking.hpp"
+#include "color.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -22,6 +23,8 @@ void Streamer::freezeFrame()
 		oldFramePt = frameStream.back();
 	}
 
+	// TODO: Don't thrash memory by clear/reallocing. 
+	// Use buffer more intelligently
 	frameStream.clear();
 
 	// Get all the points for the frame
@@ -35,14 +38,31 @@ void Streamer::freezeFrame()
 	}
 
 	// Old last point tracks to new frame
-	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 100);
+	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 7,
+			RED);
 	trks.push_back(trk);
 	sz += trk.size();
 
 	// Add tracking between objects in current frame
 	// Doesn't account for blanking between frames
 	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
-		Points t = calculate_tracking_pts(ppts[i], ppts[i+1], 100);
+		Color c;
+		switch(i%3) {
+			case 0:
+				c = RED;
+				break;
+			case 1:
+				c = GREEN;
+				break;
+			case 2:
+				c = BLUE;
+				break;
+			default:
+				c = WHITE;
+				break;
+		}
+		Points t = calculate_tracking_pts(ppts[i], ppts[i+1], 
+				7, c);
 		trks.push_back(t);
 		sz += t.size();
 	}
@@ -62,7 +82,8 @@ void Streamer::freezeFrame()
 
 	frameStreamIdx = 0;
 	frameStreamIt = frameStream.begin();
-	//cout << " [Reset Frame: with " << frameStream.size() << "] ";
+
+	cout << "Frame Size: " << frameStream.size() << endl;
 }
 
 Points Streamer::getPoints(unsigned int numPoints)

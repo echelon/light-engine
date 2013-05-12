@@ -2,24 +2,24 @@
 #include "../etherdream/types.hpp"
 
 Points calculate_tracking_pts(const Points& a, const Points& b,
-	unsigned int num) {
-		return calculate_tracking_pts(a.back(), b[0], num);
+	unsigned int num, const Color c) {
+		return calculate_tracking_pts(a.back(), b[0], num, c);
 }
 
 Points calculate_tracking_pts(const Points& a, const Point& b,
-	unsigned int num) {
-		return calculate_tracking_pts(a.back(), b, num);
+	unsigned int num, const Color c) {
+		return calculate_tracking_pts(a.back(), b, num, c);
 }
 
 Points calculate_tracking_pts(const Point& a, const Points& b,
-	unsigned int num) {
-		return calculate_tracking_pts(a, b[0], num);
+	unsigned int num, const Color c) {
+		return calculate_tracking_pts(a, b[0], num, c);
 }
 
 // TODO: Very unsophisticated
 // TODO: Floating point math seems... slower than integer.
 Points calculate_tracking_pts(const Point& a, const Point& b,
-		unsigned int num) 
+		unsigned int num, const Color c) 
 {
 	Points blankPts;
 	
@@ -32,7 +32,7 @@ Points calculate_tracking_pts(const Point& a, const Point& b,
 		float perc = i/(float)num;
 		float xb = (float)(lastX - xDiff*perc);
 		float yb = (float)(lastY - yDiff*perc);
-		blankPts.push_back(Point(xb, yb, 0, 0, 0));
+		blankPts.push_back(Point(xb, yb, c.r, c.g, c.b));
 		//blankPts.push_back(Point(xb, yb, CMAX, CMAX, CMAX));
 	}
 

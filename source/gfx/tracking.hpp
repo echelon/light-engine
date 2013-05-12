@@ -2,6 +2,7 @@
 #define LIGHT_ENGINE_GFX_TRACKING_HPP
 
 #include "point.hpp"
+#include "color.hpp"
 
 // TODO: This shouldn't be constant and should vary by a 
 // distance heuristic
@@ -18,16 +19,25 @@ const unsigned int TRACKING_SAMPLE_PTS = 10;
  * 		- cache tracking if objects don't move.
  * 		- floating point math bad?
  */
-Points calculate_tracking_pts(const Points& a, const Points& b,
-					unsigned int num = TRACKING_SAMPLE_PTS);
+Points calculate_tracking_pts(const Points& a, 
+							  const Points& b,
+							  unsigned int num = TRACKING_SAMPLE_PTS, 
+							  const Color c = INVISIBLE);
 
-Points calculate_tracking_pts(const Point& a, const Points& b,
-					unsigned int num = TRACKING_SAMPLE_PTS);
+Points calculate_tracking_pts(const Point& a, 
+							  const Points& b,
+							  unsigned int num = TRACKING_SAMPLE_PTS, 
+							  const Color c = INVISIBLE);
 
-Points calculate_tracking_pts(const Points& a, const Point& b,
-					unsigned int num = TRACKING_SAMPLE_PTS);
+Points calculate_tracking_pts(const Points& a, 
+							  const Point& b,
+							  unsigned int num = TRACKING_SAMPLE_PTS, 
+							  const Color c = INVISIBLE);
 
-Points calculate_tracking_pts(const Point& a, const Point& b,
-					unsigned int num = TRACKING_SAMPLE_PTS);
+// Everything else is shorthand for this call.
+Points calculate_tracking_pts(const Point& a, 
+							  const Point& b,
+							  unsigned int num = TRACKING_SAMPLE_PTS, 
+							  const Color c = INVISIBLE);
 
 #endif
