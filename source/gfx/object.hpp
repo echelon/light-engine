@@ -4,6 +4,7 @@
 #include <vector>
 #include <iostream>
 #include "point.hpp"
+#include "position.hpp"
 #include "color.hpp"
 #include "../etherdream/types.hpp"
 
@@ -20,12 +21,8 @@ class Object {
 			visible(true),
 			blankingPtsIn(10),
 			blankingPtsOut(10),
-			r(CMAX),
-			g(CMAX),
-			b(CMAX),
-			i(0),
-			x(0),
-			y(0)
+			color(WHITE),
+			pos()
 			{};
 
 		/**
@@ -69,23 +66,18 @@ class Object {
 
 		void setColor(unsigned int _r, unsigned int _g, 
 			unsigned int _b) {
-					r = _r;
-					g = _g;
-					b = _b;
+					color.r = _r;
+					color.g = _g;
+					color.b = _b;
 		};
 
-		void setColor(Color c) {
-					r = c.r;
-					g = c.g;
-					b = c.b;
-					i = c.i;
-		};
+		void setColor(Color c) { color = c; };
 
-		void setX(int _x) { x = _x; };
-		void setY(int _y) { y = _y; };
+		void setX(int _x) { pos.x = _x; };
+		void setY(int _y) { pos.y = _y; };
 		void setPosition(int _x, int _y) { 
-			x = _x;
-			y = _y;
+			pos.x = _x;
+			pos.y = _y;
 		};
 		// TODO
 		// void setPosition(Position p);
@@ -99,14 +91,10 @@ class Object {
 		unsigned int blankingPtsOut;
 
 		// TODO: Appropriate level to handle color?
-		unsigned int r;
-		unsigned int g;
-		unsigned int b;
-		unsigned int i;
+		Color color;
 
 		// TODO: Not formal reference frame yet
-		float x;
-		float y;
+		Position pos;
 };
 
 #endif

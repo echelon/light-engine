@@ -13,8 +13,8 @@ Points Circle::getAllPoints()
 	// Blanking in
 	for(unsigned int i = 0; i < 15; i++) {
 		double j = 2 * PI * i / np;
-		int _x = (int)(cos(j) * radius) + x;
-		int _y = (int)(sin(j) * radius) + y;
+		int _x = (int)(cos(j) * radius) + pos.x;
+		int _y = (int)(sin(j) * radius) + pos.y;
 		points.push_back(Point(_x, _y, INVISIBLE));
 	}
 
@@ -24,12 +24,10 @@ Points Circle::getAllPoints()
 		double j = 2 * PI * i / np;
 		Point pt;
 
-		pt.pos.x = (int)(cos(j) * radius) + x;
-		pt.pos.y = (int)(sin(j) * radius) + y;
+		pt.pos.x = (int)(cos(j) * radius) + pos.x;
+		pt.pos.y = (int)(sin(j) * radius) + pos.y;
 
-		pt.color.r = r;
-		pt.color.g = g;
-		pt.color.b = b;
+		pt.color = color;
 
 		points.push_back(pt);
 	}
@@ -37,8 +35,8 @@ Points Circle::getAllPoints()
 	// Blanking out
 	for(unsigned int i = 0; i < 15; i++) {
 		double j = 2 * PI * i / np;
-		int _x = (int)(cos(j) * radius) + x;
-		int _y = (int)(sin(j) * radius) + y;
+		int _x = (int)(cos(j) * radius) + pos.x;
+		int _y = (int)(sin(j) * radius) + pos.y;
 		points.push_back(Point(_x, _y, INVISIBLE));
 	}
 

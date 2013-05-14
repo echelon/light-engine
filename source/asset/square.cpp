@@ -10,10 +10,10 @@ Points Square::getAllPoints()
 
 	float half = edge/2.0;
 
-	Point q1 = Point(-half + x, -half + y, r, g, b);
-	Point q2 = Point(-half + x, half + y, r, g, b);
-	Point q3 = Point(half + x, half + y, r, g, b);
-	Point q4 = Point(half + x, -half + y, r, g, b);
+	Point q1 = Point(-half + pos.x, -half + pos.y, color);
+	Point q2 = Point(-half + pos.x, half + pos.y, color);
+	Point q3 = Point(half + pos.x, half + pos.y, color);
+	Point q4 = Point(half + pos.x, -half + pos.y, color);
 
 	for(unsigned int i = 0; i < numVertexPoints; i++) {
 		points.push_back(q1);
@@ -65,7 +65,7 @@ Points Square::getEdge(Point v1, Point v2, int num)
 		float perc = i/(float)num;
 		float xb = (float)(v1.pos.x - xDiff*perc);
 		float yb = (float)(v1.pos.y - yDiff*perc);
-		points.push_back(Point(xb, yb, r, g, b));
+		points.push_back(Point(xb, yb, color));
 	}
 
 	return points;
