@@ -58,13 +58,13 @@ Points Square::getEdge(Point v1, Point v2, int num)
 {
 	Points points;
 
-	float xDiff = v1.x - v2.x;
-	float yDiff = v1.y - v2.y;
+	float xDiff = v1.pos.x - v2.pos.x;
+	float yDiff = v1.pos.y - v2.pos.y;
 
 	for(unsigned int i = 0; i < num; i++) {
 		float perc = i/(float)num;
-		float xb = (float)(v1.x - xDiff*perc);
-		float yb = (float)(v1.y - yDiff*perc);
+		float xb = (float)(v1.pos.x - xDiff*perc);
+		float yb = (float)(v1.pos.y - yDiff*perc);
 		points.push_back(Point(xb, yb, r, g, b));
 	}
 

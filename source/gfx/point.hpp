@@ -3,55 +3,39 @@
 
 #include <vector>
 #include "color.hpp"
+#include "position.hpp"
 
 struct Point 
 {
 	/**
 	 * Coordinates 
-	 *  - in range [-1, 1] ? 
 	 */
-	float x;
-	float y;
+	Position pos;
 
 	/**
 	 * Colors
 	 */
-	float r;
-	float g;
-	float b;
-	float i; // indigo/violet
-
-	/**
-	 * Blanking flag
-	 * TODO: Good idea to bypass RGB?
-	 */
-	bool isBlank;
+	Color color;
 
 	Point():
-			x(0.0f), y(0.0f), r(0.0f), g(0.0f), b(0.0f), i(0.0f),
-			isBlank(false) {};
-
-	Point(float _x, float _y) :
-			x(_x), y(_y), r(0.0f), g(0.0f), b(0.0f), i(0.0f),
-			isBlank(false) {
-				// TODO: Set isBlank based on RGB value
-			};
+		pos(), 
+		color() 
+		{};
 
 	Point(float _x, float _y, float _r, float _g, float _b) :
-			x(_x), y(_y), r(_r), g(_g), b(_b), i(0.0f),
-			isBlank(false) {
-				// TODO: Set isBlank based on RGB value
-			};
+		pos(_x, _y),
+		color(_r, _g, _b)
+		{};
 
-	Point(float _x, float _y, float _r, float _g, float _b, 
-		  float _i, bool _isBlank):
-			x(_x), y(_y), r(_r), g(_g), b(_b), i(_i),
-			isBlank(_isBlank) {};
+	Point(float _x, float _y, const Color& c) :
+		pos(_x, _y),
+		color(c)
+		{};
 
-	Point(float _x, float _y, Color c) :
-			x(_x), y(_y), 
-			r(c.r), g(c.g), b(c.b), i(c.i), isBlank(c.isBlank) {};
-
+	Point(const Position& p, const Color& c) :
+		pos(p),
+		color(c)
+		{};
 };
 
 typedef std::vector<Point> Points;

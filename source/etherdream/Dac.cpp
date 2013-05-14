@@ -49,11 +49,11 @@ vector<dac_point> Dac::convertPoints(Points pts)
 		Point pt = pts[i];
 		dac_point newPt;
 
-		newPt.x = pt.x;
-		newPt.y = pt.y;
-		newPt.r = pt.r;
-		newPt.g = pt.g;
-		newPt.b = pt.b;
+		newPt.x = pt.pos.x;
+		newPt.y = pt.pos.y;
+		newPt.r = pt.color.r;
+		newPt.g = pt.color.g;
+		newPt.b = pt.color.b;
 
 		newPts.push_back(newPt);
 

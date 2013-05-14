@@ -46,11 +46,11 @@ I don't have the necessary equipment to explore this yet, but I want to try disp
 Current Status
 --------------
 
-1. Networking and Buffering -- work in progress; incomplete
-2. Ether Dream Protocol -- work in progress; incomplete
-3. Low-level primitives -- not yet started
-4. Processing Pipeline -- not yet started
-5. Matrix Libraries
+1. Networking and Buffering -- working, but buggy
+2. Ether Dream Protocol -- working, but incomplete
+3. Low-level primitives -- just started
+4. Processing Pipeline -- just started
+5. Matrix Libraries -- not yet started
 6. Graphics Engine-like features (clipping, backface culling, etc.)
 7. Path optimization (TSP, etc.)
 8. Python bindings

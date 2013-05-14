@@ -105,8 +105,8 @@ class Object {
 		unsigned int i;
 
 		// TODO: Not formal reference frame yet
-		int x;
-		int y;
+		float x;
+		float y;
 };
 
 #endif

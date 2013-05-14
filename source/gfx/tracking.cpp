@@ -23,10 +23,10 @@ Points calculate_tracking_pts(const Point& a, const Point& b,
 {
 	Points blankPts;
 	
-	float lastX = a.x;
-	float lastY = a.y;
-	float xDiff = lastX - b.x;
-	float yDiff = lastY - b.y;
+	float lastX = a.pos.x;
+	float lastY = a.pos.y;
+	float xDiff = lastX - b.pos.x;
+	float yDiff = lastY - b.pos.y;
 
 	for(unsigned int i = 0; i < num; i++) {
 		float perc = i/(float)num;

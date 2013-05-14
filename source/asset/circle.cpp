@@ -24,12 +24,12 @@ Points Circle::getAllPoints()
 		double j = 2 * PI * i / np;
 		Point pt;
 
-		pt.x = (int)(cos(j) * radius) + x;
-		pt.y = (int)(sin(j) * radius) + y;
+		pt.pos.x = (int)(cos(j) * radius) + x;
+		pt.pos.y = (int)(sin(j) * radius) + y;
 
-		pt.r = r;
-		pt.g = g;
-		pt.b = b;
+		pt.color.r = r;
+		pt.color.g = g;
+		pt.color.b = b;
 
 		points.push_back(pt);
 	}

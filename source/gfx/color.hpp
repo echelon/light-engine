@@ -30,6 +30,9 @@ struct Color
 	Color(float _r, float _g, float _b, float _i, bool _isBlank):
 			r(_r), g(_g), b(_b), i(_i),
 			isBlank(_isBlank) {};
+
+	Color(const Color& c):
+			r(c.r), g(c.g), b(c.b), i(c.i), isBlank(c.isBlank) {};
 };
 
 /**
