@@ -9,14 +9,13 @@ Points Circle::getAllPoints()
 	Points points;
 	double np = (double)numPoints;
 
-
-	// Blanking in
+	/*// Blanking in
 	for(unsigned int i = 0; i < 15; i++) {
 		double j = 2 * PI * i / np;
 		int _x = (int)(cos(j) * radius) + pos.x;
 		int _y = (int)(sin(j) * radius) + pos.y;
 		points.push_back(Point(_x, _y, INVISIBLE));
-	}
+	}*/
 
 	// Generate circle
 	for(unsigned int i = 0; i < numPoints; i++) 
@@ -32,14 +31,13 @@ Points Circle::getAllPoints()
 		points.push_back(pt);
 	}
 
-	// Blanking out
+	/*// Blanking out
 	for(unsigned int i = 0; i < 15; i++) {
 		double j = 2 * PI * i / np;
 		int _x = (int)(cos(j) * radius) + pos.x;
 		int _y = (int)(sin(j) * radius) + pos.y;
 		points.push_back(Point(_x, _y, INVISIBLE));
-	}
-
+	}*/
 
 	return points;
 }

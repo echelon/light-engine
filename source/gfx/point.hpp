@@ -36,6 +36,11 @@ struct Point
 		pos(p),
 		color(c)
 		{};
+	
+	Point(const Point& p):
+		pos(p.pos),
+		color(p.color)
+		{}
 };
 
 typedef std::vector<Point> Points;
