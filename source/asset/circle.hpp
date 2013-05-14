@@ -12,16 +12,16 @@ class Circle : public Object
 	public:
 		Circle(): 
 			Object(),
-			radius(1.0f), numPoints(100), drawPosition(0) {};
+			radius(1.0f), numPoints(100) {};
 			// Note: 100 points is the same as in circle.py
 
 		Circle(float _radius):
 			Object(),
-			radius(_radius), numPoints(100), drawPosition(0) {};
+			radius(_radius), numPoints(100) {};
 
 		Circle(float _radius, int npoints):
 			Object(),
-			radius(_radius), numPoints(npoints), drawPosition(0) {};
+			radius(_radius), numPoints(npoints) {};
 
 		//virtual Points getPoints(unsigned int num);
 
@@ -35,9 +35,6 @@ class Circle : public Object
 
 		// How many points comprise the circle
 		unsigned int numPoints;
-
-		// Current stream draw position/index
-		unsigned int drawPosition; 
 };
 
 #endif

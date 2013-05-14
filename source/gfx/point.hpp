@@ -31,6 +31,12 @@ struct Point
 			x(0.0f), y(0.0f), r(0.0f), g(0.0f), b(0.0f), i(0.0f),
 			isBlank(false) {};
 
+	Point(float _x, float _y) :
+			x(_x), y(_y), r(0.0f), g(0.0f), b(0.0f), i(0.0f),
+			isBlank(false) {
+				// TODO: Set isBlank based on RGB value
+			};
+
 	Point(float _x, float _y, float _r, float _g, float _b) :
 			x(_x), y(_y), r(_r), g(_g), b(_b), i(0.0f),
 			isBlank(false) {

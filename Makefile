@@ -19,7 +19,7 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/gfx/streamer.o build/gfx/tracking.o build/game/entity.o
+main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/asset/square.o build/gfx/streamer.o build/gfx/tracking.o build/game/entity.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 	@echo "[linking] main"
@@ -37,6 +37,11 @@ build/etherdream/find.o: source/etherdream/find.cpp
 	@echo "[compile] etherdream/find"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/find.cpp
+
+build/asset/square.o: source/asset/square.cpp
+	@echo "[compile] asset/square"
+	@$(CD) ./build/asset && $(C) $(INC) \
+		-c ../../source/asset/square.cpp
 
 build/asset/circle.o: source/asset/circle.cpp
 	@echo "[compile] asset/circle"

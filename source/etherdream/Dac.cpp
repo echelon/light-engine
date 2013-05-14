@@ -14,7 +14,6 @@
 
 using namespace std;
 
-
 Dac::Dac(string addr) :
 	address(addr),
 	port(DAC_PORT_COMMS),

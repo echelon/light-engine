@@ -20,15 +20,13 @@
 #include "gfx/streamer.hpp"
 #include "gfx/color.hpp"
 #include "asset/circle.hpp"
+#include "asset/square.hpp"
 #include "game/entity.hpp"
 
 using namespace std;
 
-vector<Circle*> circles;
+vector<Object*> objects;
 vector<Entity*> entities;
-
-//Circle* circle1 = new Circle(20000.0f, 100);
-//Circle* circle2 = new Circle(1000.0f, 100);
 
 Streamer* streamer = new Streamer();
 
@@ -40,7 +38,7 @@ void move_thread()
 	while(true) {
 		for(unsigned int i = 0; i < entities.size(); ++i) {
 			Entity* e = entities[i];
-			Circle* c = circles[i];
+			Object* c = objects[i];
 
 			e->tickVelocity();
 
@@ -65,35 +63,42 @@ void dac_thread()
 
 int main()
 {
-	const unsigned int NUM = 5;
+	const unsigned int NUM = 7;
    	uniform_int_distribution<> pos(-200, 200);
     uniform_int_distribution<> vel(-15, 15);
 
 	for(unsigned int i = 0; i < NUM; i++) {
-		Circle* c = new Circle(2000.f * ((i%3)+1), 120);
+		Object* o = 0;
 		Entity* e = new Entity();
 
-		circles.push_back(c);
+		switch(uniform_int_distribution<>(0, 1)(randgen)) {
+			case 0:
+				o = new Circle(2000.f * ((i%3)+1), 120);
+				break;
+			case 1:
+			default:
+				o = new Square(2000.f);
+		}
+
+		objects.push_back(o);
 		entities.push_back(e);
 
-		streamer->addObject(c);
+		streamer->addObject(o);
 
 		e->setBoundary(20000);
 		e->setVelocity(vel(randgen), vel(randgen));
 		e->setPosition(pos(randgen), pos(randgen));
 
-		switch(i % 3) {
+		switch(uniform_int_distribution<>(0, 2)(randgen)) {
 			case 0:
-				c->setColor(0, 0, CMAX);
+				o->setColor(0, 0, CMAX);
 				break;
 			case 1:
-				c->setColor(0, CMAX, 0);
+				o->setColor(0, CMAX, 0);
 				break;
 			case 2:
-				c->setColor(CMAX, CMAX, CMAX);
-				break;
 			default:
-				c->setColor(CMAX, CMAX, CMAX);
+				o->setColor(CMAX, CMAX, CMAX);
 				break;
 		}
 	}
