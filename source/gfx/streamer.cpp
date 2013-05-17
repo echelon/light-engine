@@ -1,6 +1,7 @@
 #include "streamer.hpp"
 #include "object.hpp"
 #include "tracking.hpp"
+#include "transformation.hpp"
 #include "color.hpp"
 
 #include <iostream>
@@ -30,10 +31,13 @@ void Streamer::freezeFrame()
 	// Get all the points for the frame
 	for(unsigned int i = 0; i < objects.size(); i++) {
 		Object* obj = objects[i];
+		//float scale = obj->getScale();
+		//Position pos = obj->getPosition();
 		if(!obj->isVisible()) {
 			continue;
 		}
-		ppts.push_back(obj->getAllPoints());
+		//ppts.push_back(obj->getAllPoints());
+		ppts.push_back(get_transformed_points(*obj));
 		sz += ppts.back().size();
 	}
 

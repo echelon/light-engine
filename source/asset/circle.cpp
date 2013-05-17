@@ -3,7 +3,7 @@
 #include "../gfx/color.hpp"
 #include <math.h>
 
-Points Circle::getAllPoints()
+Points Circle::getAllPoints() const
 {
 	const double PI = 3.14159265;
 	Points points;
@@ -23,8 +23,9 @@ Points Circle::getAllPoints()
 		double j = 2 * PI * i / np;
 		Point pt;
 
-		pt.pos.x = (int)(cos(j) * radius) + pos.x;
-		pt.pos.y = (int)(sin(j) * radius) + pos.y;
+		// Radius is understood to be '1.0' (unit circle)
+		pt.pos.x = cos(j);
+		pt.pos.y = sin(j);
 
 		pt.color = color;
 

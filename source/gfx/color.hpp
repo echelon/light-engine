@@ -1,6 +1,8 @@
 #ifndef LIGHT_ENGINE_GFX_COLOR_HPP
 #define LIGHT_ENGINE_GFX_COLOR_HPP
 
+#include <vector>
+
 struct Color 
 {
 	/**
@@ -34,6 +36,8 @@ struct Color
 	Color(const Color& c):
 			r(c.r), g(c.g), b(c.b), i(c.i), isBlank(c.isBlank) {};
 };
+
+typedef std::vector<Color> Colors;
 
 /**
  * Some useful const color defines

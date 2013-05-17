@@ -19,7 +19,7 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/asset/square.o build/gfx/streamer.o build/gfx/tracking.o build/game/entity.o
+main: source/main.cpp build/etherdream/dac.o build/misc.o build/etherdream/find.o build/asset/circle.o build/asset/square.o build/gfx/streamer.o build/gfx/tracking.o build/gfx/transformation.o build/game/entity.o
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 	@echo "[linking] main"
@@ -57,6 +57,11 @@ build/gfx/tracking.o: source/gfx/tracking.cpp
 	@echo "[compile] gfx/tracking"
 	@$(CD) ./build/gfx && $(C) $(INC) \
 		-c ../../source/gfx/tracking.cpp
+
+build/gfx/transformation.o: source/gfx/transformation.cpp
+	@echo "[compile] gfx/transformation"
+	@$(CD) ./build/gfx && $(C) $(INC) \
+		-c ../../source/gfx/transformation.cpp
 
 build/game/entity.o: source/game/entity.cpp
 	@echo "[compile] game/entity"

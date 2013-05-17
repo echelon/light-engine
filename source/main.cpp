@@ -4,7 +4,6 @@
 #include <thread>
 #include <random>
 
-#include "misc.hpp" // XXX TEMP
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -41,9 +40,7 @@ void move_thread()
 			Object* c = objects[i];
 
 			e->tickVelocity();
-
-			c->setX(e->getX());
-			c->setY(e->getY());
+			c->setPosition(e->getPosition());
 		}
 
 		usleep(1000);
@@ -73,11 +70,12 @@ int main()
 
 		switch(uniform_int_distribution<>(0, 1)(randgen)) {
 			case 0:
-				o = new Circle(2000.f * ((i%3)+1), 120);
+				o = new Circle(); //2000.f * ((i%3)+1), 120);
 				break;
 			case 1:
 			default:
-				o = new Square(2000.f);
+				//o = new Square(); //2000.f);
+				o = new Circle();
 		}
 
 		objects.push_back(o);

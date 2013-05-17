@@ -2,6 +2,7 @@
 #define ETHER_DREAM_GAME_ENTITY_HPP
 
 #include "../etherdream/types.hpp"
+#include "../gfx/position.hpp"
 
 /**
  * Some basic game-support features.
@@ -75,6 +76,8 @@ class Entity {
 
 		int getX() { return x; };
 		int getY() { return y; };
+
+		Position getPosition() { return Position(x, y); };
 
 	private:
 		int x;

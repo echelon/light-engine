@@ -1,6 +1,8 @@
 #ifndef LIGHT_ENGINE_GFX_POSITION_HPP
 #define LIGHT_ENGINE_GFX_POSITION_HPP
 
+#include <vector> 
+
 struct Position
 {
 	float x;
@@ -21,5 +23,7 @@ struct PhysicalPosition
 	PhysicalPosition(): x(0), y(0) {};
 	PhysicalPosition(int _x, int _y): x(_x), y(_y) {};
 };
+
+typedef std::vector<Position> Positions;
 
 #endif

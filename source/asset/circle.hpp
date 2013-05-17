@@ -12,27 +12,27 @@ class Circle : public Object
 	public:
 		Circle(): 
 			Object(),
-			radius(1.0f), numPoints(100) {};
+			numPoints(100) {};
 			// Note: 100 points is the same as in circle.py
 
-		Circle(float _radius):
+		Circle(float _scale):
 			Object(),
-			radius(_radius), numPoints(100) {};
+			numPoints(100) {
+				setScale(_scale);
+			};
 
-		Circle(float _radius, int npoints):
+		Circle(float _scale, int nPoints):
 			Object(),
-			radius(_radius), numPoints(npoints) {};
+			numPoints(nPoints) {
+				setScale(_scale);
+			};
 
 		//virtual Points getPoints(unsigned int num);
 
-		virtual Points getAllPoints();
+		virtual Points getAllPoints() const;
 
 
 	protected:
-		// Radius <= (0.0, 1.0] 
-		// TODO: enforce size
-		float radius;
-
 		// How many points comprise the circle
 		unsigned int numPoints;
 };

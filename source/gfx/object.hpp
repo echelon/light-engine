@@ -19,6 +19,7 @@ class Object {
 	public:
 		Object() : 
 			visible(true),
+			scale(0.25),
 			blankingPtsIn(10),
 			blankingPtsOut(10),
 			color(WHITE),
@@ -38,20 +39,40 @@ class Object {
 		/**
 		 * Request all points for the object.
 		 */
-		virtual Points getAllPoints() {
+		virtual Points getAllPoints() const {
 			cerr << "Wrong getAllPoints!!!" << endl;
 			Points pts;
 			return pts;
 		};
 
 		/**
-		 * Set object visibility
+		 * Object visibility
 		 */
 		void setVisible(bool v) { visible = v; };
 		bool isVisible() { return visible; };
 
 		/**
+		 * Object scaling 
+		 */
+		float getScale() const { return scale; };
+		void setScale(float s) { scale = s; };
+
+		/**
+		 * Object positioning
+		 */
+		Position getPosition() const { return pos; };
+		void setPosition(const Position p) { pos = p; };
+
+		void setPositionX(int _x) { pos.x = _x; };
+		void setPositionY(int _y) { pos.y = _y; };
+		void setPosition(int _x, int _y) { 
+			pos.x = _x;
+			pos.y = _y;
+		};
+
+		/**
 		 * Set blanking
+		 * TODO: Not yet implemented anywhere
 		 */
 		void setBlankingPtsIn(unsigned int n) {
 			blankingPtsIn = n;
@@ -73,19 +94,12 @@ class Object {
 
 		void setColor(Color c) { color = c; };
 
-		void setX(int _x) { pos.x = _x; };
-		void setY(int _y) { pos.y = _y; };
-		void setPosition(int _x, int _y) { 
-			pos.x = _x;
-			pos.y = _y;
-		};
-		// TODO
-		// void setPosition(Position p);
-
-
 	protected:
 		// If object is currently visible
 		bool visible;
+
+		// Object scale in [0.0, 1.0]
+		float scale;
 
 		unsigned int blankingPtsIn;
 		unsigned int blankingPtsOut;
