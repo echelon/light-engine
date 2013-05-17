@@ -23,6 +23,9 @@ void Streamer::freezeFrame()
 	if(frameStream.size() > 0) {
 		oldFramePt = frameStream.back();
 	}
+	else {
+		cout << "ASDF" << endl;
+	}
 
 	// TODO: Don't thrash memory by clear/reallocing. 
 	// Use buffer more intelligently
@@ -43,7 +46,7 @@ void Streamer::freezeFrame()
 
 	// Old last point tracks to new frame
 	Points trk = calculate_tracking_pts(oldFramePt, ppts[0], 
-						7, INVISIBLE);
+						7, BLUE);
 	trks.push_back(trk);
 	sz += trk.size();
 
@@ -51,7 +54,7 @@ void Streamer::freezeFrame()
 	// Doesn't account for blanking between frames
 	for(unsigned int i = 0; i < ppts.size() - 1; i++) {
 		Points t = calculate_tracking_pts(ppts[i], ppts[i+1], 
-					7, INVISIBLE);
+					7, BLUE);
 		trks.push_back(t);
 		sz += t.size();
 	}

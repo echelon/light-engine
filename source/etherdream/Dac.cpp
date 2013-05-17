@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <unistd.h> // usleep
 
 #include <iostream>
 #include <vector>
@@ -49,8 +50,17 @@ vector<dac_point> Dac::convertPoints(Points pts)
 		Point pt = pts[i];
 		dac_point newPt;
 
-		newPt.x = pt.pos.x;
-		newPt.y = pt.pos.y;
+		newPt.x = (int)pt.pos.x;
+		newPt.y = (int)pt.pos.y;
+
+		if(newPt.x < 1000 && newPt.x > -1000 &&
+		   newPt.y < 1000 && newPt.y > - 1000) {
+			cout << "POINT IS SMALL!" << endl;
+			cout << "(" << pt.pos.x << ", ";
+			cout << pt.pos.y << ")" << endl;
+		}
+
+
 		newPt.r = pt.color.r;
 		newPt.g = pt.color.g;
 		newPt.b = pt.color.b;
@@ -157,7 +167,7 @@ bool Dac::clear_estop()
 }
 
 // TODO: Fix messiness
-void Dac::test_send_data(vector<dac_point> pts)
+bool Dac::test_send_data(vector<dac_point> pts)
 {
 	data_command cmd;
 
@@ -165,7 +175,7 @@ void Dac::test_send_data(vector<dac_point> pts)
 	vector<uint8_t> cmdBuf = cmd.serialize();
 
 	send(fd, &cmdBuf[0], cmdBuf.size(), 0);
-	checkResponse('d');
+	return checkResponse('d');
 }
 
 bool Dac::checkResponse(char command) 
@@ -173,24 +183,26 @@ bool Dac::checkResponse(char command)
 	dac_response rsp;
 	vector<uint8_t> cmdBuf(22, 0);
 
-	//cout << "checkResponse(" << command << ")" << endl;
-
 	recv(fd, &cmdBuf[0], cmdBuf.size(), 0);
 
 	rsp.setFromBuffer(cmdBuf);
 
 	lastStatus = rsp.status;
 
-	if(rsp.isAck()) {
+	/*if(rsp.isAck()) {
 		cout << "Command acknowledged (";
 		cout << rsp.command << ")" << endl;
-	}
+	}*/
 
 	if(!rsp.isAck() || command != rsp.command) {
-		//cerr << "[!] Could not do whatever: " << command << endl;
+		cerr << "[!] Could not do whatever: " << command << endl;
 		//rsp.print();
 		return false;
 	}
+	else {
+		cout << "COULD " << command << endl;
+	}
+
 	return true;
 }
 
@@ -239,12 +251,21 @@ void Dac::stream()
 
 		// XXX: Not a perfect heuristic
 		// Send based on buffer fullness, as some fraction of 30kpps
-		guessRate = 5000; // streamer->getRecommendedSendRate();
+		guessRate = 200; // streamer->getRecommendedSendRate();
 		send = (int)(guessRate * 
 				(lastStatus.buffer_fullness/30000.0f));
 
+		if(send < 200) {
+			//usleep(1000);
+			//waitCount++;
+			//continue;
+		}
+
+		//send = 5000;
+
 		if(send < 1) {
-			cout << "SEND ZERO? I THINK NOT!" << endl;
+			cout << "SEND ZERO? (" << send << ") I THINK NOT!" << endl;
+			cout << "buff: " << lastStatus.buffer_fullness << endl;
 			send = 1000;
 		}
 
@@ -258,7 +279,10 @@ void Dac::stream()
 		points = convertPoints(streamer->getPoints2(send));
 
 		// FIXME: These functions and their names suck.
-		test_send_data(points);
+		if(!test_send_data(points)) {
+			cout << "Tried to send " << points.size() << endl;
+		}
+		usleep(10000);
 
 		if(!started) {
 			started = true;

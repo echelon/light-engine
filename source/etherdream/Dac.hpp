@@ -55,7 +55,7 @@ class Dac {
 		bool stop();
 		bool clear_estop();
 
-		void test_send_data(vector<dac_point> pts);
+		bool test_send_data(vector<dac_point> pts);
 
 		/**
 		 * Start the stream
