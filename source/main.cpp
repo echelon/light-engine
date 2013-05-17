@@ -75,8 +75,7 @@ int main()
 				break;
 			case 1:
 			default:
-				//o = new Square(); //2000.f);
-				o = new Circle();
+				o = new Square();
 		}
 
 		objects.push_back(o);

@@ -62,13 +62,12 @@ class Object {
 		 */
 		Position getPosition() const { return pos; };
 		void setPosition(const Position p) { pos = p; };
-
-		void setPositionX(int _x) { pos.x = _x; };
-		void setPositionY(int _y) { pos.y = _y; };
-		void setPosition(int _x, int _y) { 
-			pos.x = _x;
-			pos.y = _y;
+		void setPosition(int x, int y) { 
+			pos.x = x;
+			pos.y = y;
 		};
+		void setPositionX(int x) { pos.x = x; };
+		void setPositionY(int y) { pos.y = y; };
 
 		/**
 		 * Set blanking

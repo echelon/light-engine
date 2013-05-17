@@ -3,17 +3,15 @@
 #include "../gfx/color.hpp"
 #include <math.h>
 
-Points Square::getAllPoints()
+Points Square::getAllPoints() const
 {
 	Points points;
 	Points pts;
 
-	float half = edge/2.0;
-
-	Point q1 = Point(-half + pos.x, -half + pos.y, color);
-	Point q2 = Point(-half + pos.x, half + pos.y, color);
-	Point q3 = Point(half + pos.x, half + pos.y, color);
-	Point q4 = Point(half + pos.x, -half + pos.y, color);
+	Point q1 = Point(-1.0, -1.0, color);
+	Point q2 = Point(-1.0, 1.0, color);
+	Point q3 = Point(1.0, 1.0, color);
+	Point q4 = Point(1.0, -1.0, color);
 
 	for(unsigned int i = 0; i < numVertexPoints; i++) {
 		points.push_back(q1);
@@ -54,7 +52,7 @@ Points Square::getAllPoints()
 	return points;
 }
 
-Points Square::getEdge(Point v1, Point v2, int num) 
+Points Square::getEdge(Point v1, Point v2, int num) const
 {
 	Points points;
 
