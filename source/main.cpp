@@ -63,6 +63,7 @@ int main()
 	const unsigned int NUM = 7;
    	uniform_int_distribution<> pos(-200, 200);
     uniform_int_distribution<> vel(-15, 15);
+    uniform_int_distribution<> scale(1, 5);
 
 	for(unsigned int i = 0; i < NUM; i++) {
 		Object* o = 0;
@@ -86,6 +87,7 @@ int main()
 		e->setBoundary(20000);
 		e->setVelocity(vel(randgen), vel(randgen));
 		e->setPosition(pos(randgen), pos(randgen));
+		o->setScale((float)scale(randgen)/10 * 0.5);
 
 		switch(uniform_int_distribution<>(0, 2)(randgen)) {
 			case 0:
