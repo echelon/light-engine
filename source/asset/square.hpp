@@ -29,7 +29,7 @@ class Square: public Object
 		unsigned int numVertexPoints;
 
 		// Generate edge
-		Points getEdge(Point v1, Point v2, int num) const;
+		Points getEdge(Point v1, Point v2, unsigned int num) const;
 };
 
 #endif

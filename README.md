@@ -43,32 +43,42 @@ As this object system matures, I want to impart several features of 3D graphics 
 
 I don't have the necessary equipment to explore this yet, but I want to try dispacthing the drawing of objects between two or more projectors to effectively incresease the draw speed. A central control program would manage what drawing tasks each of the projectors is given in order to optimize for speed. This is a complex project, and I don't expect to make headway on this anytime soon. If anyone researching in this area would like to team up and tackle this together, I'm interested. 
 
+**Why Ether Dream?**
+
+It's entirely open source (including the hardware). This alone is justification enough 
+not to buy any other DAC! The network interface is incredibly modern and easy to use. 
+As time goes on, I predict that you'll see lots of open source projection software written 
+expressly for the Ether Dream. 
+
 Current Status
 --------------
 
-1. Networking and Buffering -- working, but buggy
-2. Ether Dream Protocol -- working, but incomplete
-3. Low-level primitives -- just started
+1. Networking and Buffering -- working, but inefficient and buggy
+2. Ether Dream Protocol -- mostly working, but incomplete
+3. Low-level primitives -- working on it now
 4. Processing Pipeline -- just started
 5. Matrix Libraries -- not yet started
-6. Graphics Engine-like features (clipping, backface culling, etc.)
-7. Path optimization (TSP, etc.)
-8. Python bindings
+6. Graphics Engine-like features (clipping, backface culling, etc.) -- not yet started
+7. Path optimization (TSP, etc.) -- not yet started
+8. Python bindings -- not yet started
 
-**Overall:** Just started work on this. There's a lot to do here.
+**Overall Status:** There's a lot of work to do here, but you might find some use
 
 License
 -------
-This codebase is MIT licensed. In order to advance the state of laser projection, we should publish more of our code. 
+This codebase is MIT licensed. In order to advance the state of laser projection, we should 
+publish more of our code. 
+
 
 My other laser projects 
 -----------------------
 * [Laser Asteroids](https://github.com/echelon/laser-asteroids), 
-  a Python laser projector game
+  my first Python laser projector game
 * [Laser Testbed](https://github.com/echelon/laser-testbed), 
-  misc experiments including OpenCV, Graffiti Markup Language, 
-  and more.
+  my earliest laser experiments in Python including interactive 
+  animations, OpenCV, Graffiti Markup Language, and more.
 * [Laser Client](https://github.com/echelon/laser-client), 
-  simple object shows that can cycle. Some parts are shared with 
-  Laser Testbed, and much needs to be backported.
+  simple laser shows that cycle. I actually wrote this to run 
+  "advertisements" or text displays. Some parts of the code are 
+  based on "Laser Testbed", and much remains to be backported.
 

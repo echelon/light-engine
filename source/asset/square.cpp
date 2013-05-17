@@ -52,7 +52,7 @@ Points Square::getAllPoints() const
 	return points;
 }
 
-Points Square::getEdge(Point v1, Point v2, int num) const
+Points Square::getEdge(Point v1, Point v2, unsigned int num) const
 {
 	Points points;
 

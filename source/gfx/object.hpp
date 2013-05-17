@@ -8,6 +8,8 @@
 #include "color.hpp"
 #include "../etherdream/types.hpp"
 
+class Illuminator;
+
 using namespace std;
 
 /**
@@ -22,8 +24,9 @@ class Object {
 			scale(0.25),
 			blankingPtsIn(10),
 			blankingPtsOut(10),
+			pos(),
 			color(WHITE),
-			pos()
+			illuminator(0)
 			{};
 
 		/**
@@ -70,6 +73,30 @@ class Object {
 		void setPositionY(int y) { pos.y = y; };
 
 		/**
+		 * Object static color
+		 */
+		void setColor(Color c) { color = c; };
+		void setColor(float r, float g, float b) {
+			color.r = r;
+			color.g = g;
+			color.b = b;
+		};
+
+		/**
+		 * Object illuminator 
+		 * 	-- dynamic lighting system
+		 * 	TODO/FIXME: POINTER OWNERSHIP!!
+		 */
+		bool hasIlluminator() const { return illuminator == 0; };
+
+		void setIlluminator(Illuminator* illum) {
+			illuminator = illum;
+		};
+
+		Illuminator* getIlluminator() { return illuminator; };
+
+
+		/**
 		 * Set blanking
 		 * TODO: Not yet implemented anywhere
 		 */
@@ -84,15 +111,6 @@ class Object {
 		unsigned int getBlankingPtsIn() { return blankingPtsIn; };
 		unsigned int getBlankingPtsOut() { return blankingPtsOut; };
 
-		void setColor(unsigned int _r, unsigned int _g, 
-			unsigned int _b) {
-					color.r = _r;
-					color.g = _g;
-					color.b = _b;
-		};
-
-		void setColor(Color c) { color = c; };
-
 	protected:
 		// If object is currently visible
 		bool visible;
@@ -103,11 +121,15 @@ class Object {
 		unsigned int blankingPtsIn;
 		unsigned int blankingPtsOut;
 
+		// TODO: Not formal reference frame yet
+		Position pos;
+
 		// TODO: Appropriate level to handle color?
 		Color color;
 
-		// TODO: Not formal reference frame yet
-		Position pos;
+		// Illuminator object
+		Illuminator* illuminator;
+		//bool hasIlluminator;
 };
 
 #endif
