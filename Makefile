@@ -34,12 +34,12 @@ build/main.o: source/main.cpp
 asset: build/asset/square.o build/asset/circle.o
 	@cd .
 
-build/asset/square.o: source/asset/square.cpp
+build/asset/square.o: source/asset/square.cpp source/asset/square.hpp
 	@echo "[compile] asset/square"
 	@$(CD) ./build/asset && $(C) $(INC) \
 		-c ../../source/asset/square.cpp
 
-build/asset/circle.o: source/asset/circle.cpp
+build/asset/circle.o: source/asset/circle.cpp source/asset/circle.hpp
 	@echo "[compile] asset/circle"
 	@$(CD) ./build/asset && $(C) $(INC) \
 		-c ../../source/asset/circle.cpp
@@ -47,12 +47,12 @@ build/asset/circle.o: source/asset/circle.cpp
 etherdream: build/etherdream/Dac.o build/etherdream/find.o
 	@cd .
 
-build/etherdream/Dac.o: source/etherdream/Dac.cpp
+build/etherdream/Dac.o: source/etherdream/Dac.cpp source/etherdream/Dac.hpp
 	@echo "[compile] etherdream/dac"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/Dac.cpp
 
-build/etherdream/find.o: source/etherdream/find.cpp
+build/etherdream/find.o: source/etherdream/find.cpp source/etherdream/find.hpp
 	@echo "[compile] etherdream/find"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/find.cpp
@@ -60,28 +60,27 @@ build/etherdream/find.o: source/etherdream/find.cpp
 gfx: build/gfx/streamer.o build/gfx/tracking.o build/gfx/transformation.o 
 	@cd .
 
-
-build/gfx/streamer.o: source/gfx/streamer.cpp
+build/gfx/streamer.o: source/gfx/streamer.cpp source/gfx/streamer.hpp
 	@echo "[compile] gfx/streamer"
 	@$(CD) ./build/gfx && $(C) $(INC) \
 		-c ../../source/gfx/streamer.cpp
 
-build/gfx/tracking.o: source/gfx/tracking.cpp
+build/gfx/tracking.o: source/gfx/tracking.cpp source/gfx/tracking.hpp
 	@echo "[compile] gfx/tracking"
 	@$(CD) ./build/gfx && $(C) $(INC) \
 		-c ../../source/gfx/tracking.cpp
 
-build/gfx/transformation.o: source/gfx/transformation.cpp
+build/gfx/transformation.o: source/gfx/transformation.cpp source/gfx/transformation.hpp
 	@echo "[compile] gfx/transformation"
 	@$(CD) ./build/gfx && $(C) $(INC) \
 		-c ../../source/gfx/transformation.cpp
 
-build/game/entity.o: source/game/entity.cpp
+build/game/entity.o: source/game/entity.cpp source/game/entity.hpp
 	@echo "[compile] game/entity"
 	@$(CD) ./build/game && $(C) $(INC) \
 		-c ../../source/game/entity.cpp
 
-build/misc.o: source/misc.cpp
+build/misc.o: source/misc.cpp source/misc.hpp
 	@echo "[compile] misc"
 	@$(CD) ./build && $(C) $(INC) -c ../source/misc.cpp
 
