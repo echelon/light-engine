@@ -7,13 +7,12 @@ This project aims to support research projects and laser projector hacking. As s
 
 _I'm very interested in finding collaborators for this project._
 
-**Keywords:** laser projector, projection, scanning, DAC, EtherDream, Ether Dream.
+**Keywords:** laser projector, projection, lasers, scanning, DAC, EtherDream, Ether Dream.
 
 Goals
 -----
-I want to built a laser projector daemon that handles multiple 
-objects, logical "frame buffers", and simple low-level scanning 
-operations such as tracking and blanking the laser. This system should make it easy to develop new programs or experiments quickly. 
+To built a laser projector daemon that tracks and displays multiple 
+objects, transforming logical "frame buffers" into a physical ILDA mapping. Simple low-level scanning operations such as tracking and blanking the laser will be automatically handled. This system should make it easy to develop new programs or experiments quickly. 
 
 **Logical and Physical Surfaces**
 
