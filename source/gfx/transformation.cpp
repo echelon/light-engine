@@ -1,6 +1,10 @@
 #include "transformation.hpp"
 #include "illuminator.hpp"
 
+#include <iostream>
+
+using namespace std;
+
 Points get_transformed_points(Object& obj) {
 	Points pts = obj.getAllPoints();
 	Position pos = obj.getPosition();

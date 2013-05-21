@@ -15,11 +15,9 @@ class Circle : public Object
 			numPoints(100) {};
 			// Note: 100 points is the same as in circle.py
 
-		Circle(float _scale):
+		Circle(int numPoints):
 			Object(),
-			numPoints(100) {
-				setScale(_scale);
-			};
+			numPoints(numPoints) {};
 
 		Circle(float _scale, int nPoints):
 			Object(),

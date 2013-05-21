@@ -1,5 +1,7 @@
 ### VARIABLES #############
 C = g++ -std=c++0x -pthread -g -Wall
+GCC = gcc -pthread -g -Wall 
+EDFLAGS = -Wall -Wextra -ansi -pedantic -std=c99 -lm -lpthread
 L = g++ -std=c++0x -pthread -g
 RM = /bin/rm -f
 CD = cd
@@ -27,9 +29,15 @@ main: asset etherdream gfx build/misc.o build/game/entity.o \
 		$(LIBS) -o main 
 	@chmod +x main 
 
+edtest: build/lib/etherdream.o build/lib/test.o
+	@echo "[linking] edtest"
+	$(GCC) $(CFLAGS) -g build/lib/*o -lrt -lm -o edtest
+	@chmod +x edtest
+
 build/main.o: source/main.cpp
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
+
 
 asset: build/asset/square.o build/asset/circle.o
 	@cd .
@@ -83,4 +91,15 @@ build/game/entity.o: source/game/entity.cpp source/game/entity.hpp
 build/misc.o: source/misc.cpp source/misc.hpp
 	@echo "[compile] misc"
 	@$(CD) ./build && $(C) $(INC) -c ../source/misc.cpp
+
+build/lib/etherdream.o: source/lib/etherdream.c \
+		source/lib/etherdream.h
+	@echo "[compile] lib/etherdream"
+	@$(CD) ./build/lib && $(GCC) $(EDFLAGS) $(INC) \
+		-c ../../source/lib/etherdream.c
+
+build/lib/test.o: source/lib/test.c
+	@echo "[compile] lib/test"
+	@$(CD) ./build/lib && $(GCC) $(EDFLAGS) $(INC) \
+		-c ../../source/lib/test.c
 

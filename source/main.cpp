@@ -68,10 +68,10 @@ int main()
     uniform_int_distribution<> vel(7, 8);
     uniform_int_distribution<> scale(2, 3);
 
-	Colors colors;
-	colors.push_back(INVISIBLE);
+	//Colors colors;
+	//colors.push_back(INVISIBLE);
 	//colors.push_back(GREEN);
-	colors.push_back(WHITE);
+	//colors.push_back(WHITE);
 
 	for(unsigned int i = 0; i < NUM; i++) {
 		Object* o = 0;
@@ -80,13 +80,14 @@ int main()
 
 		switch(uniform_int_distribution<>(0, 1)(randgen)) {
 			case 0:
-				o = new Circle(5000);
+				o = new Circle(500);
 				break;
 			case 1:
 			default:
 				o = new Circle();
 				//o = new Square();
 		}
+		o->setScale(0.0005);
 
 		objects.push_back(o);
 		entities.push_back(e);
@@ -108,14 +109,14 @@ int main()
 				break;
 		}
 
-		il = new BlinkIlluminator(*o, colors, 20);
-		o->setIlluminator(il);
+		//il = new BlinkIlluminator(*o, colors, 20);
+		//o->setIlluminator(il);
 		o->setColor(WHITE);
 
 		e->setBoundary(20000);
 		//e->setVelocity(vel(randgen), 0.0f); //vel(randgen));
 		e->setPosition(pos(randgen), pos(randgen));
-		o->setScale((float)scale(randgen)/10 * 0.5);
+		//o->setScale((float)scale(randgen)/10 * 0.5);
 	}
 
 	thread dt(dac_thread);
