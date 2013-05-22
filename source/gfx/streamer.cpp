@@ -24,7 +24,6 @@ void Streamer::freezeFrame()
 		oldFramePt = frameStream.back();
 	}
 	else {
-		cout << "ASDF" << endl;
 	}
 
 	// TODO: Don't thrash memory by clear/reallocing. 

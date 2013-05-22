@@ -577,29 +577,24 @@ static void *dac_loop(void *dv) {
 }
 
 int etherdream_connect(struct etherdream *d) {
-	printf("one\n");
 	// Initialize buffer
 	d->frame_buffer_read = 0;
 	d->frame_buffer_fullness = 0;
 	memset(d->buffer, sizeof(d->buffer), 0);
 
-	printf("two\n");
 	// Connect to the DAC
 	if (dac_connect(d) < 0) {
 		trace(d, "!! DAC connection failed.\n");
 		return -1;
 	}
 
-	printf("three\n");
 	d->state = ST_READY;
 
-	printf("four\n");
 	int res = pthread_create(&d->workerthread, NULL, dac_loop, d);
 	if (res) {
 		trace(d, "!! Begin thread error: %s\n", strerror(res));
 		return -1;
 	}
-	printf("five\n");
 
 	trace(d, "Ready.\n");
 
@@ -704,10 +699,8 @@ int etherdream_is_ready(struct etherdream *d) {
 int etherdream_wait_for_ready(struct etherdream *d) {
 	pthread_mutex_lock(&d->mutex);
 	while (d->frame_buffer_fullness == BUFFER_NFRAMES) {
-		printf("wait\n");
 		pthread_cond_wait(&d->loop_cond, &d->mutex);
 	}
-	printf("done wait\n");
 	pthread_mutex_unlock(&d->mutex);
 	return 0;
 }

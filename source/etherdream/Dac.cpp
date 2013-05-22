@@ -55,32 +55,11 @@ vector<DAC::dac_point> Dac::convertPoints(Points pts)
 		newPt.x = (int)pt.pos.x;
 		newPt.y = (int)pt.pos.y;
 
-		if(newPt.x < 1000 && newPt.x > -1000 &&
-		   newPt.y < 1000 && newPt.y > - 1000) {
-			cout << "POINT IS SMALL!" << endl;
-			cout << "(" << pt.pos.x << ", ";
-			cout << pt.pos.y << ")" << endl;
-		}
-
-
 		newPt.r = pt.color.r;
 		newPt.g = pt.color.g;
 		newPt.b = pt.color.b;
 
 		newPts.push_back(newPt);
-
-		/*int k = 1;
-		while(k) {
-			// XXX: Just an experiment to waste CPU cycles
-			for(unsigned int j = 0; j < newPts.size(); j++) {
-				pt.x = newPt.x;
-				pt.y = newPt.y;
-				pt.r = newPt.r;
-				pt.g = newPt.g;
-				pt.b = newPt.b;
-			}
-			k--;
-		}*/
 	}
 
 	return newPts;
@@ -91,7 +70,6 @@ vector<DAC::dac_point> Dac::convertPoints(Points pts)
 void Dac::convertPoints2(vector<Point> inPts, 
 				etherdream_point* outPts)
 {
-	cout << "ASDF" << endl;
 	for(unsigned int i = 0; i < inPts.size(); i++) {
 		Point pt = inPts[i];
 
@@ -366,14 +344,12 @@ void Dac::stream()
 
 	while(1) 
 	{
-		Points pts = streamer->getPoints2(5000);
+		Points pts = streamer->getPoints2(300);
 
-		cout << "convert points..." << endl;
 		convertPoints2(pts, ptBuffer);
 
-		cout << "points:" << pts.size() << endl;
 		// Writes frames...
-		int nRepeat = 1;
+		int nRepeat = 1; // try 1 and -1, read DOCs
 		int res = etherdream_write(
 				dac, 
 				ptBuffer,	
@@ -386,9 +362,7 @@ void Dac::stream()
 			cout << "Write " << res << endl;
 		}
 
-		cout << "ready?" << endl;
 		etherdream_wait_for_ready(dac);
-		cout << "ready!" << endl;
 	}
 
 }

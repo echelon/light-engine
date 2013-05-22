@@ -63,10 +63,10 @@ void dac_thread()
 
 int main()
 {
-	const unsigned int NUM = 4;
+	const unsigned int NUM = 7;
    	uniform_int_distribution<> pos(-200, 200);
-    uniform_int_distribution<> vel(7, 8);
-    uniform_int_distribution<> scale(2, 3);
+    uniform_int_distribution<> vel(3, 8);
+    uniform_int_distribution<> scale(1, 3);
 
 	// For illuminator
 	Colors colors;
@@ -81,11 +81,11 @@ int main()
 
 		switch(uniform_int_distribution<>(0, 1)(randgen)) {
 			case 0:
-				o = new Circle(500);
+				o = new Circle(50);
 				break;
 			case 1:
 			default:
-				o = new Circle(400);
+				o = new Circle(40);
 				//o = new Square();
 		}
 		o->setScale(0.05);
