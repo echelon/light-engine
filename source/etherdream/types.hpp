@@ -8,6 +8,8 @@
 
 // ================================ HW CONSTANTS =============== //
 
+namespace DAC {
+
 /**
  * DAC Communication Ports
  *  - UDP broadcast and TCP data comms
@@ -51,5 +53,7 @@ enum COMMAND {
 	CLEAR_ESTOP			= 'c',
 	PING				= '?',
 };
+
+} // end namespace DAC
 
 #endif

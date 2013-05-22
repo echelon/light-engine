@@ -42,73 +42,6 @@
 #include "protocol.h"
 #include "etherdream.h"
 
-#define BUFFER_POINTS_PER_FRAME 16000
-#define BUFFER_NFRAMES          2
-#define MAX_LATE_ACKS		64
-#define MIN_SEND_POINTS		40
-#define DEFAULT_TIMEOUT		2000000
-#define DEBUG_THRESHOLD_POINTS	800
-
-struct etherdream_conn {
-	int dc_sock;
-	char dc_read_buf[1024];
-	int dc_read_buf_size;
-	struct dac_response resp;
-	long long dc_last_ack_time;
-
-	struct {
-		struct queue_command queue;
-		struct data_command_header header;
-		struct dac_point data[1000];
-	} __attribute__((packed)) dc_local_buffer;
-
-	int dc_begin_sent;
-	int ackbuf[MAX_LATE_ACKS];
-	int ackbuf_prod;
-	int ackbuf_cons;
-	int unacked_points;
-	int pending_meta_acks;
-};
-
-struct buffer_item {
-	struct dac_point data[BUFFER_POINTS_PER_FRAME];
-	int points;
-	int pps;
-	int repeatcount;
-	int idx;
-};
-
-enum dac_state {
-	ST_DISCONNECTED,
-	ST_READY,
-	ST_RUNNING,
-	ST_BROKEN,
-	ST_SHUTDOWN
-};
-
-struct etherdream {
-	pthread_mutex_t mutex;
-	pthread_cond_t loop_cond;
-
-	struct buffer_item buffer[BUFFER_NFRAMES];
-	int frame_buffer_read;
-	int frame_buffer_fullness;
-	int bounce_count;
-
-	pthread_t workerthread;
-	
-	struct in_addr addr;
-	struct etherdream_conn conn;
-	unsigned long dac_id;
-	int sw_revision;
-	char mac_address[6];
-	char version[32];
-
-	enum dac_state state;
-
-	struct etherdream * next;
-};
-
 static FILE *trace_fp = NULL;
 #if __MACH__
 static long long timer_start, timer_freq_numer, timer_freq_denom;
@@ -644,24 +577,29 @@ static void *dac_loop(void *dv) {
 }
 
 int etherdream_connect(struct etherdream *d) {
+	printf("one\n");
 	// Initialize buffer
 	d->frame_buffer_read = 0;
 	d->frame_buffer_fullness = 0;
 	memset(d->buffer, sizeof(d->buffer), 0);
 
+	printf("two\n");
 	// Connect to the DAC
 	if (dac_connect(d) < 0) {
 		trace(d, "!! DAC connection failed.\n");
 		return -1;
 	}
 
+	printf("three\n");
 	d->state = ST_READY;
 
+	printf("four\n");
 	int res = pthread_create(&d->workerthread, NULL, dac_loop, d);
 	if (res) {
 		trace(d, "!! Begin thread error: %s\n", strerror(res));
 		return -1;
 	}
+	printf("five\n");
 
 	trace(d, "Ready.\n");
 
@@ -765,8 +703,11 @@ int etherdream_is_ready(struct etherdream *d) {
  */
 int etherdream_wait_for_ready(struct etherdream *d) {
 	pthread_mutex_lock(&d->mutex);
-	while (d->frame_buffer_fullness == BUFFER_NFRAMES)
+	while (d->frame_buffer_fullness == BUFFER_NFRAMES) {
+		printf("wait\n");
 		pthread_cond_wait(&d->loop_cond, &d->mutex);
+	}
+	printf("done wait\n");
 	pthread_mutex_unlock(&d->mutex);
 	return 0;
 }

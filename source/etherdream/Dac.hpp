@@ -8,6 +8,7 @@
 #include "responses.hpp"
 #include "commands.hpp"
 #include "../gfx/point.hpp"
+#include "../lib/etherdream.h"
 
 class Object;
 class Streamer;
@@ -18,9 +19,8 @@ using namespace std;
  * DAC 
  * Communicate with the DAC.
  */
-class Dac {
-
-
+class Dac 
+{
 	public:
 		// These are for ease of use
 		const string address;
@@ -28,7 +28,7 @@ class Dac {
 
 		// Last status sent from DAC
 		// TODO: Temporary public
-		dac_status lastStatus;
+		DAC::dac_status lastStatus;
 
 		/**
 		 * CTOR
@@ -55,7 +55,7 @@ class Dac {
 		bool stop();
 		bool clear_estop();
 
-		bool test_send_data(vector<dac_point> pts);
+		bool test_send_data(vector<DAC::dac_point> pts);
 
 		/**
 		 * Start the stream
@@ -66,6 +66,9 @@ class Dac {
 
 
 	private:
+		// Jacob Potter's etherdream library
+		etherdream* dac; 
+
 		// Socket file descriptor
 		int fd;
 
@@ -82,7 +85,9 @@ class Dac {
 		// Whether stream has started
 		bool started;
 
-		vector<dac_point> convertPoints(vector<Point> pts);
+		vector<DAC::dac_point> convertPoints(vector<Point> pts);
+		void convertPoints2(vector<Point> inPts, 
+				etherdream_point* outPts);
 
 		/**
 		 * Sometimes the DAC gets flooded or buffer fills.
@@ -94,8 +99,6 @@ class Dac {
 		 * Parse Response.
 		 */
 		bool checkResponse(char command);
-
-
 
 };
 

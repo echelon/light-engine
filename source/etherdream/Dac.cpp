@@ -17,7 +17,8 @@ using namespace std;
 
 Dac::Dac(string addr) :
 	address(addr),
-	port(DAC_PORT_COMMS),
+	port(DAC::DAC_PORT_COMMS),
+	dac(0),
 	fd(0),
 	streamer(0),
 	started(false)
@@ -25,13 +26,14 @@ Dac::Dac(string addr) :
 	memset(&server, 0, sizeof server);
 
 	//fd = socket(AF_INET, SOCK_STREAM, 0);
-	fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	/*fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	
 	if (fd < 0) {
 		// TODO: ERROR
-	}
+	}*/
 
 	//connect();
+	dac = new etherdream();
 }
 
 Dac::~Dac()
@@ -40,15 +42,15 @@ Dac::~Dac()
 }
 
 // TODO: This is inefficient. 
-vector<dac_point> Dac::convertPoints(Points pts)
+vector<DAC::dac_point> Dac::convertPoints(Points pts)
 {
-	vector<dac_point> newPts;
+	vector<DAC::dac_point> newPts;
 
 	newPts.reserve(pts.size());
 
 	for(unsigned int i = 0; i < pts.size(); i++) {
 		Point pt = pts[i];
-		dac_point newPt;
+		DAC::dac_point newPt;
 
 		newPt.x = (int)pt.pos.x;
 		newPt.y = (int)pt.pos.y;
@@ -84,10 +86,29 @@ vector<dac_point> Dac::convertPoints(Points pts)
 	return newPts;
 }
 
+
+// TODO: This is inefficient. 
+void Dac::convertPoints2(vector<Point> inPts, 
+				etherdream_point* outPts)
+{
+	cout << "ASDF" << endl;
+	for(unsigned int i = 0; i < inPts.size(); i++) {
+		Point pt = inPts[i];
+
+		outPts[i].x = (int)pt.pos.x;
+		outPts[i].y = (int)pt.pos.y;
+
+		outPts[i].r = pt.color.r;
+		outPts[i].g = pt.color.g;
+		outPts[i].b = pt.color.b;
+	}
+}
+
+
 void Dac::connect()
 {
-	int r = 0;
-	dac_response rsp;
+	/*int r = 0;
+	DAC::dac_response rsp;
 
 	cout << "[dac] connecting... (" << address << ")" << endl;
 
@@ -103,13 +124,56 @@ void Dac::connect()
 		return;
 	}
 
-	checkResponse('?');
+	cout << "Checking response..." << endl;
+	checkResponse('?');*/
+
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	/////////////////////////////////////////////////////
+	
+	cout << "calling etherdream_lib_start..."<<endl;
+
+	etherdream_lib_start();
+	
+	usleep(1000000);
+
+	int num = etherdream_dac_count();
+	cout << "NUM DACS = " << num << endl;
+	for(unsigned int i = 0; i < num; i++) {
+		cout << "For loop(" << i << ")" << endl;
+		int x = etherdream_get_id(etherdream_get(i));
+		cout << "ed: " << x << endl;
+	}
+
+	dac = etherdream_get(0);
+
+	cout << "TEST OMFG" << endl;
+
+	cout << "dac.f_b_r " << dac->frame_buffer_read << endl;
+	cout << "dac.f_b_f " << dac->frame_buffer_fullness << endl;
+
+	char ipstr[INET_ADDRSTRLEN];
+	cout << inet_ntop(AF_INET, &dac->addr, 
+			ipstr, sizeof ipstr);
+
+	cout << endl;
+
+	cout << "etherdream_get worked" << endl;
+	cout << "trying etherdream_connect..." << endl;
+
+	if(etherdream_connect(dac) < 0) {
+		// TODO: error
+	}
+
+	cout << "etherdream_connect worked" << endl;
 }
 
 bool Dac::prepare()
 {
-	prepare_command cmd; // TODO: Could be constant
-	dac_response rsp;
+	DAC::prepare_command cmd; // TODO: Could be constant
+	DAC::dac_response rsp;
 
 	cout << "[dac] preparing..." << endl;
 
@@ -123,8 +187,8 @@ bool Dac::prepare()
 
 bool Dac::begin()
 {
-	begin_command cmd; // TODO: Could be constant
-	dac_response rsp;
+	DAC::begin_command cmd; // TODO: Could be constant
+	DAC::dac_response rsp;
 
 	cout << "[dac] beginning..." << endl;
 
@@ -138,8 +202,8 @@ bool Dac::begin()
 
 bool Dac::stop()
 {
-	stop_command cmd; // TODO: Could be constant
-	dac_response rsp;
+	DAC::stop_command cmd; // TODO: Could be constant
+	DAC::dac_response rsp;
 
 	cout << "[dac] stopping..." << endl;
 
@@ -153,8 +217,8 @@ bool Dac::stop()
 
 bool Dac::clear_estop()
 {
-	clear_estop_command cmd; // TODO: Could be constant
-	dac_response rsp;
+	DAC::clear_estop_command cmd; // TODO: Could be constant
+	DAC::dac_response rsp;
 
 	cout << "[dac] clearing e-stop..." << endl;
 
@@ -167,9 +231,9 @@ bool Dac::clear_estop()
 }
 
 // TODO: Fix messiness
-bool Dac::test_send_data(vector<dac_point> pts)
+bool Dac::test_send_data(vector<DAC::dac_point> pts)
 {
-	data_command cmd;
+	DAC::data_command cmd;
 
 	cmd.set_points(pts);
 	vector<uint8_t> cmdBuf = cmd.serialize();
@@ -180,7 +244,7 @@ bool Dac::test_send_data(vector<dac_point> pts)
 
 bool Dac::checkResponse(char command) 
 {
-	dac_response rsp;
+	DAC::dac_response rsp;
 	vector<uint8_t> cmdBuf(22, 0);
 
 	recv(fd, &cmdBuf[0], cmdBuf.size(), 0);
@@ -219,7 +283,7 @@ void Dac::stream()
 	// Only need to prepare if not already prepared
 	// If then can't prepare, perhaps the last run has 
 	// it confused, so try a shutdown / state refresh.
-	if(lastStatus.playback_state == 0) {
+	/*if(lastStatus.playback_state == 0) {
 		if(!prepare()) { 
 			cerr << "DAC: FIRST 'PREPARE' NOT ACKNOWLEDGED!" << endl;
 			if(!clear_estop()) {
@@ -247,7 +311,7 @@ void Dac::stream()
 
 	while(true) 
 	{
-		vector<dac_point> points;
+		vector<DAC::dac_point> points;
 
 		// XXX: Not a perfect heuristic
 		// Send based on buffer fullness, as some fraction of 30kpps
@@ -288,7 +352,45 @@ void Dac::stream()
 			started = true;
 			begin();
 		}
+	}*/
+
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	/////////////////////////////////////////////////
+	
+
+	// Should be big enough of a vector
+	etherdream_point ptBuffer[20000];
+
+	while(1) 
+	{
+		Points pts = streamer->getPoints2(5000);
+
+		cout << "convert points..." << endl;
+		convertPoints2(pts, ptBuffer);
+
+		cout << "points:" << pts.size() << endl;
+		// Writes frames...
+		int nRepeat = 1;
+		int res = etherdream_write(
+				dac, 
+				ptBuffer,	
+				pts.size(), 
+				30000, 
+				nRepeat
+		);
+
+		if(res != 0) {
+			cout << "Write " << res << endl;
+		}
+
+		cout << "ready?" << endl;
+		etherdream_wait_for_ready(dac);
+		cout << "ready!" << endl;
 	}
+
 }
 
 void Dac::refreshStream()

@@ -22,11 +22,12 @@ stats:
 ### MAIN BUILD TARGET #############
 
 main: asset etherdream gfx build/misc.o build/game/entity.o \
-	build/main.o 
+	build/lib/etherdream.o build/main.o 
 	@echo "[linking] main"
 	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
 		build/gfx/*.o build/game/*.o \
-		$(LIBS) -o main 
+		build/lib/etherdream.o \
+		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
 
 edtest: build/lib/etherdream.o build/lib/test.o

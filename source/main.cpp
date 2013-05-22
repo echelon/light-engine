@@ -54,7 +54,7 @@ void dac_thread()
 {
 	string ip;
 
-	ip = find_dac();
+	//ip = find_dac();
 
 	Dac dac = Dac(ip);
 	dac.setStreamer(streamer);
@@ -63,15 +63,16 @@ void dac_thread()
 
 int main()
 {
-	const unsigned int NUM = 1;
+	const unsigned int NUM = 4;
    	uniform_int_distribution<> pos(-200, 200);
     uniform_int_distribution<> vel(7, 8);
     uniform_int_distribution<> scale(2, 3);
 
-	//Colors colors;
-	//colors.push_back(INVISIBLE);
-	//colors.push_back(GREEN);
-	//colors.push_back(WHITE);
+	// For illuminator
+	Colors colors;
+	colors.push_back(INVISIBLE);
+	colors.push_back(GREEN);
+	colors.push_back(WHITE);
 
 	for(unsigned int i = 0; i < NUM; i++) {
 		Object* o = 0;
@@ -84,10 +85,10 @@ int main()
 				break;
 			case 1:
 			default:
-				o = new Circle();
+				o = new Circle(400);
 				//o = new Square();
 		}
-		o->setScale(0.0005);
+		o->setScale(0.05);
 
 		objects.push_back(o);
 		entities.push_back(e);
@@ -96,7 +97,7 @@ int main()
 
 		switch(uniform_int_distribution<>(0, 2)(randgen)) {
 			case 0:
-				//il = new BlinkIlluminator(*o, colors, 3);
+				il = new BlinkIlluminator(*o, colors, 3);
 				//o->setColor(0, 0, CMAX);
 				break;
 			case 1:
@@ -105,18 +106,18 @@ int main()
 				break;
 			case 2:
 			default:
-				o->setColor(CMAX, CMAX, CMAX);
+				o->setColor(DAC::CMAX, DAC::CMAX, DAC::CMAX);
 				break;
 		}
 
 		//il = new BlinkIlluminator(*o, colors, 20);
-		//o->setIlluminator(il);
+		o->setIlluminator(il);
 		o->setColor(WHITE);
 
 		e->setBoundary(20000);
-		//e->setVelocity(vel(randgen), 0.0f); //vel(randgen));
+		e->setVelocity(vel(randgen), vel(randgen));
 		e->setPosition(pos(randgen), pos(randgen));
-		//o->setScale((float)scale(randgen)/10 * 0.5);
+		o->setScale((float)scale(randgen)/10 * 0.5);
 	}
 
 	thread dt(dac_thread);

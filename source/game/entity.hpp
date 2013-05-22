@@ -16,10 +16,10 @@ class Entity {
 			y(0),
 			xVel(0.0f),
 			yVel(0.0f),
-			maxX(DMAX),
-			maxY(DMAX),
-			minX(-DMAX),
-			minY(-DMAX),
+			maxX(DAC::DMAX),
+			maxY(DAC::DMAX),
+			minX(-DAC::DMAX),
+			minY(-DAC::DMAX),
 			bounceBoundary(true) {};
 
 		Entity(int _x, int _y):
@@ -27,10 +27,10 @@ class Entity {
 			y(_y),
 			xVel(0.0f),
 			yVel(0.0f),
-			maxX(DMAX),
-			maxY(DMAX),
-			minX(-DMAX),
-			minY(-DMAX),
+			maxX(DAC::DMAX),
+			maxY(DAC::DMAX),
+			minX(-DAC::DMAX),
+			minY(-DAC::DMAX),
 			bounceBoundary(true) {};
 
 		// Absolute positioning

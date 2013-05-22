@@ -10,6 +10,8 @@ using namespace std;
 // These types are largely defined by Jacob Potter's documentation.
 // http://ether-dream.com/protocol.html
 
+namespace DAC {
+
 /**
  * DAC Status Report
  */
@@ -173,5 +175,7 @@ struct dac_response {
 		cout << endl;
 	};
 };
+
+} // end namespace DAC
 
 #endif
