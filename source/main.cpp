@@ -52,11 +52,7 @@ void move_thread()
 
 void dac_thread() 
 {
-	string ip;
-
-	//ip = find_dac();
-
-	Dac dac = Dac(ip);
+	Dac dac = Dac();
 	dac.setStreamer(streamer);
 	dac.stream();
 }
