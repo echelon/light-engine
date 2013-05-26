@@ -5,8 +5,6 @@
 
 using namespace std;
 
-namespace DAC {
-
 // These types are largely defined by Jacob Potter's documentation.
 // http://ether-dream.com/protocol.html
 
@@ -237,7 +235,5 @@ struct keep_alive_command {
 	keep_alive_command():
 		command('?') {};
 };
-
-} // end namespace DAC
 
 #endif

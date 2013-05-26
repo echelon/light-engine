@@ -52,7 +52,7 @@ void move_thread()
 
 void dac_thread() 
 {
-	Dac dac = Dac();
+	Dac dac = Dac(find_dac());
 	dac.setStreamer(streamer);
 	dac.stream();
 }
@@ -102,7 +102,7 @@ int main()
 				break;
 			case 2:
 			default:
-				o->setColor(DAC::CMAX, DAC::CMAX, DAC::CMAX);
+				o->setColor(CMAX, CMAX, CMAX);
 				break;
 		}
 

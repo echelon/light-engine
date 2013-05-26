@@ -26,7 +26,7 @@ string find_dac()
 	memset(&buf, 0, sizeof buf);
 
 	client.sin_family = AF_INET;
-	client.sin_port = htons(DAC::DAC_PORT_BCAST);
+	client.sin_port = htons(DAC_PORT_BCAST);
 	client.sin_addr.s_addr = INADDR_ANY;
 
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
