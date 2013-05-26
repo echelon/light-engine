@@ -32,6 +32,11 @@ struct Point
 		color(c)
 		{};
 
+	Point(float _x, float _y) :
+		pos(_x, _y),
+		color(WHITE)
+		{};
+
 	Point(const Position& p, const Color& c) :
 		pos(p),
 		color(c)

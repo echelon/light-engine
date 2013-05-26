@@ -6,31 +6,35 @@
 using namespace std;
 
 Points get_transformed_points(Object& obj, Surface s) {
-	Points pts = obj.getAllPoints();
+	Points outPts;
+	Points* pts = obj.getAllPoints();
 	Position pos = obj.getPosition();
 	float scale = obj.getScale();
 
 	Illuminator* illum = obj.getIlluminator();
 	Colors colors;
 
-	for(unsigned int i = 0; i < pts.size(); i++) {
+	for(unsigned int i = 0; i < pts->size(); i++) {
+		Point pt = pts->at(i); //(*pts)[i];
 		//pts[i].pos *= scale * HARDWARE_SCALE;
-		pts[i].pos *= scale;
-		pts[i].pos.x *= s.xScale;
-		pts[i].pos.y *= s.yScale;
-		pts[i].pos += pos;
-		pts[i].pos.x += s.xShift;
-		pts[i].pos.y += s.yShift;
+		pt.pos *= scale;
+		pt.pos.x *= s.xScale;
+		pt.pos.y *= s.yScale;
+		pt.pos += pos;
+		pt.pos.x += s.xShift;
+		pt.pos.y += s.yShift;
+
+		outPts.push_back(pt);
 	}
 
 	// Map illuminator colors
 	if(illum) {
-		colors = illum->getColors(pts.size());
-		for(unsigned int i = 0; i < pts.size(); i++) {
-			pts[i].color = colors[i];
+		colors = illum->getColors(outPts.size());
+		for(unsigned int i = 0; i < outPts.size(); i++) {
+			outPts[i].color = colors[i];
 		}
 	}
 
-	return pts;
+	return outPts;
 }
 

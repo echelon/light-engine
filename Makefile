@@ -40,7 +40,8 @@ build/main.o: source/main.cpp
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 
 
-asset: build/asset/square.o build/asset/circle.o
+#asset: build/asset/square.o build/asset/circle.o
+asset: build/asset/circle.o
 	@cd .
 
 build/asset/square.o: source/asset/square.cpp source/asset/square.hpp

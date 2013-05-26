@@ -1,6 +1,9 @@
 #include "tracking.hpp"
 #include "../etherdream/types.hpp"
 
+#include <iostream>
+using namespace std;
+
 Points calculate_tracking_pts(const Points& a, const Points& b,
 	unsigned int num, const Color c) {
 		return calculate_tracking_pts(a.back(), b[0], num, c);

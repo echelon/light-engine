@@ -26,13 +26,17 @@ class Circle : public Object
 			};
 
 		//virtual Points getPoints(unsigned int num);
-
-		virtual Points getAllPoints() const;
-
+		//virtual Points getAllPoints() const;
 
 	protected:
 		// How many points comprise the circle
 		unsigned int numPoints;
+
+		/**
+		 * Generate the points of the circle.
+		 */
+		virtual void generateStaticPoints();
+
 };
 
 #endif

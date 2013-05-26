@@ -60,6 +60,7 @@ void Streamer::freezeFrame()
 
 	// FIXME/TODO: Make this efficient!!
 	//frameStream.reserve(sz);
+	
 
 	for(unsigned int i = 0; i < ppts.size(); i++) {
 		frameStream.insert(frameStream.end(), 

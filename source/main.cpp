@@ -21,7 +21,7 @@
 #include "gfx/color.hpp"
 #include "gfx/illuminator.hpp"
 #include "asset/circle.hpp"
-#include "asset/square.hpp"
+//#include "asset/square.hpp"
 #include "asset/illum/solid.hpp"
 #include "asset/illum/blink.hpp"
 #include "game/entity.hpp"
