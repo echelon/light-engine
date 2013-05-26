@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "point.hpp"
+#include "surface.hpp"
 
 using namespace std;
 
@@ -30,6 +31,12 @@ class Streamer
 		 * change their visibility, etc.
 		 */
 		void addObject(Object* obj);
+
+		/**
+		 * Change the dimensions of the projection surface.
+		 */
+		void setSurface(Surface s) { surface = s; };
+		Surface getSurface() { return surface; };
 
 		/**
 		 * Get the next numPoints points in the stream.
@@ -78,6 +85,9 @@ class Streamer
 
 		// Recommended rate heuristic 
 		unsigned int recommendedSendRate;
+
+		// Projection surface
+		Surface surface;
 
 		/**
 		 * Cache all the points for this frame, and calculate

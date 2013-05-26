@@ -53,14 +53,6 @@ vector<dac_point> Dac::convertPoints(Points pts)
 		newPt.x = (int)pt.pos.x;
 		newPt.y = (int)pt.pos.y;
 
-		if(newPt.x < 1000 && newPt.x > -1000 &&
-		   newPt.y < 1000 && newPt.y > - 1000) {
-			cout << "POINT IS SMALL!" << endl;
-			cout << "(" << pt.pos.x << ", ";
-			cout << pt.pos.y << ")" << endl;
-		}
-
-
 		newPt.r = pt.color.r;
 		newPt.g = pt.color.g;
 		newPt.b = pt.color.b;
@@ -111,7 +103,7 @@ bool Dac::prepare()
 	prepare_command cmd; // TODO: Could be constant
 	dac_response rsp;
 
-	cout << "[dac] preparing..." << endl;
+	//cout << "[dac] preparing..." << endl;
 
 	// Messy serialization
 	vector<uint8_t> cmdBuf;
@@ -126,7 +118,7 @@ bool Dac::begin()
 	begin_command cmd; // TODO: Could be constant
 	dac_response rsp;
 
-	cout << "[dac] beginning..." << endl;
+	//cout << "[dac] beginning..." << endl;
 
 	// Messy serialization
 	vector<uint8_t> cmdBuf;
@@ -195,12 +187,9 @@ bool Dac::checkResponse(char command)
 	}*/
 
 	if(!rsp.isAck() || command != rsp.command) {
-		cerr << "[!] Could not do whatever: " << command << endl;
+		//cerr << "[!] Could not do whatever: " << command << endl;
 		//rsp.print();
 		return false;
-	}
-	else {
-		cout << "COULD " << command << endl;
 	}
 
 	return true;
@@ -264,15 +253,15 @@ void Dac::stream()
 		//send = 5000;
 
 		if(send < 1) {
-			cout << "SEND ZERO? (" << send << ") I THINK NOT!" << endl;
-			cout << "buff: " << lastStatus.buffer_fullness << endl;
+			//cout << "SEND ZERO?" << endl;
+			//cout << "buff: " << lastStatus.buffer_fullness << endl;
 			send = 1000;
 		}
 
 		// Sometimes we can flood the DAC
 		//if(started && lastStatus.buffer_fullness == 0) {
 		if(started && lastStatus.isDacFlooded()) {
-			cout << "**FLOOD**" << endl;
+			//cout << "**FLOOD**" << endl;
 			refreshStream();
 		}
 
@@ -280,7 +269,7 @@ void Dac::stream()
 
 		// FIXME: These functions and their names suck.
 		if(!test_send_data(points)) {
-			cout << "Tried to send " << points.size() << endl;
+			//cout << "Tried to send " << points.size() << endl;
 		}
 		usleep(10000);
 

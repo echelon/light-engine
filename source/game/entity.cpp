@@ -40,7 +40,6 @@ void Entity::tickVelocity()
 	else if(newX < minX) {
 		newX = minX;
 		xVel = -xVel; // FIXME: Wrong
-	
 	}
 
 	if(newY > maxY) {

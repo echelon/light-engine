@@ -3,6 +3,7 @@
 
 #include "../etherdream/types.hpp"
 #include "../gfx/position.hpp"
+#include "../gfx/surface.hpp"
 
 /**
  * Some basic game-support features.
@@ -74,10 +75,21 @@ class Entity {
 			minY = _minY;
 		};
 
+		void setSurfaceAsBoundary(Surface s) {
+			setBoundary(
+				s.getMaxX(),
+				s.getMaxY(),
+				s.getMinX(),
+				s.getMinY()
+			);
+		};
+
 		int getX() { return x; };
 		int getY() { return y; };
 
-		Position getPosition() { return Position(x, y); };
+		Position getPosition() { 
+			return Position(x, y); 
+		};
 
 	private:
 		int x;

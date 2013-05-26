@@ -3,10 +3,11 @@
 
 #include "object.hpp"
 #include "point.hpp"
+#include "surface.hpp"
 
 // TODO: Look up ILDA hardware scales
 #define HARDWARE_SCALE 35000
 
-Points get_transformed_points(Object& obj);
+Points get_transformed_points(Object& obj, Surface s);
 
 #endif

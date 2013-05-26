@@ -39,7 +39,7 @@ void Streamer::freezeFrame()
 			continue;
 		}
 		//ppts.push_back(obj->getAllPoints());
-		ppts.push_back(get_transformed_points(*obj));
+		ppts.push_back(get_transformed_points(*obj, surface));
 		sz += ppts.back().size();
 	}
 

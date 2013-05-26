@@ -17,6 +17,7 @@
 #include "etherdream/commands.hpp"
 #include "etherdream/Dac.hpp"
 #include "gfx/streamer.hpp"
+#include "gfx/surface.hpp"
 #include "gfx/color.hpp"
 #include "gfx/illuminator.hpp"
 #include "asset/circle.hpp"
@@ -30,6 +31,7 @@ using namespace std;
 vector<Object*> objects;
 vector<Entity*> entities;
 
+Surface surface (20000, 20000, -20000, 0);
 Streamer* streamer = new Streamer();
 
 random_device rd;
@@ -57,63 +59,38 @@ void dac_thread()
 	dac.stream();
 }
 
+// Random magnitude
+int rsign() {
+	if(uniform_int_distribution<>(0, 1)(randgen) == 1) {
+		return 1;
+	}
+	return -1;
+}
+
 int main()
 {
 	const unsigned int NUM = 7;
-   	uniform_int_distribution<> pos(-200, 200);
-    uniform_int_distribution<> vel(3, 8);
+    uniform_int_distribution<> vel(1, 10);
     uniform_int_distribution<> scale(1, 3);
 
-	// For illuminator
-	Colors colors;
-	colors.push_back(INVISIBLE);
-	colors.push_back(GREEN);
-	colors.push_back(WHITE);
+	streamer->setSurface(surface);
 
 	for(unsigned int i = 0; i < NUM; i++) {
-		Object* o = 0;
+		Object* o = new Circle(40);
 		Entity* e = new Entity();
-		Illuminator* il = 0;
 
-		switch(uniform_int_distribution<>(0, 1)(randgen)) {
-			case 0:
-				o = new Circle(50);
-				break;
-			case 1:
-			default:
-				o = new Circle(40);
-				//o = new Square();
+		o->setColor(WHITE);
+		if(i%2 == 0) {
+			o->setColor(GREEN);
 		}
-		o->setScale(0.05);
+		o->setScale((float)scale(randgen)/10 * 0.5);
 
-		objects.push_back(o);
-		entities.push_back(e);
+		e->setSurfaceAsBoundary(surface);
+		e->setVelocity(vel(randgen)*rsign(), vel(randgen)*rsign());
 
 		streamer->addObject(o);
-
-		switch(uniform_int_distribution<>(0, 2)(randgen)) {
-			case 0:
-				il = new BlinkIlluminator(*o, colors, 3);
-				//o->setColor(0, 0, CMAX);
-				break;
-			case 1:
-				//il = new SolidIlluminator(*o, GREEN);
-				//o->setColor(0, CMAX, 0);
-				break;
-			case 2:
-			default:
-				o->setColor(CMAX, CMAX, CMAX);
-				break;
-		}
-
-		//il = new BlinkIlluminator(*o, colors, 20);
-		o->setIlluminator(il);
-		o->setColor(WHITE);
-
-		e->setBoundary(20000);
-		e->setVelocity(vel(randgen), vel(randgen));
-		e->setPosition(pos(randgen), pos(randgen));
-		o->setScale((float)scale(randgen)/10 * 0.5);
+		objects.push_back(o);
+		entities.push_back(e);
 	}
 
 	thread dt(dac_thread);
