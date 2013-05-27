@@ -7,7 +7,7 @@ using namespace std;
 
 Points get_transformed_points(Object& obj, Surface s) {
 	Points outPts;
-	Points* pts = obj.getAllPoints();
+	const Points* pts = obj.getPoints();
 	Position pos = obj.getPosition();
 	float scale = obj.getScale();
 

@@ -39,7 +39,7 @@ class Object {
 		 * Request all points for the object.
 		 *  - Returns static points by default, but can be overridden
 		 */
-		virtual Points* getAllPoints() { 
+		virtual const Points* getPoints() { 
 			if(!staticPoints) {
 				generateStaticPoints();
 			}

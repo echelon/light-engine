@@ -25,11 +25,8 @@ class Circle : public Object
 				setScale(_scale);
 			};
 
-		//virtual Points getPoints(unsigned int num);
-		//virtual Points getAllPoints() const;
-
 	protected:
-		// How many points comprise the circle
+		// Num points that comprise the circle
 		unsigned int numPoints;
 
 		/**
