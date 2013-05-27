@@ -40,9 +40,14 @@ build/main.o: source/main.cpp
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 
 
-#asset: build/asset/square.o build/asset/circle.o
-asset: build/asset/circle.o
+#asset: build/asset/square.o build/asset/circle.o build/asset/rectangle.o
+asset: build/asset/circle.o build/asset/rectangle.o
 	@cd .
+
+build/asset/rectangle.o: source/asset/rectangle.cpp source/asset/rectangle.hpp
+	@echo "[compile] asset/rectangle"
+	@$(CD) ./build/asset && $(C) $(INC) \
+		-c ../../source/asset/rectangle.cpp
 
 build/asset/square.o: source/asset/square.cpp source/asset/square.hpp
 	@echo "[compile] asset/square"

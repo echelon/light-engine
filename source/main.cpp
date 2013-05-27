@@ -20,8 +20,7 @@
 #include "gfx/surface.hpp"
 #include "gfx/color.hpp"
 #include "gfx/illuminator.hpp"
-#include "asset/circle.hpp"
-//#include "asset/square.hpp"
+#include "asset/shapes.hpp"
 #include "asset/illum/solid.hpp"
 #include "asset/illum/blink.hpp"
 #include "game/entity.hpp"
@@ -76,7 +75,8 @@ int main()
 	streamer->setSurface(surface);
 
 	for(unsigned int i = 0; i < NUM; i++) {
-		Object* o = new Circle(40);
+		//Object* o = new Circle(40);
+		Object* o = new Rectangle();
 		Entity* e = new Entity();
 
 		o->setColor(WHITE);
