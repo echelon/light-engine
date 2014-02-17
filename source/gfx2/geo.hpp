@@ -39,7 +39,16 @@ namespace Gfx {
 	*/
 	class StaticGeo {
 		public:
-			pass // will be constructed by a factory, GML reader, whatever...
+			// will be constructed by a factory, GML reader, whatever...
+			StaticGeo(); 
+
+			StaticGeo(const Points &pts);
+
+			// The number of points in the geometry
+			unsigned int numPoints();
+
+			Points::const_iterator begin();
+			Points::const_iterator end();
 
 		private:
 			Points points;
@@ -50,3 +59,4 @@ namespace Gfx {
 
 } // end namespace Gfx
 
+#endif

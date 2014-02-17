@@ -30,6 +30,12 @@ main: asset etherdream gfx build/misc.o build/game/entity.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
 
+gfx2test: gfx2 build/gfx2/test.o
+	@echo "[linking] gfx2test"
+	@$(L) build/gfx2/*.o \
+		$(LIBS) -lrt -lm -o gfx2test
+	@chmod +x gfx2test
+
 edtest: build/lib/etherdream.o build/lib/test.o
 	@echo "[linking] edtest"
 	$(GCC) $(CFLAGS) -g build/lib/*o -lrt -lm -o edtest
@@ -39,6 +45,21 @@ build/main.o: source/main.cpp
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 
+
+gfx2: build/gfx2/geo.o
+	@cd .
+
+build/gfx2/geo.o: source/gfx2/geo.cpp source/gfx2/geo.hpp
+	@echo "[compile] gfx2/geo"
+	@mkdir -p ./build/gfx2
+	@$(CD) ./build/gfx2 && $(C) $(INC) \
+		-c ../../source/gfx2/geo.cpp
+
+build/gfx2/test.o: source/gfx2/test.cpp
+	@echo "[compile] gfx2/test"
+	@mkdir -p ./build/gfx2
+	@$(CD) ./build/gfx2 && $(C) $(INC) \
+		-c ../../source/gfx2/test.cpp
 
 #asset: build/asset/square.o build/asset/circle.o build/asset/rectangle.o
 asset: build/asset/circle.o build/asset/rectangle.o

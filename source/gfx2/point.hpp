@@ -3,6 +3,8 @@
 
 // TODO: header files shouldn't include STL
 #include <vector>
+#include <string>
+#include <sstream>
 
 namespace Gfx {
 
@@ -44,11 +46,19 @@ namespace Gfx {
 		};
 
 		// TODO: What other operators / math operations should be supported?
+		
+		std::string toString() const {
+			std::stringstream ss;
+			ss.precision(2);
+			ss << "<" << x << "," << y << "," << z << ">";
+			return ss.str();
+		};
 	};
+
+	// TODO: Good typedef?
+	typedef std::vector<Point> Points;
 
 } // end namespace Gfx
 
-// TODO: Good typedef?
-typedef std::vector<Point> Points;
 
 #endif
