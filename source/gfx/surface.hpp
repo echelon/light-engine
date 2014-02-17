@@ -16,10 +16,13 @@
 #define HW_Y_MAXIMA 30000
 #define HW_Y_MINIMA -30000
 
+#include <memory>
 #include <iostream>
+#include "point.hpp"
+#include "../asset/rectangle.hpp"
+
 using namespace std;
 
-#include "point.hpp"
 class Object;
 
 class Surface {
@@ -32,19 +35,22 @@ class Surface {
 			xMax(HW_X_MAXIMA),
 			xMin(HW_X_MINIMA),
 			yMax(HW_Y_MAXIMA),
-			yMin(HW_Y_MINIMA)
+			yMin(HW_Y_MINIMA),
+			borderRect(0)
 			{ recalculate(); };
 		Surface(unsigned int xMag, unsigned int yMag):
 			xMax(xMag),
 			xMin(-xMag),
 			yMax(yMag),
-			yMin(-yMag) 
+			yMin(-yMag),
+			borderRect(0)
 			{ recalculate(); };
 		Surface(int _xMax, int _yMax, int _xMin, int _yMin):
 			xMax(_xMax),
 			xMin(_xMin),
 			yMax(_yMax),
-			yMin(_yMin) 
+			yMin(_yMin),
+			borderRect(0)
 			{ recalculate(); };
 
 		void setX(int _xMax, int _xMin) {
@@ -81,6 +87,28 @@ class Surface {
 			recalculate();
 		};
 	
+		void showBorder() {
+			Rectangle* r = new Rectangle(
+				Position(xMax, yMax),
+				Position(xMax, yMin),
+				Position(xMin, yMin),
+				Position(xMin, yMax)
+			);
+			r->setScale(1.0f);
+			borderRect = shared_ptr<Rectangle>(r);
+		};
+
+		void hideBorder() {
+			// TODO
+		};
+
+		Rectangle* getBorderRectangle() {
+			if(!borderRect) {
+				return 0;
+			}
+			return borderRect.get();
+		}
+
 	private:
 		// Cached range
 		int xMax;
@@ -93,6 +121,9 @@ class Surface {
 		int xShift;
 		int yScale;
 		int yShift;
+
+		// Border to optionally show
+		shared_ptr<Rectangle> borderRect;
 
 		/**
 		 * Calculate the scale and shift.

@@ -12,6 +12,8 @@
 #include <math.h>
 #include <unistd.h> // usleep
 
+#include "gfx2/point.hpp"
+
 #include "etherdream/find.hpp"
 #include "etherdream/types.hpp"
 #include "etherdream/commands.hpp"
@@ -43,6 +45,8 @@ void move_thread()
 			Entity* e = entities[i];
 			Object* c = objects[i];
 
+			// XXX:
+			// 'objects' (the backing geometry) should not have position.
 			e->tickVelocity();
 			c->setPosition(e->getPosition());
 		}
@@ -72,6 +76,7 @@ int main()
     uniform_int_distribution<> vel(1, 10);
     uniform_int_distribution<> scale(1, 3);
 
+	surface.showBorder();
 	streamer->setSurface(surface);
 
 	for(unsigned int i = 0; i < NUM; i++) {
