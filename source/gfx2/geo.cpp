@@ -7,20 +7,38 @@ StaticGeo::StaticGeo() {
 	// void
 }
 
-StaticGeo::StaticGeo(const Points &pts) :
-	points(pts)
+StaticGeo::StaticGeo(const Paths &pths) :
+	paths(pths)
 {
 	// void
 }
 
-unsigned int StaticGeo::numPoints() {
-	return points.size();
+StaticGeo::StaticGeo(const Points &pts)
+{
+	paths.push_back(Path(pts));
 }
 
-Points::const_iterator StaticGeo::begin() {
-	return points.begin();
+unsigned int StaticGeo::numPaths() const {
+	return paths.size();
 }
 
-Points::const_iterator StaticGeo::end() {
-	return points.end();
+// TODO
+unsigned int StaticGeo::numPoints() const
+{
+	unsigned int count = 0;
+
+	for(Paths::const_iterator it = begin(); it != end(); ++it) {
+		count += it->numPoints();
+	}
+
+	return count;
+}
+
+
+Paths::const_iterator StaticGeo::begin() const {
+	return paths.begin();
+}
+
+Paths::const_iterator StaticGeo::end() const {
+	return paths.end();
 }

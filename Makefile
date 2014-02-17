@@ -46,7 +46,7 @@ build/main.o: source/main.cpp
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 
 
-gfx2: build/gfx2/geo.o
+gfx2: build/gfx2/geo.o build/gfx2/path.o
 	@cd .
 
 build/gfx2/geo.o: source/gfx2/geo.cpp source/gfx2/geo.hpp
@@ -54,6 +54,13 @@ build/gfx2/geo.o: source/gfx2/geo.cpp source/gfx2/geo.hpp
 	@mkdir -p ./build/gfx2
 	@$(CD) ./build/gfx2 && $(C) $(INC) \
 		-c ../../source/gfx2/geo.cpp
+
+build/gfx2/path.o: source/gfx2/path.cpp
+	@echo "[compile] gfx2/path"
+	@mkdir -p ./build/gfx2
+	@$(CD) ./build/gfx2 && $(C) $(INC) \
+		-c ../../source/gfx2/path.cpp
+
 
 build/gfx2/test.o: source/gfx2/test.cpp
 	@echo "[compile] gfx2/test"
