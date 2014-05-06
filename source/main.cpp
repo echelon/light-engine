@@ -36,68 +36,66 @@ Streamer* streamer = new Streamer();
 random_device rd;
 mt19937 randgen(rd());
  
-void move_thread() 
-{
-	while(true) {
-		for(unsigned int i = 0; i < entities.size(); ++i) {
-			Entity* e = entities[i];
-			Object* c = objects[i];
+void move_thread() {
+  while(true) {
+	for(unsigned int i = 0; i < entities.size(); ++i) {
+	  Entity* e = entities[i];
+	  Object* c = objects[i];
 
-			e->tickVelocity();
-			c->setPosition(e->getPosition());
-		}
-
-		usleep(1000);
+	  e->tickVelocity();
+	  c->setPosition(e->getPosition());
 	}
+
+	usleep(1000);
+  }
 }
 
-void dac_thread() 
-{
-	Dac dac = Dac(find_dac());
-	dac.setStreamer(streamer);
-	dac.stream();
+void dac_thread() {
+  Dac dac = Dac(find_dac());
+  dac.setStreamer(streamer);
+  dac.stream();
 }
 
 // Random magnitude
 int rsign() {
-	if(uniform_int_distribution<>(0, 1)(randgen) == 1) {
-		return 1;
-	}
-	return -1;
+  if(uniform_int_distribution<>(0, 1)(randgen) == 1) {
+	return 1;
+  }
+  return -1;
 }
 
-int main()
-{
-	const unsigned int NUM = 7;
-    uniform_int_distribution<> vel(1, 10);
-    uniform_int_distribution<> scale(1, 3);
+int main() {
+  const unsigned int NUM = 7;
+  uniform_int_distribution<> vel(1, 10);
+  uniform_int_distribution<> scale(1, 3);
 
-	streamer->setSurface(surface);
+  streamer->setSurface(surface);
 
-	for(unsigned int i = 0; i < NUM; i++) {
-		//Object* o = new Circle(40);
-		Object* o = new Rectangle();
-		Entity* e = new Entity();
+  for (unsigned int i = 0; i < NUM; i++) {
+	//Object* o = new Circle(40);
+	Object* o = new Rectangle();
+	Entity* e = new Entity();
 
-		o->setColor(WHITE);
-		if(i%2 == 0) {
-			o->setColor(GREEN);
-		}
-		o->setScale((float)scale(randgen)/10 * 0.5);
-
-		e->setSurfaceAsBoundary(surface);
-		e->setVelocity(vel(randgen)*rsign(), vel(randgen)*rsign());
-
-		streamer->addObject(o);
-		objects.push_back(o);
-		entities.push_back(e);
+	o->setColor(WHITE);
+	if (i%2 == 0) {
+		o->setColor(GREEN);
 	}
+	o->setScale((float)scale(randgen)/10 * 0.5);
 
-	thread dt(dac_thread);
-	thread mt(move_thread);
+	e->setSurfaceAsBoundary(surface);
+	e->setVelocity(vel(randgen)*rsign(), vel(randgen)*rsign());
 
-	dt.join();
-	mt.join();
+	streamer->addObject(o);
+	objects.push_back(o);
+	entities.push_back(e);
+  }
 
-	return EXIT_SUCCESS;
+  thread dt(dac_thread);
+  thread mt(move_thread);
+
+  dt.join();
+  mt.join();
+
+  return EXIT_SUCCESS;
 }
+

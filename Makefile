@@ -30,6 +30,24 @@ main: asset etherdream gfx build/misc.o build/game/entity.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
 
+dac_report: asset etherdream gfx build/misc.o build/game/entity.o \
+	build/lib/etherdream.o build/dac_report.o 
+	@echo "[linking] dac_report"
+	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
+		build/gfx/*.o build/game/*.o \
+		build/lib/etherdream.o \
+		$(LIBS) -lrt -lm -o dac_report
+	@chmod +x dac_report
+
+network_test: asset etherdream gfx network build/misc.o build/game/entity.o \
+	build/lib/etherdream.o build/network_test.o 
+	@echo "[linking] network_test"
+	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
+		build/gfx/*.o build/game/*.o build/network/*.o \
+		build/lib/etherdream.o \
+		$(LIBS) -lrt -lm -o network_test 
+	@chmod +x network_test
+
 edtest: build/lib/etherdream.o build/lib/test.o
 	@echo "[linking] edtest"
 	$(GCC) $(CFLAGS) -g build/lib/*o -lrt -lm -o edtest
@@ -38,6 +56,14 @@ edtest: build/lib/etherdream.o build/lib/test.o
 build/main.o: source/main.cpp
 	@echo "[compile] main"
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
+
+build/dac_report.o: source/dac_report.cpp
+	@echo "[compile] dac_report"
+	@$(CD) ./build && $(C) $(INC) -c ../source/dac_report.cpp
+
+build/network_test.o: source/network_test.cpp
+	@echo "[compile] network_test"
+	@$(CD) ./build && $(C) $(INC) -c ../source/network_test.cpp
 
 
 #asset: build/asset/square.o build/asset/circle.o build/asset/rectangle.o
@@ -71,6 +97,19 @@ build/etherdream/find.o: source/etherdream/find.cpp source/etherdream/find.hpp
 	@echo "[compile] etherdream/find"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/find.cpp
+
+network: build/network/mac_address.o build/network/ip_address.o
+	@cd .
+
+build/network/ip_address.o: source/network/ip_address.cpp source/network/ip_address.hpp
+	@echo "[compile] network/ip_address"
+	@$(CD) ./build/network && $(C) $(INC) \
+		-c ../../source/network/ip_address.cpp
+
+build/network/mac_address.o: source/network/mac_address.cpp source/network/mac_address.hpp
+	@echo "[compile] network/mac_address"
+	@$(CD) ./build/network && $(C) $(INC) \
+		-c ../../source/network/mac_address.cpp
 
 gfx: build/gfx/streamer.o build/gfx/tracking.o build/gfx/transformation.o 
 	@cd .

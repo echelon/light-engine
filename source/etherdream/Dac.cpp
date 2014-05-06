@@ -239,28 +239,16 @@ void Dac::stream()
 
 	// XXX: Not a perfect heuristic
 	// Send based on buffer fullness, as some fraction of 30kpps
-	guessRate = 200; // streamer->getRecommendedSendRate();
-	send = (int)(guessRate * 
-			(lastStatus.buffer_fullness/3000.0f));
+	guessRate = 2000; // streamer->getRecommendedSendRate();
+	send = (int)(guessRate * (lastStatus.buffer_fullness/30000.0f));
 
-	if(send < 200) {
-	  //usleep(1000);
-	  //waitCount++;
-	  //continue;
-	}
-
-	//send = 5000;
-
-	if(send < 1) {
-	  //cout << "SEND ZERO?" << endl;
-	  //cout << "buff: " << lastStatus.buffer_fullness << endl;
+	if(send < 100) {
 	  send = 1000;
 	}
 
 	// Sometimes we can flood the DAC
 	//if(started && lastStatus.buffer_fullness == 0) {
 	if(started && lastStatus.isDacFlooded()) {
-	  cout << "**FLOOD**" << endl;
 	  refreshStream();
 	}
 
