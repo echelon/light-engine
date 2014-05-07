@@ -21,11 +21,13 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: asset etherdream gfx build/misc.o build/game/entity.o \
+main: asset etherdream gfx network build/misc.o build/game/entity.o \
 	build/lib/etherdream.o build/main.o 
 	@echo "[linking] main"
 	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
-		build/gfx/*.o build/game/*.o \
+		build/gfx/*.o \
+		build/game/*.o \
+		build/network/*.o \
 		build/lib/etherdream.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
@@ -85,18 +87,13 @@ build/asset/circle.o: source/asset/circle.cpp source/asset/circle.hpp
 	@$(CD) ./build/asset && $(C) $(INC) \
 		-c ../../source/asset/circle.cpp
 
-etherdream: build/etherdream/Dac.o build/etherdream/find.o
+etherdream: build/etherdream/Dac.o
 	@cd .
 
 build/etherdream/Dac.o: source/etherdream/Dac.cpp source/etherdream/Dac.hpp
 	@echo "[compile] etherdream/dac"
 	@$(CD) ./build/etherdream && $(C) $(INC) \
 		-c ../../source/etherdream/Dac.cpp
-
-build/etherdream/find.o: source/etherdream/find.cpp source/etherdream/find.hpp
-	@echo "[compile] etherdream/find"
-	@$(CD) ./build/etherdream && $(C) $(INC) \
-		-c ../../source/etherdream/find.cpp
 
 network: build/network/mac_address.o build/network/ip_address.o
 	@cd .

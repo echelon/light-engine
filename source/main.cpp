@@ -12,7 +12,8 @@
 #include <math.h>
 #include <unistd.h> // usleep
 
-#include "etherdream/find.hpp"
+#include "network/ip_address.hpp"
+#include "network/mac_address.hpp"
 #include "etherdream/types.hpp"
 #include "etherdream/commands.hpp"
 #include "etherdream/Dac.hpp"
@@ -26,6 +27,10 @@
 #include "game/entity.hpp"
 
 using namespace std;
+using namespace LE;
+
+const Network::MacAddress MAC_A("00:04:A3:87:28:CD");
+const Network::MacAddress MAC_B("00:04:A3:3D:0B:60");
 
 vector<Object*> objects;
 vector<Entity*> entities;
@@ -51,7 +56,9 @@ void move_thread() {
 }
 
 void dac_thread() {
-  Dac dac = Dac(find_dac());
+  Network::IpAddress ipAddress = Dac::find_broadcast_ip_with_mac(MAC_B);
+  Dac dac = Dac(ipAddress);
+
   dac.setStreamer(streamer);
   dac.stream();
 }

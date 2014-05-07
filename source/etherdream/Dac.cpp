@@ -2,6 +2,9 @@
 #include "../gfx/object.hpp"
 #include "../gfx/point.hpp"
 #include "../gfx/streamer.hpp"
+#include "../network/ip_address.hpp"
+#include "../network/mac_address.hpp"
+#include "../network/exceptions.hpp"
 
 #include <string.h>
 #include <sys/types.h>
@@ -14,9 +17,87 @@
 #include <vector>
 
 using namespace std;
+using namespace LE;
 
-Dac::Dac(string addr) :
-  address(addr),
+Network::IpAddress Dac::find_broadcast_ip_with_mac(
+	const Network::MacAddress& macAddress) {
+  int fd = 0; 
+  int r = 0;
+  char buf[1024];
+  char ipstr[INET_ADDRSTRLEN];
+
+  sockaddr_in client; 
+  sockaddr_in sender;
+  socklen_t sendsize = sizeof sender;
+
+  memset(&sender, 0, sizeof sender);
+  memset(&client, 0, sizeof client);
+  memset(&buf, 0, sizeof buf);
+
+  client.sin_family = AF_INET;
+  client.sin_port = htons(DAC_PORT_BCAST);
+  client.sin_addr.s_addr = INADDR_ANY;
+
+  fd = socket(AF_INET, SOCK_DGRAM, 0);
+	
+  if (fd < 0) {
+	throw Network::SocketException("Could not create socket.");
+  }
+
+  r = ::bind(fd, (sockaddr*)&client, sizeof(client));
+
+  if (r < 0) {
+	throw Network::SocketException("Could not bind port.");
+  }
+
+  Network::IpAddress ip;
+
+  while (1) {
+	recvfrom(fd, buf, sizeof buf, 0, (sockaddr*)&sender, &sendsize);
+	string ipStr = inet_ntop(AF_INET, &sender.sin_addr, ipstr, sizeof ipstr);
+
+	if (ipStr.size() < 7) {
+	  continue;
+	}
+
+	ip = Network::IpAddress(ipStr);
+
+	// Ping IP and then look up in ARP table
+	Network::MacAddress mac = Network::MacAddress::lookup_from_ip_with_arp_table(
+		ip, true);
+
+	if (macAddress != mac) {
+	  continue;
+	}
+	break;
+  }
+
+  return ip;
+}
+
+Dac::Dac(const string& addr) :
+  ipAddress(Network::IpAddress(addr)),
+  address(ipAddress.toString()),
+  port(DAC_PORT_COMMS),
+  fd(0),
+  streamer(0),
+  started(false)
+{
+  memset(&server, 0, sizeof server);
+
+  //fd = socket(AF_INET, SOCK_STREAM, 0);
+  fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  
+  if (fd < 0) {
+	// TODO: ERROR
+  }
+
+  //connect();
+}
+
+Dac::Dac(const Network::IpAddress& ipAddr) :
+  ipAddress(ipAddr),
+  address(ipAddr.toString()),
   port(DAC_PORT_COMMS),
   fd(0),
   streamer(0),

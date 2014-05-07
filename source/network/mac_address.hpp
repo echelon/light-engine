@@ -1,3 +1,6 @@
+#ifndef LE_NETWORK_MAC_ADDRESS
+#define LE_NETWORK_MAC_ADDRESS
+
 #include <string>
 
 namespace LE {
@@ -24,9 +27,16 @@ namespace LE {
 		  return (macString.size() == 17);
 		}
 
+		bool operator==(const MacAddress& other) const;
+
+		bool operator!=(const MacAddress& other) const {
+		  return !(*this == other);
+		}
+
 	  protected:
 		std::string macString; // In AA:BB:CC:DD:EE:FF format
 	};
   }
 }
 
+#endif

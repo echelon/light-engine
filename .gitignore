@@ -2,4 +2,7 @@ build/*
 *~
 main
 edtest
+dac_report
+network_test
 *.vim
+TODO.md

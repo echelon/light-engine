@@ -8,10 +8,18 @@
 #include "responses.hpp"
 #include "commands.hpp"
 #include "../gfx/point.hpp"
+#include "../network/ip_address.hpp"
 
 class Object;
 class Streamer;
 
+namespace LE {
+  namespace Network {
+	class MacAddress;
+  }
+}
+
+using namespace LE;
 using namespace std;
 
 /**
@@ -20,7 +28,19 @@ using namespace std;
  */
 class Dac {
   public:
+
+	/** 
+	 * Listens for broadcasting Dac matching the MAC address. 
+	 * TODO: Needs timeout exception; will infinite loop!
+	 *
+	 * @Throws Network::SocketException
+	 * @Throws Network::TimeoutException
+	 */
+	static Network::IpAddress find_broadcast_ip_with_mac(
+		const Network::MacAddress& macAddress);
+
 	// These are for ease of use
+	const Network::IpAddress ipAddress;
 	const string address;
 	const unsigned int port;
 
@@ -28,15 +48,13 @@ class Dac {
 	// TODO: Temporary public
 	dac_status lastStatus;
 
-	/**
-	 * CTOR
-	 *  - string addr ip_address
-	 */
-	Dac(string addr);
+	/** CTOR */
+	Dac(const Network::IpAddress& ipAddress);
 
-	/**
-	 * DTOR.
-	 */
+	/** CTOR (DEPRECATED) */
+	Dac(const string& addr);
+
+	/** DTOR */
 	~Dac();
 
 	/**
@@ -92,7 +110,6 @@ class Dac {
 	 * Parse Response.
 	 */
 	bool checkResponse(char command);
-
 };
 
 #endif

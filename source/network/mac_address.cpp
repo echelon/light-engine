@@ -7,11 +7,11 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
-
 #include <linux/if_ether.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <strings.h> // string comparison
 
 using namespace std;
 
@@ -182,6 +182,12 @@ sendmsg(sock, somemmem....);*/
 
 	  return MacAddress();*/
 	}
+
+	bool MacAddress::operator==(const MacAddress& other) const {
+	  // TODO: Colons, and soon other member vars
+	  return (strcasecmp(macString.c_str(), other.macString.c_str()) == 0);
+	}
+
   } // end namespace Network
 } // end namespace LE
 

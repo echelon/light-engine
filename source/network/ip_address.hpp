@@ -1,3 +1,6 @@
+#ifndef LE_NETWORK_IP_ADDRESS
+#define LE_NETWORK_IP_ADDRESS
+
 #include <string>
 
 namespace LE {
@@ -32,3 +35,5 @@ namespace LE {
 
   }
 }
+
+#endif
