@@ -21,13 +21,15 @@ stats:
 
 ### MAIN BUILD TARGET #############
 
-main: asset etherdream gfx network build/misc.o build/game/entity.o \
+main: asset etherdream gfx network pipeline build/misc.o \
+	build/game/entity.o \
 	build/lib/etherdream.o build/main.o 
 	@echo "[linking] main"
 	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
 		build/gfx/*.o \
 		build/game/*.o \
 		build/network/*.o \
+		build/pipeline/*.o \
 		build/lib/etherdream.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
@@ -41,14 +43,6 @@ dac_report: asset etherdream gfx build/misc.o build/game/entity.o \
 		$(LIBS) -lrt -lm -o dac_report
 	@chmod +x dac_report
 
-network_test: asset etherdream gfx network build/misc.o build/game/entity.o \
-	build/lib/etherdream.o build/network_test.o 
-	@echo "[linking] network_test"
-	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
-		build/gfx/*.o build/game/*.o build/network/*.o \
-		build/lib/etherdream.o \
-		$(LIBS) -lrt -lm -o network_test 
-	@chmod +x network_test
 
 edtest: build/lib/etherdream.o build/lib/test.o
 	@echo "[linking] edtest"
@@ -67,6 +61,41 @@ build/network_test.o: source/network_test.cpp
 	@echo "[compile] network_test"
 	@$(CD) ./build && $(C) $(INC) -c ../source/network_test.cpp
 
+
+
+
+pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Entity.o build/pipeline/Geometry.o build/pipeline/FauxMatStack.o build/pipeline/FourMatrix.o
+	@cd .
+
+build/pipeline/Streamer.o: source/pipeline/Streamer.hpp source/pipeline/Streamer.cpp
+	@echo "[compile] pipeline/Streamer"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/Streamer.cpp
+
+build/pipeline/Frame.o: source/pipeline/Frame.hpp source/pipeline/Frame.cpp
+	@echo "[compile] pipeline/Frame"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/Frame.cpp
+
+build/pipeline/FourMatrix.o: source/pipeline/FourMatrix.hpp source/pipeline/FourMatrix.cpp
+	@echo "[compile] pipeline/FourMatrix"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/FourMatrix.cpp
+
+build/pipeline/Entity.o: source/pipeline/Entity.hpp source/pipeline/Entity.cpp
+	@echo "[compile] pipeline/Entity"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/Entity.cpp
+
+build/pipeline/Geometry.o: source/pipeline/Geometry.hpp source/pipeline/Geometry.cpp
+	@echo "[compile] pipeline/Geometry"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/Geometry.cpp
+
+build/pipeline/FauxMatStack.o: source/pipeline/FauxMatStack.hpp source/pipeline/FauxMatStack.cpp
+	@echo "[compile] pipeline/FauxMatStack"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/pipeline/FauxMatStack.cpp
 
 #asset: build/asset/square.o build/asset/circle.o build/asset/rectangle.o
 asset: build/asset/circle.o build/asset/rectangle.o
