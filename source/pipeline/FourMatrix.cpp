@@ -1,5 +1,6 @@
 #include "FourMatrix.hpp"
 #include <sstream>
+#include <cmath>
 
 // Cell aliases from:
 // https://github.com/spsu/graphics4363/blob/master/source/libs/math.cpp
@@ -21,6 +22,174 @@
 #define T15 15
 
 namespace LE {
+  FourMatrix FourMatrix::identity() {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = 0.0f;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = 0.0f;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::x_rotation(float theta) {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = 0.0f;
+	mat[4] = 0.0f;
+	mat[5] = cos(theta);
+	mat[6] = sin(theta);
+	mat[7] = 0.0f;
+	mat[8] = 0.0f;
+	mat[9] = -mat[6];
+	mat[10] = mat[5];
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::y_rotation(float theta) {
+	float* mat = new float[16];
+	mat[0] = cos(theta);
+	mat[1] = 0.0f;
+	mat[2] = -sin(theta);
+	mat[3] = 0.0f;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = 0.0f;
+	mat[8] = -mat[2];
+	mat[9] = 0.0f;
+	mat[10] = mat[0];
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::z_rotation(float theta) {
+	float* mat = new float[16];
+	mat[0] = cos(theta);
+	mat[1] = sin(theta);
+	mat[2] = 0.0f;
+	mat[3] = 0.0f;
+	mat[4] = -mat[1];
+	mat[5] = mat[0];
+	mat[6] = 0.0f;
+	mat[7] = 0.0f;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::x_translation(float x) {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = x;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = 0.0f;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::y_translation(float y) {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = 0.0f;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = y;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = 0.0f;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::z_translation(float z) {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = 0.0f;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = 0.0f;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = z;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
+  FourMatrix FourMatrix::translation(float x, float y, float z) {
+	float* mat = new float[16];
+	mat[0] = 1.0f;
+	mat[1] = 0.0f;
+	mat[2] = 0.0f;
+	mat[3] = x;
+	mat[4] = 0.0f;
+	mat[5] = 1.0f;
+	mat[6] = 0.0f;
+	mat[7] = y;
+	mat[8] = 0.0f;
+	mat[9] = 0.0f;
+	mat[10] = 1.0f;
+	mat[11] = z;
+	mat[12] = 0.0f;
+	mat[13] = 0.0f;
+	mat[14] = 0.0f;
+	mat[15] = 1.0f;
+	return FourMatrix(mat);
+  }
+
   FourMatrix::~FourMatrix() {
 	delete[] values;
   }
@@ -75,6 +244,9 @@ namespace LE {
 	return FourMatrix(r); 
   }
 
+  //void FourMatrix::translate(float x, float y, float z) {
+  //}
+
   std::string FourMatrix::toString() const {
 	std::ostringstream ss;
 	// TODO: loop inefficient
@@ -89,6 +261,10 @@ namespace LE {
 	return ss.str();
   }
 
+  float FourMatrix::getAt(unsigned int i) const {
+	return values[i]; // TODO: Bounds assertions
+  }
+
   void FourMatrix::setAt(unsigned int i, float val) {
 	values[i] = val; // TODO: Bounds assertions
   }
@@ -97,11 +273,5 @@ namespace LE {
 	unsigned int cell = row * 4 + col; // TODO: Bounds assertions
 	values[cell] = val;
   }
-
-  float FourMatrix::getAt(unsigned int i) const {
-	return values[i]; // TODO: Bounds assertions
-  }
-
-
 } // end namespace
 

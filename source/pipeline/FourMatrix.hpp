@@ -3,6 +3,10 @@
 
 #include <string>
 
+// TODO - Design Goals: This should be *fast* and *easy*. 
+// Methods for both in terms of memory use. But easy enough to know which
+// API you're using without conflating them
+
 namespace LE {
   class FourMatrix {
 
@@ -18,24 +22,53 @@ namespace LE {
 	  FourMatrix(float* array);
 
 	public:
-	  /** CTOR: 4x4 */
+
+	  /** Get identity matrix. */
+	  static FourMatrix identity();
+
+	  /** Get rotation matrices. */
+	  static FourMatrix x_rotation(float theta);
+	  static FourMatrix y_rotation(float theta);
+	  static FourMatrix z_rotation(float theta);
+
+	  /** Get translation matrices. */
+	  static FourMatrix x_translation(float x);
+	  static FourMatrix y_translation(float y);
+	  static FourMatrix z_translation(float z);
+	  static FourMatrix translation(float x, float y, float z);
+
+	  /** CTOR: 4x4 zerofill. */
 	  FourMatrix();
 
-	  /** Copy CTOR */
+	  /** Copy CTOR. */
 	  FourMatrix(const FourMatrix& mat);
 
-	  /** DTOR */
+	  /** DTOR. */
 	  ~FourMatrix();
 
+	  /** Matrix multiplication */
 	  FourMatrix operator*(const FourMatrix& mat) const;
+
+	  /** Translate */
+	  //void translate(float x, float y, float z);
+
+	  /** Scale */
+	  //void scale(float x, float y, float z);
+
+	  /** Rotate in one of 3 dimensions */
+	  //void rotateX(float r);
+	  //void rotateY(float r);
+	  //void rotateZ(float r);
+
+	  // TODO: getTranslated[d]() -> new copy
 
 	  /** Debug */
 	  std::string toString() const;
 
-	  /** Accessor and Mutator */
+	  /** Accessor and Mutators */
+	  float getAt(unsigned int i) const;
 	  void setAt(unsigned int i, float val);
 	  void setAt(unsigned int row, unsigned int col, float val);
-	  float getAt(unsigned int i) const;
   };
 }
 

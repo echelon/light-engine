@@ -73,19 +73,19 @@ int rsign() {
   return -1;
 }
 
-void testing() {
+void testing_matrices() {
   FourMatrix a = FourMatrix();
-  FourMatrix b = FourMatrix();
+  FourMatrix b = FourMatrix::identity();
 
   a.setAt(3, 1.3f);
   a.setAt(5, 5.3f);
   a.setAt(9, 9.3f);
   a.setAt(12, 11.3f);
 
-  b.setAt(0, 1.0f);
+  /*b.setAt(0, 1.0f);
   b.setAt(5, 1.0f);
   b.setAt(10, 1.0f);
-  b.setAt(15, 2.0f);
+  b.setAt(15, 2.0f);*/
 
   cout << "Mat A: " << endl;
   cout << a.toString();
@@ -100,7 +100,7 @@ void testing() {
 
 int main() {
 
-  testing();
+  testing_matrices();
 
   const unsigned int NUM = 7;
   uniform_int_distribution<> vel(1, 10);
