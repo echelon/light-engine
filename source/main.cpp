@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <random>
+#include <memory>
 
 #include <string.h>
 #include <sys/types.h>
@@ -27,6 +28,8 @@
 #include "game/entity.hpp"
 
 #include "pipeline/FourMatrix.hpp"
+#include "pipeline/FrameBuffers.hpp"
+#include "pipeline/Frame.hpp"
 
 using namespace std;
 using namespace LE;
@@ -98,9 +101,21 @@ void testing_matrices() {
   cout << c.toString();
 }
 
+void testing_framebuffers() {
+
+  LE::FrameBuffers buffers;
+
+  std::shared_ptr<Frame> frameA = buffers.getLasingFrame();
+  std::shared_ptr<Frame> frameB = buffers.getLasingFrame();
+
+
+}
+
+
 int main() {
 
   testing_matrices();
+  testing_framebuffers();
 
   const unsigned int NUM = 7;
   uniform_int_distribution<> vel(1, 10);

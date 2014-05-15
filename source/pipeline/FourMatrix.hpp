@@ -49,13 +49,13 @@ namespace LE {
 	  /** Matrix multiplication */
 	  FourMatrix operator*(const FourMatrix& mat) const;
 
-	  /** Translate */
+	  /** In-place translate */
 	  //void translate(float x, float y, float z);
 
-	  /** Scale */
+	  /** In-place scale */
 	  //void scale(float x, float y, float z);
 
-	  /** Rotate in one of 3 dimensions */
+	  /** In-place rotate in one of 3 dimensions */
 	  //void rotateX(float r);
 	  //void rotateY(float r);
 	  //void rotateZ(float r);
