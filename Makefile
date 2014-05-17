@@ -64,7 +64,7 @@ build/network_test.o: source/network_test.cpp
 
 
 
-pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Entity.o build/pipeline/Geometry.o build/pipeline/FauxMatStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o
+pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Entity.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o
 	@cd .
 
 build/pipeline/Streamer.o: source/pipeline/Streamer.hpp source/pipeline/Streamer.cpp
@@ -97,10 +97,10 @@ build/pipeline/Geometry.o: source/pipeline/Geometry.hpp source/pipeline/Geometry
 	@$(CD) ./build/pipeline && $(C) $(INC) \
 		-c ../../source/pipeline/Geometry.cpp
 
-build/pipeline/FauxMatStack.o: source/pipeline/FauxMatStack.hpp source/pipeline/FauxMatStack.cpp
-	@echo "[compile] pipeline/FauxMatStack"
+build/pipeline/MatrixStack.o: source/pipeline/MatrixStack.hpp source/pipeline/MatrixStack.cpp
+	@echo "[compile] pipeline/MatrixStack"
 	@$(CD) ./build/pipeline && $(C) $(INC) \
-		-c ../../source/pipeline/FauxMatStack.cpp
+		-c ../../source/pipeline/MatrixStack.cpp
 
 #asset: build/asset/square.o build/asset/circle.o build/asset/rectangle.o
 asset: build/asset/circle.o build/asset/rectangle.o

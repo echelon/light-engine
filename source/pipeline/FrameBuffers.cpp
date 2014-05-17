@@ -5,6 +5,7 @@ namespace LE {
 
   FrameBuffers::FrameBuffers(): 
 	lasing(0),
+	nextLasing(0),
 	drawing(1),
 	waiting(2)
   {
@@ -19,24 +20,40 @@ namespace LE {
   }
 
   FrameBuffers::~FrameBuffers() {
-
   }
 
   std::shared_ptr<Frame> FrameBuffers::getLasingFrame() {
-	return frames[0]; // TODO
+	return frames[lasing];
   }
 
   std::shared_ptr<Frame> FrameBuffers::getDrawingFrame() {
-	return frames[0]; // TODO 
+	return frames[drawing];
   }
 
+  // TODO: Requires debug
   void FrameBuffers::doneDrawing() {
 	mutex.lock();
+	unsigned int oldDrawing = drawing;
+
+	nextLasing = oldDrawing;
+	waiting = oldDrawing;
+
+	drawing = waiting;
+
 	mutex.unlock();
   }
 
   void FrameBuffers::doneLasing() {
 	mutex.lock();
+
+	if (lasing == nextLasing) {
+	  // We're not ready with the next frame
+	  mutex.unlock();
+	  return;
+	}
+
+	// Swap
+	lasing = nextLasing;
 	mutex.unlock();
   }
 

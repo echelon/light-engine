@@ -56,8 +56,9 @@ namespace LE {
 			return true;
 		  case NONE:
 		  case WRITE:
-			return false;
+			break;
 		}
+		return false;
 	  };
 
 	  /** Can I haz write permissions? */
@@ -68,7 +69,7 @@ namespace LE {
 			return true;
 		  case NONE:
 		  case READ:
-			return false;
+			break;
 		}
 		return false;
 	  };

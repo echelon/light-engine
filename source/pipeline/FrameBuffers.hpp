@@ -10,20 +10,21 @@ namespace LE {
 
 	protected:
 	  /** 
-	   * Frames x3:
+	   * Frames x 3:
 	   *  - Lasing frame 
 	   *  - Drawing frame
 	   *  - Waiting frame
 	   */
 	  std::shared_ptr<Frame>* frames;
 
+	  /** Indices to different frames. */
+	  unsigned int lasing;
+	  unsigned int nextLasing;
+	  unsigned int drawing;
+	  unsigned int waiting;
+
 	  /** Mutex guard on frame swap. */
 	  std::mutex mutex;
-
-	  /** Pointers to different frames. */
-	  int lasing;
-	  int drawing;
-	  int waiting;
 
 	public:
 	  FrameBuffers();
@@ -35,10 +36,16 @@ namespace LE {
 	  /** Get the current frame to draw on. */
 	  std::shared_ptr<Frame> getDrawingFrame();
 
-	  /** Denote finish of drawing. */
+	  /** 
+	   * Denote finish of drawing. 
+	   * You **MUST** get a new drawing frame with getDrawingFrame()
+	   */
 	  void doneDrawing();
 
-	  /** Denote finish of lasing. */
+	  /** 
+	   * Denote finish of lasing. 
+	   * You **MUST** get a new lasing frame with getLasingFrame()
+	   */
 	  void doneLasing();
   };
 }

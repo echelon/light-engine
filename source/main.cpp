@@ -30,6 +30,7 @@
 #include "pipeline/FourMatrix.hpp"
 #include "pipeline/FrameBuffers.hpp"
 #include "pipeline/Frame.hpp"
+#include "pipeline/MatrixStack.hpp"
 
 using namespace std;
 using namespace LE;
@@ -79,16 +80,16 @@ int rsign() {
 void testing_matrices() {
   FourMatrix a = FourMatrix();
   FourMatrix b = FourMatrix::identity();
+  MatrixStack stack = MatrixStack();
 
   a.setAt(3, 1.3f);
   a.setAt(5, 5.3f);
   a.setAt(9, 9.3f);
   a.setAt(12, 11.3f);
 
-  /*b.setAt(0, 1.0f);
-  b.setAt(5, 1.0f);
-  b.setAt(10, 1.0f);
-  b.setAt(15, 2.0f);*/
+  b.setAt(1, 1.2f);
+  b.setAt(3, -15.3f);
+  b.setAt(7, 0.3f);
 
   cout << "Mat A: " << endl;
   cout << a.toString();
@@ -99,16 +100,34 @@ void testing_matrices() {
 
   cout << "Mat C: " << endl;
   cout << c.toString();
+
+  stack.push(a);
+  stack.push(b);
+
+  cout << "MatStack->push(a)->push(b)->top(): " << endl;
+  cout << stack.top().toString();
+
 }
+
 
 void testing_framebuffers() {
 
   LE::FrameBuffers buffers;
 
-  std::shared_ptr<Frame> frameA = buffers.getLasingFrame();
-  std::shared_ptr<Frame> frameB = buffers.getLasingFrame();
+  shared_ptr<Frame> lasing;
+  shared_ptr<Frame> drawing;
 
+  for(unsigned int i = 0; i < 5; i++) {
+	lasing = buffers.getLasingFrame();
+	drawing = buffers.getDrawingFrame();
 
+	cout << "Lase Read:\t" << lasing->canRead() << endl;
+	cout << "Lase Write:\t" << lasing->canWrite() << endl;
+	cout << "Draw Read:\t" << drawing->canRead() << endl;
+	cout << "Draw Write:\t" << drawing->canWrite() << endl;
+
+	buffers.doneDrawing();
+  }
 }
 
 
