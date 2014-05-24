@@ -46,8 +46,12 @@ build/main.o: source/main.cpp
 	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
 
 
-gfx2: build/gfx2/geo.o build/gfx2/path.o
-	@cd .
+gfx2: \
+	build/gfx2/geo.o \
+	build/gfx2/geo_blanked.o \
+	build/gfx2/geo_unblanked.o \
+	build/gfx2/path.o
+		@cd .
 
 build/gfx2/geo.o: source/gfx2/geo.cpp source/gfx2/geo.hpp
 	@echo "[compile] gfx2/geo"
@@ -55,12 +59,23 @@ build/gfx2/geo.o: source/gfx2/geo.cpp source/gfx2/geo.hpp
 	@$(CD) ./build/gfx2 && $(C) $(INC) \
 		-c ../../source/gfx2/geo.cpp
 
+build/gfx2/geo_blanked.o: source/gfx2/geo_blanked.cpp
+	@echo "[compile] gfx2/geo_blanked"
+	@mkdir -p ./build/gfx2
+	@$(CD) ./build/gfx2 && $(C) $(INC) \
+		-c ../../source/gfx2/geo_blanked.cpp
+
+build/gfx2/geo_unblanked.o: source/gfx2/geo_unblanked.cpp
+	@echo "[compile] gfx2/geo_unblanked"
+	@mkdir -p ./build/gfx2
+	@$(CD) ./build/gfx2 && $(C) $(INC) \
+		-c ../../source/gfx2/geo_unblanked.cpp
+
 build/gfx2/path.o: source/gfx2/path.cpp
 	@echo "[compile] gfx2/path"
 	@mkdir -p ./build/gfx2
 	@$(CD) ./build/gfx2 && $(C) $(INC) \
 		-c ../../source/gfx2/path.cpp
-
 
 build/gfx2/test.o: source/gfx2/test.cpp
 	@echo "[compile] gfx2/test"

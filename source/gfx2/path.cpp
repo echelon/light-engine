@@ -23,3 +23,8 @@ Points::const_iterator Path::begin() const {
 Points::const_iterator Path::end() const {
 	return points.end();
 }
+
+void Path::reset() {
+	points.reset();
+}
+

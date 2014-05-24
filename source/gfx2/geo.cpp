@@ -3,27 +3,27 @@
 
 using namespace Gfx;
 
-StaticGeo::StaticGeo() {
+Geo::Geo() {
 	// void
 }
 
-StaticGeo::StaticGeo(const Paths &pths) :
+Geo::Geo(const Paths &pths) :
 	paths(pths)
 {
 	// void
 }
 
-StaticGeo::StaticGeo(const Points &pts)
+Geo::Geo(const Points &pts)
 {
 	paths.push_back(Path(pts));
 }
 
-unsigned int StaticGeo::numPaths() const {
+unsigned int Geo::numPaths() const {
 	return paths.size();
 }
 
-// TODO
-unsigned int StaticGeo::numPoints() const
+// TODO CONSTANT TIME
+unsigned int Geo::numPoints() const
 {
 	unsigned int count = 0;
 
@@ -35,10 +35,15 @@ unsigned int StaticGeo::numPoints() const
 }
 
 
-Paths::const_iterator StaticGeo::begin() const {
+Paths::const_iterator Geo::begin() const {
 	return paths.begin();
 }
 
-Paths::const_iterator StaticGeo::end() const {
+Paths::const_iterator Geo::end() const {
 	return paths.end();
 }
+
+void Geo::push_path(const Path& pth) {
+	paths.push_back(pth); // TODO TODO: Copy or ref? BLAH.
+}
+

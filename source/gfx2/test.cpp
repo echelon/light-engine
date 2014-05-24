@@ -2,6 +2,8 @@
 #include <iostream>
 
 #include "geo.hpp"
+#include "geo_blanked.hpp"
+#include "geo_unblanked.hpp"
 #include "point.hpp"
 #include "path.hpp"
 
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
 	
 	cout << "Geo 1" << endl;
 
-	Gfx::StaticGeo g1;
+	Gfx::Geo g1;
 
 	cout << "Num Paths in geo: " << g1.numPaths() << endl;
 
@@ -72,17 +74,28 @@ int main(int argc, char *argv[])
 
 	cout << "Geo 2" << endl;
 
-	Gfx::StaticGeo g2(pths);
+	Gfx::Geo g2(pths);
 
 	cout << "Num Paths in geo: " << g2.numPaths() << endl;
 	cout << "Num Points in geo: " << g2.numPoints() << endl;
 
 	cout << "Geo 3" << endl;
 
-	Gfx::StaticGeo g3(pts);
+	Gfx::Geo g3(pts);
 
 	cout << "Num Paths in geo: " << g3.numPaths() << endl;
 	cout << "Num Points in geo: " << g3.numPoints() << endl;
 
+	cout << "================================" << endl;
+
+	Gfx::UnblankedGeo ugeo(pths);
+
+	cout << "UGeo #Paths: " << ugeo.numPaths() << endl;
+	cout << "UGeo #Points: " << ugeo.numPoints() << endl;
+
+	Gfx::BlankedGeo bgeo = ugeo.getBlanked();
+
+	cout << "BGeo #Paths: " << bgeo.numPaths() << endl;
+	cout << "BGeo #Points: " << bgeo.numPoints() << endl;
 }
 
