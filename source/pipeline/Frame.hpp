@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "../gfx/point.hpp"
+#include "Geometry.hpp"
+#include "MatrixStack.hpp"
 
 /**
  * Implemenation of the drawing algorithm.
@@ -24,29 +26,19 @@ namespace LE {
 
 	protected:
 	  /** Point buffer. */
-	  std::vector<Point> points;
 	  
 	  /** Drawing mode of the frame. */
 	  Mode mode;
 
 	public:
+
+	  Points points; // TODO/temp -- move back to protected
+
 	  /** CTOR. */
 	  Frame();
 
 	  /** DTOR. */
 	  ~Frame();
-
-	  /** 
-	   * Synchronously calculate the frame and replace the buffer
-	   * contents. 
-	   */
-	  void calculateFrame();
-
-	  /**
-	   * Synchronously calculate the frame and replace the buffer
-	   * contents. Use the last frame as the start point for tracking.
-	   */
-	  void calculateFrame(const Frame& previousFrame);
 
 	  /** Can I haz read permissions? */
 	  bool canRead() const {
@@ -73,6 +65,27 @@ namespace LE {
 		}
 		return false;
 	  };
+
+	unsigned int getNumberPoints() const;
+
+    /**
+	 * Draw Geometry.
+	 */
+	void draw(const Geometry& geo);
+	// void draw_notrack() for non-tracking/blanking
+
+	/**
+	 * Draw Geometry with transformation.
+	 */
+	void draw(const Geometry& geo, const MatrixStack& matStack);
+
+	/**
+	 * Clear the frame buffer of points.
+	 */
+	void clear();
+
+	// TODO: Inefficient
+	Points getPoints() const;
   };
 }
 

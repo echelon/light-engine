@@ -3,12 +3,14 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <netinet/in.h>
 #include "types.hpp"
 #include "responses.hpp"
 #include "commands.hpp"
 #include "../gfx/point.hpp"
 #include "../network/ip_address.hpp"
+#include "../pipeline/FrameBuffers.hpp"
 
 class Object;
 class Streamer;
@@ -48,6 +50,9 @@ class Dac {
 	// TODO: Temporary public
 	dac_status lastStatus;
 
+	// Frame buffer
+	shared_ptr<FrameBuffers> frameBuffer;
+
 	/** CTOR */
 	Dac(const Network::IpAddress& ipAddress);
 
@@ -75,10 +80,17 @@ class Dac {
 
 	/**
 	 * Start the stream
+	 * XXX: DEPRECATED!!!
 	 * TODO: These should live outside of EtherDream code.
 	 */
 	void stream();
 	void setStreamer(Streamer* s);
+
+	/**
+	 * Start the frame buffer stream
+	 */
+	void setFrameBuffer(shared_ptr<LE::FrameBuffers> frameBuffer);
+	void streamFrameBuffer();
 
 
   private:

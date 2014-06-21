@@ -23,6 +23,9 @@ namespace LE {
 	  unsigned int drawing;
 	  unsigned int waiting;
 
+	  /** Whether the next lasing frame is ready. */
+	  bool nextLasingFrameReady;
+
 	  /** Mutex guard on frame swap. */
 	  std::mutex mutex;
 
@@ -47,6 +50,9 @@ namespace LE {
 	   * You **MUST** get a new lasing frame with getLasingFrame()
 	   */
 	  void doneLasing();
+
+	  // Debug
+	  void printSizes();
   };
 }
 

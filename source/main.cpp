@@ -27,6 +27,7 @@
 #include "asset/illum/blink.hpp"
 #include "game/entity.hpp"
 
+#include "pipeline/Geometry.hpp"
 #include "pipeline/FourMatrix.hpp"
 #include "pipeline/FrameBuffers.hpp"
 #include "pipeline/Frame.hpp"
@@ -38,8 +39,12 @@ using namespace LE;
 const Network::MacAddress MAC_A("00:04:A3:87:28:CD");
 const Network::MacAddress MAC_B("00:04:A3:3D:0B:60");
 
+const Network::MacAddress USE_MAC = MAC_A;
+
 vector<Object*> objects;
 vector<Entity*> entities;
+
+shared_ptr<LE::FrameBuffers> FRAME_BUFFERS(new LE::FrameBuffers);
 
 Surface surface (20000, 20000, -20000, 0);
 Streamer* streamer = new Streamer();
@@ -62,11 +67,13 @@ void move_thread() {
 }
 
 void dac_thread() {
-  Network::IpAddress ipAddress = Dac::find_broadcast_ip_with_mac(MAC_B);
+  Network::IpAddress ipAddress = Dac::find_broadcast_ip_with_mac(USE_MAC);
   Dac dac = Dac(ipAddress);
 
   dac.setStreamer(streamer);
-  dac.stream();
+  dac.setFrameBuffer(FRAME_BUFFERS);
+  //dac.stream();
+  dac.streamFrameBuffer();
 }
 
 // Random magnitude
@@ -131,10 +138,44 @@ void testing_framebuffers() {
 }
 
 
-int main() {
+LE::Geometry make_circle(unsigned int radius, 
+	unsigned int sample_points) {
+  Points pts;
 
-  testing_matrices();
-  testing_framebuffers();
+  for (unsigned int i = 0; i < sample_points; i++) {
+	float s = (float)i / sample_points * 2 * M_PI;
+	float x = cos(s) * radius;
+	float y = sin(s) * radius;
+	//cout << x << "," << y << endl;
+	pts.push_back(Point(x, y));
+  }
+
+  return LE::Geometry(pts);
+}
+
+void draw_thread() {
+  LE::Geometry circle = make_circle(5000, 1000);
+
+  while (true) {
+	shared_ptr<Frame> drawing = FRAME_BUFFERS->getDrawingFrame();
+	drawing->clear();
+	drawing->draw(circle);
+	FRAME_BUFFERS->doneDrawing();
+  }
+}
+
+void laser_thread() {
+  Network::IpAddress ipAddress = Dac::find_broadcast_ip_with_mac(USE_MAC);
+  Dac dac = Dac(ipAddress);
+
+  dac.setFrameBuffer(FRAME_BUFFERS);
+  //dac.streamFrameBuffer();
+  dac.stream();
+}
+
+void old_main() {
+  //testing_matrices();
+  //testing_framebuffers();
 
   const unsigned int NUM = 7;
   uniform_int_distribution<> vel(1, 10);
@@ -162,10 +203,20 @@ int main() {
   }
 
   thread dt(dac_thread);
-  thread mt(move_thread);
+  //thread mt(move_thread);
 
   dt.join();
-  mt.join();
+  //mt.join();
+}
+
+int main() {
+  thread drawing(draw_thread);
+  old_main();
+
+  //thread lasing(laser_thread);
+
+  drawing.join();
+  //lasing.join();
 
   return EXIT_SUCCESS;
 }

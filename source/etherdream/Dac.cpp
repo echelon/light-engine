@@ -5,6 +5,7 @@
 #include "../network/ip_address.hpp"
 #include "../network/mac_address.hpp"
 #include "../network/exceptions.hpp"
+#include "../pipeline/Frame.hpp"
 
 #include <string.h>
 #include <sys/types.h>
@@ -133,6 +134,9 @@ vector<dac_point> Dac::convertPoints(Points pts)
 
 	newPt.x = (int)pt.pos.x;
 	newPt.y = (int)pt.pos.y;
+
+	//cout << pt.pos.x << "." << pt.pos.y << endl;
+	//cout << newPt.x << ":" << newPt.y << endl;
 
 	newPt.r = pt.color.r;
 	newPt.g = pt.color.g;
@@ -283,7 +287,7 @@ void Dac::setStreamer(Streamer* s)
 
 void Dac::stream()
 {
-  // TODO: Check if connected. 
+  /*// TODO: Check if connected. 
   connect();
 
   // Only need to prepare if not already prepared
@@ -345,7 +349,7 @@ void Dac::stream()
 	  started = true;
 	  begin();
 	}
-  }
+  }*/
 }
 
 void Dac::refreshStream()
@@ -354,3 +358,82 @@ void Dac::refreshStream()
   started = false;
 }
 
+
+void Dac::setFrameBuffer(shared_ptr<LE::FrameBuffers> buffer) {
+  frameBuffer = buffer;
+}
+
+void Dac::streamFrameBuffer() 
+{
+  // TODO: Check if connected. 
+  connect();
+
+  // Only need to prepare if not already prepared
+  // If then can't prepare, perhaps the last run has 
+  // it confused, so try a shutdown / state refresh.
+  if(lastStatus.playback_state == 0) {
+	if(!prepare()) { 
+	  cerr << "DAC: FIRST 'PREPARE' NOT ACKNOWLEDGED!" << endl;
+	  if(!clear_estop()) {
+		// TODO: Raise critical exception
+		cerr << "DAC: COULD NOT CLEAR ESTOP!" << endl;
+		return;
+	  }
+	  stop();
+	  if(!prepare()) {
+		// TODO: Raise critical exception
+		cerr << "DAC: 'PREPARE' NOT ACKNOWLEDGED!" << endl;
+		return;
+	  }
+	}
+  }
+
+  // TODO: Idea [!]
+  // do a connect(), restart(), etc. functions that run through
+  // all the commands necessary for a healthy connection
+
+  started = false;
+
+  unsigned int send = 1000;
+  unsigned int guessRate = DEFAULT_POINTS_PER_SEND;
+
+  while (true) {
+	vector<dac_point> points;
+
+	// XXX: Not a perfect heuristic
+	// Send based on buffer fullness, as some fraction of 30kpps
+	guessRate = 2000;
+	send = (int)(guessRate * (lastStatus.buffer_fullness/30000.0f));
+
+	if(send < 100) {
+	  send = 1000;
+	}
+
+	// Sometimes we can flood the DAC
+	//if(started && lastStatus.buffer_fullness == 0) {
+	if(started && lastStatus.isDacFlooded()) {
+	  refreshStream();
+	}
+
+	// Can't hold onto drawing an empty frame
+	Points framePoints = frameBuffer->getDrawingFrame()->points;
+	while (framePoints.size() == 0) {
+	  frameBuffer->doneLasing();
+	  framePoints = frameBuffer->getDrawingFrame()->points;
+	}
+
+	points = convertPoints(framePoints);
+	frameBuffer->doneLasing();
+
+	// FIXME: These functions and their names suck.
+	if(!test_send_data(points)) {
+	  //cout << "Tried to send " << points.size() << endl;
+	}
+	usleep(10000);
+
+	if(!started) {
+	  started = true;
+	  begin();
+	}
+  }
+}
