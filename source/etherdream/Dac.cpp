@@ -124,15 +124,17 @@ Dac::~Dac()
 }
 
 // TODO: This is inefficient. 
-shared_ptr<vector<dac_point>> Dac::convertPoints(Points pts)
+shared_ptr<vector<dac_point>> Dac::convertPoints(shared_ptr<Points> pts)
 {
   vector<dac_point>* newPts = new vector<dac_point>;
   vector<dac_point>& newPtsRef = *newPts;
 
-  newPts->reserve(pts.size());
+  Points& ptsRef = *pts;
 
-  for (unsigned int i = 0; i < pts.size(); i++) {
-	Point pt = pts[i];
+  newPts->reserve(pts->size());
+
+  for (unsigned int i = 0; i < ptsRef.size(); i++) {
+	Point pt =ptsRef[i];
 	dac_point newPt;
 
 	newPt.x = (int)pt.pos.x;
@@ -247,11 +249,15 @@ bool Dac::clear_estop()
 }
 
 // TODO: Fix messiness
-bool Dac::test_send_data(vector<dac_point> pts)
+bool Dac::test_send_data(unique_ptr<vector<dac_point>> pts)
 {
   data_command cmd;
 
-  cmd.set_points(pts);
+  cout << "Sending " 
+	<< pts->size() 
+	<< " encoded points to DAC over the wire" << endl;
+
+  cmd.set_points(*pts);
   vector<uint8_t> cmdBuf = cmd.serialize();
 
   send(fd, &cmdBuf[0], cmdBuf.size(), 0);
@@ -413,38 +419,52 @@ void Dac::streamFrameBuffer()
 	}
 
 	// Sometimes we can flood the DAC
-	//if(started && lastStatus.buffer_fullness == 0) {
+	// if(started && lastStatus.buffer_fullness == 0) {
 	if (started && lastStatus.isDacFlooded()) {
 	  refreshStream();
 	}
 
-	shared_ptr<Frame> curFrame = frameBuffer->getDrawingFrame();
-	Points framePoints = curFrame->points;
+	// We stream from the buffer, not directly from the frame!
+	while (streamBuffer.size() < send) {
+	  shared_ptr<Frame> curFrame = frameBuffer->getDrawingFrame();
+	  shared_ptr<Points> framePts;
 
-	do {
-	  frameBuffer->doneLasing(); // performs buffer swap
-	  curFrame = frameBuffer->getDrawingFrame();
-	  framePoints = curFrame->points;
-	  curFrame->markGetPoints();
+	  do {
+		frameBuffer->doneLasing(); // performs buffer swap (TODO: confirm)
+		curFrame = frameBuffer->getDrawingFrame();
 
-	} while (framePoints.size() == 0);
+		Points pts = curFrame->copyPoints();
 
-	curFrame->markGotPoints();
-	frameBuffer->doneLasing(); // TODO: Before or after?
+		framePts = shared_ptr<Points>(new Points(pts));
+		curFrame->markGetPoints();
 
-	shared_ptr<vector<dac_point>> points = convertPoints(framePoints);
+	  } while (framePts->size() == 0);
 
-	streamBuffer.add(points);
+	  curFrame->markGotPoints();
 
-	//unique_ptr<vector<dac_point>> pts = streamBuffer.get(points);
-	
-	if (true) {
-	  cout << "continue" << endl;
-	  continue;
+	  streamBuffer.add(convertPoints(framePts));
+
+	  // Now safe to deallocate framePoints ptr
+	  frameBuffer->doneLasing(); // TODO: Before or after?
 	}
 
+	auto before = streamBuffer.size();
+
+	// We don't send large messages (~1000 points)
+	unique_ptr<vector<dac_point>> packetPoints = streamBuffer.get(send);
+
+	auto after = streamBuffer.size();
+
+	cout << "Stream buffer size before get(): " 
+	  << before 
+	  << " after: "
+	  << after
+	  << " got these to send: "
+	  << packetPoints->size()
+	  << endl;
+
 	// FIXME: These functions and their names suck.
-	if(!test_send_data(*points)) {
+	if(!test_send_data(move(packetPoints))) {
 	  //cout << "Tried to send " << points.size() << endl;
 	}
 

@@ -76,7 +76,7 @@ class Dac {
 	bool stop();
 	bool clear_estop();
 
-	bool test_send_data(vector<dac_point> pts);
+	bool test_send_data(unique_ptr<vector<dac_point>> pts);
 
 	/**
 	 * Start the stream
@@ -110,7 +110,7 @@ class Dac {
 	// Whether stream has started
 	bool started;
 
-	shared_ptr<vector<dac_point>> convertPoints(vector<Point> pts);
+	shared_ptr<vector<dac_point>> convertPoints(shared_ptr<Points> pts);
 
 	/**
 	 * Sometimes the DAC gets flooded or buffer fills.

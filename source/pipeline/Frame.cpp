@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <assert.h>
+#include <algorithm>    // std::move (ranges)
+#include <utility>      // std::move (objects)
 
 using namespace std;
 
@@ -89,9 +91,11 @@ namespace LE {
 	numberGotPointsCalls++;
   }
 
-  Points Frame::getPoints() const {
-	// XXX: Doesn't automatically numberGetPointsCalls++
-	return points; // TODO CONFIRM
+  // XXX: Doesn't automatically numberGetPointsCalls++
+  Points Frame::copyPoints() const {
+	vector<Point> pointCopy(points.begin(), points.end());
+	pointCopy.reserve(points.size());
+	return move(pointCopy); // TODO
   }
 
   void Frame::printStats() const {

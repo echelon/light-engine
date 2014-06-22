@@ -20,29 +20,19 @@ namespace LE {
   }
 
   void StreamingPointBuffer::add(
-	  const shared_ptr<vector<dac_point>>& points) 
+	  shared_ptr<vector<dac_point>> points) 
   {
 	unsigned int numAdded = points->size();
 	assert(numAdded <= allocation);
 
-	//vector<dac_point>& pointsRef = *points;
-
-	if (tail + numAdded <= allocation) {
-	  // Case 1 - fits into contiguous stretch
-	  for (dac_point p: *points) {
-		pointBuffer[tail] = p; //dac_point(p);
-		tail = (tail + 1) % allocation;
-		if (tail == head) {
-		  // Full, overwrite
-		  // TODO: Make this more efficient / constant time
-		  head = (head + 1) % allocation;
-		}
+	for (dac_point p: *points) {
+	  pointBuffer[tail] = p; //dac_point(p);
+	  tail = (tail + 1) % allocation;
+	  if (tail == head) {
+		// Full, overwrite
+		// TODO: Make this more efficient / constant time
+		head = (head + 1) % allocation;
 	  }
-	}
-	else {
-	  // Case 2 - must wrap around end
-	  cout << "TODO TODO TODO 1" << endl;
-	  terminate();
 	}
   }
 
@@ -56,17 +46,31 @@ namespace LE {
 
 	outPts->reserve(numPoints);
 
-	if (head + numPoints <= allocation) {
-	  // Case 1 - fits into contiguous stretch
-	  for (unsigned int i = 0; i < numPoints; i++) {
-		outPtsRef[i] = pointBuffer[head + i];
-	  }
+	// Case 1 - fits into contiguous stretch
+	for (unsigned int i = 0; i < numPoints; i++) {
+	  unsigned int j = (head + i) % allocation;
+	  outPtsRef.push_back(pointBuffer[j]);
+	}
+
+	head = (head + numPoints) % allocation;
+
+	/*if (head + numPoints <= allocation) {
 	}
 	else {
 	  // Case 2 - must wrap around end
+	  for (unsigned int i = 0; i < numPoints; i++) {
+		unsigned int j;
+
+		outPtsRef.push_back(pointBuffer[head + i]);
+	  }
+
+	  head = (head + numPoints) % allocation;
+
 	  cout << "TODO TODO TODO TODO 2" << endl;
 	  terminate();
-	}
+	}*/
+
+	cout << "StreamBuffer.get() size is " << outPts->size() << endl;
 
 	return unique_ptr<vector<dac_point>>(outPts);
   }

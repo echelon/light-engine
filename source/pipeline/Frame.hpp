@@ -99,7 +99,7 @@ namespace LE {
 	  void markGotPoints(); // Non-looping / non-empty
 
 	  // TODO: Inefficient
-	  Points getPoints() const;
+	  Points copyPoints() const;
 
 	  /** Debug statistics */
 	  void printStats() const;

@@ -39,7 +39,7 @@ namespace LE {
 	  ~StreamingPointBuffer();
 
 	  /** Add points to stream */
-	  void add(const shared_ptr<vector<dac_point>>& points);
+	  void add(shared_ptr<vector<dac_point>> points);
 
 	  /** Get points from the buffer. */
 	  unique_ptr<vector<dac_point>> get(unsigned int numPoints);
