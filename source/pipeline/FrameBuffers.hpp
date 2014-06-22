@@ -19,12 +19,18 @@ namespace LE {
 
 	  /** Indices to different frames. */
 	  unsigned int lasing;
-	  unsigned int nextLasing;
 	  unsigned int drawing;
 	  unsigned int waiting;
 
 	  /** Whether the next lasing frame is ready. */
 	  bool nextLasingFrameReady;
+
+	  /** Stats on the number of done*() calls made. */
+	  unsigned long numberDrawsComplete;
+	  unsigned long numberLasesComplete;
+
+	  /** Number of swaps in lasing frames. */
+	  unsigned long numberLasingSwaps;
 
 	  /** Mutex guard on frame swap. */
 	  std::mutex mutex;
@@ -52,7 +58,9 @@ namespace LE {
 	  void doneLasing();
 
 	  // Debug
-	  void printSizes();
+	  void printSizes() const;
+	  void printStats() const;
+	  void printFullStats() const;
   };
 }
 

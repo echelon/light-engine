@@ -1,6 +1,7 @@
 #include "FrameBuffers.hpp"
 #include "Frame.hpp"
 #include <iostream>
+#include <assert.h>
 
 using namespace std;
 
@@ -8,27 +9,35 @@ namespace LE {
 
   FrameBuffers::FrameBuffers(): 
 	lasing(0),
-	nextLasing(1),
-	drawing(2),
+	drawing(1),
 	waiting(2),
-	nextLasingFrameReady(false)
+	nextLasingFrameReady(false),
+	numberDrawsComplete(0),
+	numberLasesComplete(0),
+	numberLasingSwaps(0)
   {
 	frames = new std::shared_ptr<Frame>[3];
-	frames[0] = std::shared_ptr<Frame>(new Frame());
-	frames[1] = std::shared_ptr<Frame>(new Frame());
-	frames[2] = std::shared_ptr<Frame>(new Frame());
 
-	frames[0]->mode = Frame::READ;
-	frames[1]->mode = Frame::WRITE;
-	frames[2]->mode = Frame::NONE;
+	// Lasing
+	frames[lasing] = std::shared_ptr<Frame>(new Frame());
+	frames[lasing]->setFrameMode(Frame::LASING);
+
+	// Drawing
+	frames[drawing] = std::shared_ptr<Frame>(new Frame());
+	frames[drawing]->setFrameMode(Frame::DRAWING);
+
+	// Waiting buffer
+	frames[waiting] = std::shared_ptr<Frame>(new Frame());
   }
 
   FrameBuffers::~FrameBuffers() {
+	// DTOR
   }
 
   std::shared_ptr<Frame> FrameBuffers::getLasingFrame() {
 	mutex.lock();
 	std::shared_ptr<Frame> frame = frames[lasing];
+	assert(frame->getFrameMode() == Frame::LASING);
 	mutex.unlock();
 	return frame;
   }
@@ -36,6 +45,7 @@ namespace LE {
   std::shared_ptr<Frame> FrameBuffers::getDrawingFrame() {
 	mutex.lock();
 	std::shared_ptr<Frame> frame = frames[drawing];
+	assert(frame->getFrameMode() == Frame::DRAWING);
 	mutex.unlock();
 	return frame;
   }
@@ -43,19 +53,22 @@ namespace LE {
   // TODO: Requires debug
   void FrameBuffers::doneDrawing() {
 	mutex.lock();
-	//unsigned int oldDrawing = drawing;
 
-	unsigned int swap_ = nextLasing; // missed your chance
-	//waiting = nextLasing; // missed your chance
+	assert(frames[lasing]->getFrameMode() == Frame::LASING);
+	assert(frames[drawing]->getFrameMode() == Frame::DRAWING);
+	assert(frames[waiting]->getFrameMode() == Frame::SWAP);
+	assert(drawing != lasing && lasing != waiting && 
+		waiting != drawing);
 
-	nextLasing = drawing; // now you're up instead
-	drawing = swap_;
-
+	numberDrawsComplete++;
 	nextLasingFrameReady = true;
 
-	//waiting = oldDrawing;
-
-	//drawing = waiting;
+	// Swap out roles
+	unsigned int swap_ = waiting;
+	waiting = drawing;
+	drawing = swap_;
+	frames[drawing]->setFrameMode(Frame::DRAWING);
+	frames[waiting]->setFrameMode(Frame::SWAP);
 
 	mutex.unlock();
   }
@@ -63,52 +76,83 @@ namespace LE {
   void FrameBuffers::doneLasing() {
 	mutex.lock();
 
+	assert(frames[lasing]->getFrameMode() == Frame::LASING);
+	assert(frames[drawing]->getFrameMode() == Frame::DRAWING);
+	assert(frames[waiting]->getFrameMode() == Frame::SWAP);
+	assert(drawing != lasing && lasing != waiting && 
+		waiting != drawing);
+
+	numberLasesComplete++;
+
 	if (!nextLasingFrameReady) {
 	  // We're not ready with the next frame
 	  mutex.unlock();
 	  return;
 	}
 
-	cout << "SWAP IN DRAWING FRAME NOW..." << endl << endl;
-
+	numberLasingSwaps++;
 	nextLasingFrameReady = false;
 
+	// Swap out roles
 	unsigned int swap_ = lasing;
-	lasing = nextLasing;
-	nextLasing = swap_;
-
-	/*if (lasing == nextLasing) {
-	  // We're not ready with the next frame
-	  mutex.unlock();
-	  return;
-	}*/
-
-	// Swap
-	//waiting = lasing; // TODO unconfirmed
+	lasing = waiting;
+	waiting = swap_;
+	frames[lasing]->setFrameMode(Frame::LASING);
+	frames[waiting]->setFrameMode(Frame::SWAP);
 
 	mutex.unlock();
   }
 
-  void FrameBuffers::printSizes()
+  void FrameBuffers::printSizes() const
   {
-	mutex.lock();
+	// Non-locking
 	cout 
 	  << " lasing = "
 	  << lasing
 	  << " size = "
 	  << frames[lasing]->getNumberPoints()
 	  << endl
-	  << " nextLasing = "
-	  << nextLasing
+	  << " waiting = "
+	  << waiting 
 	  << " size = "
-	  << frames[nextLasing]->getNumberPoints()
+	  << frames[waiting]->getNumberPoints()
 	  << endl
 	  << " drawing = " 
 	  << drawing 
 	  << " size = "
 	  << frames[drawing]->getNumberPoints()
 	  << endl;
-	mutex.unlock();
+  }
+
+  void FrameBuffers::printStats() const
+  {
+	// Non-locking
+	cout 
+	  << numberDrawsComplete
+	  << " Draws | "
+	  << numberLasesComplete
+	  << " Lases ("
+	  << numberLasingSwaps
+	  << " novel frames)"
+	  << endl;
+  }
+
+  void FrameBuffers::printFullStats() const
+  {
+	// Non-locking
+	cout 
+	  << numberDrawsComplete
+	  << " Draws | "
+	  << numberLasesComplete
+	  << " Lases ("
+	  << numberLasingSwaps
+	  << " novel frames)"
+	  << endl;
+
+	for (unsigned int i = 0; i < 3; i++) {
+	  cout << "  - ";
+	  frames[i]->printStats();
+	}
   }
 
 } // end namespace LE

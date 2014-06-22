@@ -55,7 +55,8 @@ Network::IpAddress Dac::find_broadcast_ip_with_mac(
 
   while (1) {
 	recvfrom(fd, buf, sizeof buf, 0, (sockaddr*)&sender, &sendsize);
-	string ipStr = inet_ntop(AF_INET, &sender.sin_addr, ipstr, sizeof ipstr);
+	string ipStr = inet_ntop(AF_INET, &sender.sin_addr, ipstr, 
+		sizeof ipstr);
 
 	if (ipStr.size() < 7) {
 	  continue;
@@ -64,8 +65,8 @@ Network::IpAddress Dac::find_broadcast_ip_with_mac(
 	ip = Network::IpAddress(ipStr);
 
 	// Ping IP and then look up in ARP table
-	Network::MacAddress mac = Network::MacAddress::lookup_from_ip_with_arp_table(
-		ip, true);
+	Network::MacAddress mac = 
+	  Network::MacAddress::lookup_from_ip_with_arp_table(ip, true);
 
 	if (macAddress != mac) {
 	  continue;
@@ -411,19 +412,25 @@ void Dac::streamFrameBuffer()
 
 	// Sometimes we can flood the DAC
 	//if(started && lastStatus.buffer_fullness == 0) {
-	if(started && lastStatus.isDacFlooded()) {
+	if (started && lastStatus.isDacFlooded()) {
 	  refreshStream();
 	}
 
-	// Can't hold onto drawing an empty frame
-	Points framePoints = frameBuffer->getDrawingFrame()->points;
-	while (framePoints.size() == 0) {
-	  frameBuffer->doneLasing();
-	  framePoints = frameBuffer->getDrawingFrame()->points;
-	}
+	shared_ptr<Frame> curFrame = frameBuffer->getDrawingFrame();
+	Points framePoints = curFrame->points;
 
+	do {
+	  frameBuffer->doneLasing(); // performs buffer swap
+	  curFrame = frameBuffer->getDrawingFrame();
+	  framePoints = curFrame->points;
+	  curFrame->markGetPoints();
+
+	} while (framePoints.size() == 0);
+
+	curFrame->markGotPoints();
 	points = convertPoints(framePoints);
 	frameBuffer->doneLasing();
+
 
 	// FIXME: These functions and their names suck.
 	if(!test_send_data(points)) {
