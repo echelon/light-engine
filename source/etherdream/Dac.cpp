@@ -6,6 +6,7 @@
 #include "../network/mac_address.hpp"
 #include "../network/exceptions.hpp"
 #include "../pipeline/Frame.hpp"
+#include "../pipeline/StreamingPointBuffer.hpp"
 
 #include <string.h>
 #include <sys/types.h>
@@ -123,11 +124,12 @@ Dac::~Dac()
 }
 
 // TODO: This is inefficient. 
-vector<dac_point> Dac::convertPoints(Points pts)
+shared_ptr<vector<dac_point>> Dac::convertPoints(Points pts)
 {
-  vector<dac_point> newPts;
+  vector<dac_point>* newPts = new vector<dac_point>;
+  vector<dac_point>& newPtsRef = *newPts;
 
-  newPts.reserve(pts.size());
+  newPts->reserve(pts.size());
 
   for (unsigned int i = 0; i < pts.size(); i++) {
 	Point pt = pts[i];
@@ -143,12 +145,12 @@ vector<dac_point> Dac::convertPoints(Points pts)
 	newPt.g = pt.color.g;
 	newPt.b = pt.color.b;
 
-	newPts.push_back(newPt);
+	newPtsRef.push_back(newPt);
 
 	/*int k = 1;
 	while(k) {
 	  // XXX: Just an experiment to waste CPU cycles
-	  for(unsigned int j = 0; j < newPts.size(); j++) {
+	  for(unsigned int j = 0; j < newPtsRef.size(); j++) {
 		pt.x = newPt.x;
 		pt.y = newPt.y;
 		pt.r = newPt.r;
@@ -159,7 +161,7 @@ vector<dac_point> Dac::convertPoints(Points pts)
 	}*/
   }
 
-  return newPts;
+  return shared_ptr<vector<dac_point>>(newPts);
 }
 
 void Dac::connect()
@@ -398,9 +400,9 @@ void Dac::streamFrameBuffer()
   unsigned int send = 1000;
   unsigned int guessRate = DEFAULT_POINTS_PER_SEND;
 
-  while (true) {
-	vector<dac_point> points;
+  StreamingPointBuffer streamBuffer;
 
+  while (true) {
 	// XXX: Not a perfect heuristic
 	// Send based on buffer fullness, as some fraction of 30kpps
 	guessRate = 2000;
@@ -428,14 +430,24 @@ void Dac::streamFrameBuffer()
 	} while (framePoints.size() == 0);
 
 	curFrame->markGotPoints();
-	points = convertPoints(framePoints);
-	frameBuffer->doneLasing();
+	frameBuffer->doneLasing(); // TODO: Before or after?
 
+	shared_ptr<vector<dac_point>> points = convertPoints(framePoints);
+
+	streamBuffer.add(points);
+
+	//unique_ptr<vector<dac_point>> pts = streamBuffer.get(points);
+	
+	if (true) {
+	  cout << "continue" << endl;
+	  continue;
+	}
 
 	// FIXME: These functions and their names suck.
-	if(!test_send_data(points)) {
+	if(!test_send_data(*points)) {
 	  //cout << "Tried to send " << points.size() << endl;
 	}
+
 	usleep(10000);
 
 	if(!started) {

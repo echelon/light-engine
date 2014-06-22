@@ -1,7 +1,10 @@
 #ifndef LASER_COMMANDS_HPP
 #define LASER_COMMANDS_HPP
 
+#include "types.hpp"
 #include <vector>
+#include <iostream>
+#include <stdint.h>
 
 using namespace std;
 
@@ -102,6 +105,17 @@ struct dac_point {
 		b(CMAX),
 		u1(0),
 		u2(0) {};
+
+	dac_point(const dac_point& o):
+		control(o.control),
+		x(o.x),
+		y(o.y),
+		i(o.i),
+		r(o.r),
+		g(o.g),
+		b(o.b),
+		u1(o.u1),
+		u2(o.u2) {};
 
 	// Sent over socket
 	// FIXME: Remapped RGB -> GBR (Dac error?)

@@ -110,7 +110,7 @@ class Dac {
 	// Whether stream has started
 	bool started;
 
-	vector<dac_point> convertPoints(vector<Point> pts);
+	shared_ptr<vector<dac_point>> convertPoints(vector<Point> pts);
 
 	/**
 	 * Sometimes the DAC gets flooded or buffer fills.
