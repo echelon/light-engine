@@ -244,6 +244,15 @@ namespace LE {
 	return FourMatrix(r); 
   }
 
+  // TODO: Only verified to work with translations
+  Position FourMatrix::multiply(const Position& p) const {
+	Position r;
+	r.x = p.x*values[0] + p.y*values[4] + p.z*values[8] + values[3];
+	r.y = p.x*values[1] + p.y*values[5] + p.z*values[9] + values[7];
+	r.z = p.x*values[2] + p.y*values[6] + p.z*values[10] + values[11];
+	return r;
+  }
+
   //void FourMatrix::translate(float x, float y, float z) {
   //}
 
@@ -273,5 +282,10 @@ namespace LE {
 	unsigned int cell = row * 4 + col; // TODO: Bounds assertions
 	values[cell] = val;
   }
+
+  std::ostream& operator <<(std::ostream& stream, const FourMatrix& mat) {
+	return stream << mat.toString();
+  }
+
 } // end namespace
 

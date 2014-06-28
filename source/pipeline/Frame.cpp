@@ -49,7 +49,17 @@ namespace LE {
   }
 
   void Frame::draw(const Geometry& geo, const MatrixStack& matStack) {
-	// TODO
+	assert(drawingState == DRAWING_STATE_DRAWING_NOW);
+
+	const FourMatrix& mat = matStack.top();
+
+	for(Point p : geo.points) {
+	  p.pos = mat.multiply(p.pos);
+	  points.insert(points.end(), p);
+	}
+
+	//points.insert(points.begin(), geo.points.begin(), geo.points.end());
+	numberDrawCalls++;
   }
 
   void Frame::finishDrawing() {

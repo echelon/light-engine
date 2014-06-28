@@ -2,6 +2,7 @@
 #define LE_PIPELINE_FOURMATRIX
 
 #include <string>
+#include "../gfx/position.hpp"
 
 // TODO - Design Goals: This should be *fast* and *easy*. 
 // Methods for both in terms of memory use. But easy enough to know which
@@ -49,6 +50,9 @@ namespace LE {
 	  /** Matrix multiplication */
 	  FourMatrix operator*(const FourMatrix& mat) const;
 
+	  /** Multiply gfx/Position. */
+	  Position multiply(const Position& pos) const;
+
 	  /** In-place translate */
 	  //void translate(float x, float y, float z);
 
@@ -70,6 +74,9 @@ namespace LE {
 	  void setAt(unsigned int i, float val);
 	  void setAt(unsigned int row, unsigned int col, float val);
   };
+
+  /** osteam implementation */
+  std::ostream& operator <<(std::ostream& stream, const FourMatrix& mat);
 }
 
 #endif

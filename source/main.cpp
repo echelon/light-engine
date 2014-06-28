@@ -4,6 +4,7 @@
 #include <thread>
 #include <random>
 #include <memory>
+#include <chrono>
 
 #include <string.h>
 #include <sys/types.h>
@@ -72,14 +73,51 @@ LE::Geometry make_circle(unsigned int radius,
 
 void draw_thread() {
   LE::Geometry circle = make_circle(5000, 500);
+  MatrixStack matStack;
+
+  int MAX = 10000;
+  int MIN = -10000;
+
+  int x = 0;
+  int y = 0;
+  int mag = 100;
+  
+  auto start = std::chrono::system_clock::now();
+  auto finish = std::chrono::system_clock::now();
 
   while (true) {
+	auto elapsed = finish - start;
+	start = std::chrono::system_clock::now();
+
+	float add = elapsed.count() / 10000.0f;
+
+	cout << "Elapsed: " << add << endl;
+	cout << "x: " << x << ", y: " << y << endl;
+
+	if (x >= MAX) {
+	  mag *= -1;
+	}
+	else if (y <= MIN) {
+	  mag *= -1;
+	}
+
+	x += add * mag;
+	y += add * mag;
+
 	shared_ptr<Frame> drawing = FRAME_BUFFERS->getDrawingFrame();
 	drawing->beginDrawing();
-	drawing->draw(circle);
+
+	// TODO: This will be wrapped up in the higher-level entity system
+	matStack.push(FourMatrix::translation(x, y, 1.0f));
+	//matStack.push(FourMatrix::x_translation(x));
+	drawing->draw(circle, matStack);
+	matStack.pop();
+
 	drawing->finishDrawing();
 	FRAME_BUFFERS->doneDrawing();
 	//FRAME_BUFFERS->printFullStats();
+
+	finish = std::chrono::system_clock::now();
   }
 }
 

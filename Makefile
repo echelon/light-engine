@@ -64,18 +64,13 @@ build/network_test.o: source/network_test.cpp
 
 
 
-pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
+pipeline: build/pipeline/Frame.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
 	@cd .
 
 build/pipeline/StreamingPointBuffer.o: source/pipeline/StreamingPointBuffer.hpp source/pipeline/StreamingPointBuffer.cpp
 	@echo "[compile] pipeline/StreamingPointBuffer"
 	@$(CD) ./build/pipeline && $(C) $(INC) \
 		-c ../../source/pipeline/StreamingPointBuffer.cpp
-
-build/pipeline/Streamer.o: source/pipeline/Streamer.hpp source/pipeline/Streamer.cpp
-	@echo "[compile] pipeline/Streamer"
-	@$(CD) ./build/pipeline && $(C) $(INC) \
-		-c ../../source/pipeline/Streamer.cpp
 
 build/pipeline/Frame.o: source/pipeline/Frame.hpp source/pipeline/Frame.cpp
 	@echo "[compile] pipeline/Frame"
