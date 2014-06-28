@@ -71,7 +71,7 @@ LE::Geometry make_circle(unsigned int radius,
 }
 
 void draw_thread() {
-  LE::Geometry circle = make_circle(500, 3000);
+  LE::Geometry circle = make_circle(5000, 500);
 
   while (true) {
 	shared_ptr<Frame> drawing = FRAME_BUFFERS->getDrawingFrame();

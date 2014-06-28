@@ -64,7 +64,7 @@ build/network_test.o: source/network_test.cpp
 
 
 
-pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Entity.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
+pipeline: build/pipeline/Streamer.o build/pipeline/Frame.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
 	@cd .
 
 build/pipeline/StreamingPointBuffer.o: source/pipeline/StreamingPointBuffer.hpp source/pipeline/StreamingPointBuffer.cpp
@@ -91,11 +91,6 @@ build/pipeline/FourMatrix.o: source/pipeline/FourMatrix.hpp source/pipeline/Four
 	@echo "[compile] pipeline/FourMatrix"
 	@$(CD) ./build/pipeline && $(C) $(INC) \
 		-c ../../source/pipeline/FourMatrix.cpp
-
-build/pipeline/Entity.o: source/pipeline/Entity.hpp source/pipeline/Entity.cpp
-	@echo "[compile] pipeline/Entity"
-	@$(CD) ./build/pipeline && $(C) $(INC) \
-		-c ../../source/pipeline/Entity.cpp
 
 build/pipeline/Geometry.o: source/pipeline/Geometry.hpp source/pipeline/Geometry.cpp
 	@echo "[compile] pipeline/Geometry"
