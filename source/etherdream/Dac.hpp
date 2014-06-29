@@ -11,6 +11,7 @@
 #include "../gfx/point.hpp"
 #include "../network/ip_address.hpp"
 #include "../pipeline/FrameBuffers.hpp"
+#include "../pipeline/Tracking.hpp"
 
 class Object;
 class Streamer;
@@ -53,6 +54,9 @@ class Dac {
 	// Frame buffer
 	shared_ptr<FrameBuffers> frameBuffer;
 
+	// Tracking algorithm
+	shared_ptr<Tracking> tracking;
+
 	/** CTOR */
 	Dac(const Network::IpAddress& ipAddress);
 
@@ -92,6 +96,10 @@ class Dac {
 	void setFrameBuffer(shared_ptr<LE::FrameBuffers> frameBuffer);
 	void streamFrameBuffer();
 
+	/**
+	 * Set the tracking algorithm
+	 */
+	void setTracking(shared_ptr<LE::Tracking> tracking);
 
   private:
 	// Socket file descriptor
@@ -111,6 +119,9 @@ class Dac {
 	bool started;
 
 	shared_ptr<vector<dac_point>> convertPoints(shared_ptr<Points> pts);
+
+	shared_ptr<vector<dac_point>> convertPoints(
+		shared_ptr<Points> trackInPts, shared_ptr<Points> pts);
 
 	/**
 	 * Sometimes the DAC gets flooded or buffer fills.

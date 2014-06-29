@@ -28,6 +28,7 @@
 #include "asset/illum/blink.hpp"
 #include "game/entity.hpp"
 
+#include "pipeline/Tracking.hpp"
 #include "pipeline/Geometry.hpp"
 #include "pipeline/FourMatrix.hpp"
 #include "pipeline/FrameBuffers.hpp"
@@ -44,6 +45,7 @@ const Network::MacAddress MAC_B("00:04:A3:3D:0B:60");
 const Network::MacAddress USE_MAC = MAC_A;
 
 shared_ptr<LE::FrameBuffers> FRAME_BUFFERS(new LE::FrameBuffers);
+shared_ptr<LE::Tracking> TRACKING(new LE::Tracking);
 
 random_device rd;
 mt19937 randgen(rd());
@@ -54,6 +56,40 @@ int random_sign() {
 	return 1;
   }
   return -1;
+}
+
+float x = 0;
+float y = 0;
+int mag = 1;
+
+void animation_thread() {
+  int MAX = 10000;
+  int MIN = -10000;
+
+  auto start = std::chrono::system_clock::now();
+  auto finish = std::chrono::system_clock::now();
+
+  while (true) {
+	auto elapsed = finish - start;
+	start = std::chrono::system_clock::now();
+
+	float add = elapsed.count() / 100.0f;
+
+	//cout << "Elapsed: " << add << endl;
+	//cout << "x: " << x << ", y: " << y << endl;
+
+	if (x >= MAX) {
+	  mag *= -1;
+	}
+	else if (y <= MIN) {
+	  mag *= -1;
+	}
+
+	x += add * mag;
+	y += add * mag;
+
+	finish = std::chrono::system_clock::now();
+  }
 }
 
 LE::Geometry make_circle(unsigned int radius, 
@@ -75,49 +111,20 @@ void draw_thread() {
   LE::Geometry circle = make_circle(5000, 500);
   MatrixStack matStack;
 
-  int MAX = 10000;
-  int MIN = -10000;
-
-  int x = 0;
-  int y = 0;
-  int mag = 100;
-  
-  auto start = std::chrono::system_clock::now();
-  auto finish = std::chrono::system_clock::now();
-
   while (true) {
-	auto elapsed = finish - start;
-	start = std::chrono::system_clock::now();
-
-	float add = elapsed.count() / 10000.0f;
-
-	cout << "Elapsed: " << add << endl;
-	cout << "x: " << x << ", y: " << y << endl;
-
-	if (x >= MAX) {
-	  mag *= -1;
-	}
-	else if (y <= MIN) {
-	  mag *= -1;
-	}
-
-	x += add * mag;
-	y += add * mag;
-
 	shared_ptr<Frame> drawing = FRAME_BUFFERS->getDrawingFrame();
 	drawing->beginDrawing();
 
 	// TODO: This will be wrapped up in the higher-level entity system
-	matStack.push(FourMatrix::translation(x, y, 1.0f));
-	//matStack.push(FourMatrix::x_translation(x));
-	drawing->draw(circle, matStack);
+
+	matStack.push(FourMatrix::translation(0, 5000, 1.0f));
+	//drawing->draw(circle, matStack);
+	drawing->draw(circle);
 	matStack.pop();
 
 	drawing->finishDrawing();
 	FRAME_BUFFERS->doneDrawing();
 	//FRAME_BUFFERS->printFullStats();
-
-	finish = std::chrono::system_clock::now();
   }
 }
 
@@ -126,13 +133,16 @@ void laser_thread() {
   Dac dac = Dac(ipAddress);
 
   dac.setFrameBuffer(FRAME_BUFFERS);
+  dac.setTracking(TRACKING);
   dac.streamFrameBuffer();
 }
 
 int main() {
+  thread animating(animation_thread);
   thread drawing(draw_thread);
   thread lasing(laser_thread);
 
+  animating.join();
   drawing.join();
   lasing.join();
 

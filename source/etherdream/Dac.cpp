@@ -166,6 +166,48 @@ shared_ptr<vector<dac_point>> Dac::convertPoints(shared_ptr<Points> pts)
   return shared_ptr<vector<dac_point>>(newPts);
 }
 
+// TODO: This is inefficient. 
+shared_ptr<vector<dac_point>> Dac::convertPoints(
+	shared_ptr<Points> trackInPts, shared_ptr<Points> pts)
+{
+  vector<dac_point>* newPts = new vector<dac_point>;
+  vector<dac_point>& newPtsRef = *newPts;
+
+  Points& trackPtsRef = *trackInPts;
+  Points& ptsRef = *pts;
+
+  newPts->reserve(trackInPts->size() + pts->size());
+
+  for (unsigned int i = 0; i < trackPtsRef.size(); i++) {
+	Point pt = trackPtsRef[i];
+	dac_point newPt;
+
+	newPt.x = (int)pt.pos.x;
+	newPt.y = (int)pt.pos.y;
+	newPt.r = pt.color.r;
+	newPt.g = pt.color.g;
+	newPt.b = pt.color.b;
+
+	newPtsRef.push_back(newPt);
+  }
+
+  for (unsigned int i = 0; i < ptsRef.size(); i++) {
+	Point pt =ptsRef[i];
+	dac_point newPt;
+
+	newPt.x = (int)pt.pos.x;
+	newPt.y = (int)pt.pos.y;
+
+	newPt.r = pt.color.r;
+	newPt.g = pt.color.g;
+	newPt.b = pt.color.b;
+
+	newPtsRef.push_back(newPt);
+  }
+
+  return shared_ptr<vector<dac_point>>(newPts);
+}
+
 void Dac::connect()
 {
   int r = 0;
@@ -249,13 +291,13 @@ bool Dac::clear_estop()
 }
 
 // TODO: Fix messiness
-bool Dac::test_send_data(unique_ptr<vector<dac_point>> pts)
-{
+// TODO: Rename. WTF is it named this?
+bool Dac::test_send_data(unique_ptr<vector<dac_point>> pts) {
   data_command cmd;
 
-  cout << "Sending " 
+  /*cout << "Sending " 
 	<< pts->size() 
-	<< " encoded points to DAC over the wire" << endl;
+	<< " encoded points to DAC over the wire" << endl;*/
 
   cmd.set_points(*pts);
   vector<uint8_t> cmdBuf = cmd.serialize();
@@ -264,8 +306,7 @@ bool Dac::test_send_data(unique_ptr<vector<dac_point>> pts)
   return checkResponse('d');
 }
 
-bool Dac::checkResponse(char command) 
-{
+bool Dac::checkResponse(char command) {
   dac_response rsp;
   vector<uint8_t> cmdBuf(22, 0);
 
@@ -372,6 +413,10 @@ void Dac::setFrameBuffer(shared_ptr<LE::FrameBuffers> buffer) {
   frameBuffer = buffer;
 }
 
+void Dac::setTracking(shared_ptr<LE::Tracking> t) {
+  tracking = t;
+}
+
 void Dac::streamFrameBuffer() 
 {
   // TODO: Check if connected. 
@@ -413,8 +458,7 @@ void Dac::streamFrameBuffer()
 	// Send based on buffer fullness, as some fraction of 30kpps
 	guessRate = 2000;
 	send = (int)(guessRate * (lastStatus.buffer_fullness/30000.0f));
-
-	if(send < 100) {
+	if (send < 100) {
 	  send = 1000;
 	}
 
@@ -424,14 +468,20 @@ void Dac::streamFrameBuffer()
 	  refreshStream();
 	}
 
+	// For tracking
+	Point curPoint;
+	Point lastPoint;
+
+	// Only request a new frame when we're out of points to send.
 	// We stream from the buffer, not directly from the frame!
 	while (streamBuffer.size() < send) {
-	  shared_ptr<Frame> curFrame = frameBuffer->getDrawingFrame();
+	  shared_ptr<Frame> curFrame = frameBuffer->getLasingFrame();
 	  shared_ptr<Points> framePts;
 
+	  // TODO: TONS OF OPTIMIZATION HERE!!
 	  do {
 		frameBuffer->doneLasing(); // performs buffer swap (TODO: confirm)
-		curFrame = frameBuffer->getDrawingFrame();
+		curFrame = frameBuffer->getLasingFrame();
 
 		Points pts = curFrame->copyPoints();
 
@@ -442,7 +492,13 @@ void Dac::streamFrameBuffer()
 
 	  curFrame->markGotPoints();
 
-	  streamBuffer.add(convertPoints(framePts));
+	  lastPoint = curPoint;
+	  curPoint = framePts->back();
+
+	  shared_ptr<Points> trackPts = 
+		tracking->track(lastPoint, curPoint);
+
+	  streamBuffer.add(convertPoints(trackPts, framePts));
 
 	  // Now safe to deallocate framePoints ptr
 	  frameBuffer->doneLasing(); // TODO: Before or after?
@@ -455,13 +511,13 @@ void Dac::streamFrameBuffer()
 
 	auto after = streamBuffer.size();
 
-	cout << "Stream buffer size before get(): " 
+	/*cout << "Stream buffer size before get(): " 
 	  << before 
 	  << " after: "
 	  << after
 	  << " got these to send: "
 	  << packetPoints->size()
-	  << endl;
+	  << endl;*/
 
 	// FIXME: These functions and their names suck.
 	if(!test_send_data(move(packetPoints))) {

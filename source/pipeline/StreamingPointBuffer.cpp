@@ -70,7 +70,7 @@ namespace LE {
 	  terminate();
 	}*/
 
-	cout << "StreamBuffer.get() size is " << outPts->size() << endl;
+	//cout << "StreamBuffer.get() size is " << outPts->size() << endl;
 
 	return unique_ptr<vector<dac_point>>(outPts);
   }
