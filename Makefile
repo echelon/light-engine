@@ -6,8 +6,14 @@ L = g++ -std=c++0x -pthread -g
 RM = /bin/rm -f
 CD = cd
 INC = 
+PWD = $(shell pwd)
+INC_TEST= -I$(PWD)/source
 #LIBS = -lstdc++ -lrt -lzmq
 LIBS = -lstdc++
+#LIB_TEST = /usr/src/gtest/libgtest.a \
+#		   /usr/src/gtest/libgtest_main.a -lpthread
+LIB_TEST = -lpthread -lgtest -lgtest_main
+
 .PHONY: clean
 clean:
 	@$(RM) main 
@@ -33,6 +39,19 @@ main: asset etherdream gfx network pipeline build/misc.o \
 		build/lib/etherdream.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
+
+test: testing/test.o pipeline etherdream gfx network asset \
+	build/game/entity.o \
+	build/lib/etherdream.o
+	@echo "[TESTING]"
+	@$(L) build/etherdream/*.o build/asset/*.o \
+		build/gfx/*.o \
+		build/game/*.o \
+		build/network/*.o \
+		build/pipeline/*.o \
+		build/lib/etherdream.o \
+		$(LIBS) -lrt -lm -o test $(LIB_TEST)
+	@chmod +x test
 
 dac_report: asset etherdream gfx build/misc.o build/game/entity.o \
 	build/lib/etherdream.o build/dac_report.o 
@@ -62,7 +81,21 @@ build/network_test.o: source/network_test.cpp
 	@$(CD) ./build && $(C) $(INC) -c ../source/network_test.cpp
 
 
+# =====================================================
 
+testing/test.o: testing/test.cpp
+	@echo "[compile] testing/test.cpp"
+	@$(CD) ./build && $(C) $(INC) $(INC_TEST) -c ../testing/test.cpp
+
+#pipeline_test: test/pipeline/StreamingPointBufferTest.o
+#	@cd .
+#
+#test/pipeline/StreamingPointBufferTest.o: test/pipeline/#StreamingPointBufferTest.hpp
+#	@echo "[compile] test/pipeline/StreamingPointBufferTest"
+#	@$(CD) ./build/pipeline && $(C) $(INC) $(INC_TEST) \
+#		-c ../../test/pipeline/StreamingPointBufferTest.cpp
+
+# =====================================================
 
 pipeline: build/pipeline/Frame.o build/pipeline/Tracking.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
 	@cd .

@@ -1,11 +1,13 @@
 #include "Tracking.hpp"
+#include "../etherdream/types.hpp"
 #include <iostream>
+
 
 namespace LE {
 
   shared_ptr<Points> Tracking::track(const Point& p1, 
 	  const Point& p2) const {
-	const unsigned int SAMPLE = 15;
+	const unsigned int SAMPLE = 50000;
 	float lastX = p1.pos.x;
 	float lastY = p1.pos.y;
 	float xDiff = p1.pos.x - p2.pos.x;
@@ -19,14 +21,14 @@ namespace LE {
 	  float xb = lastX - xDiff * percent;
 	  float yb = lastY - yDiff * percent;
 
-	  cout << "Tracking (" 
+	  /*cout << "Tracking (" 
 		<< i 
 		<< ") x: " 
 		<< xb << " y: " 
 		<< yb 
-		<< endl;
+		<< endl;*/
 
-	  pts->push_back(Point(xb, yb, 0, 0, 0));
+	  pts->push_back(Point(xb, yb, CMAX, CMAX, 0));
 	}
 	return pts;
   }

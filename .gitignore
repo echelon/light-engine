@@ -1,6 +1,7 @@
 build/*
 *~
 main
+test
 edtest
 dac_report
 network_test

@@ -453,6 +453,10 @@ void Dac::streamFrameBuffer()
 
   StreamingPointBuffer streamBuffer;
 
+  // For tracking
+  Point curPoint;
+  Point lastPoint;
+
   while (true) {
 	// XXX: Not a perfect heuristic
 	// Send based on buffer fullness, as some fraction of 30kpps
@@ -468,13 +472,10 @@ void Dac::streamFrameBuffer()
 	  refreshStream();
 	}
 
-	// For tracking
-	Point curPoint;
-	Point lastPoint;
-
 	// Only request a new frame when we're out of points to send.
 	// We stream from the buffer, not directly from the frame!
 	while (streamBuffer.size() < send) {
+	  cout << "Must fill stream buffer " << endl;
 	  shared_ptr<Frame> curFrame = frameBuffer->getLasingFrame();
 	  shared_ptr<Points> framePts;
 
@@ -485,6 +486,7 @@ void Dac::streamFrameBuffer()
 		curFrame = frameBuffer->getLasingFrame();
 	  } while (!curFrame->hasPoints());
 
+	  // TODO: This sucks...
 	  Points pts = curFrame->copyPoints();
 	  framePts = shared_ptr<Points>(new Points(pts));
 
@@ -492,6 +494,18 @@ void Dac::streamFrameBuffer()
 
 	  lastPoint = curPoint;
 	  curPoint = framePts->back();
+
+	  cout << "Last Point - x: " 
+		<< lastPoint.pos.x 
+		<< " y: " 
+		<< lastPoint.pos.y
+		<< endl;
+
+	  cout << "Curr Point - x: " 
+		<< curPoint.pos.x 
+		<< " y: " 
+		<< curPoint.pos.y
+		<< endl;
 
 	  shared_ptr<Points> trackPts = 
 		tracking->track(lastPoint, curPoint);
