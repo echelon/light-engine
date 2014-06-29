@@ -478,17 +478,15 @@ void Dac::streamFrameBuffer()
 	  shared_ptr<Frame> curFrame = frameBuffer->getLasingFrame();
 	  shared_ptr<Points> framePts;
 
-	  // TODO: TONS OF OPTIMIZATION HERE!!
+	  // Keep swapping frame until we get one with points. 
+	  // (Should only occur at init.)
 	  do {
 		frameBuffer->doneLasing(); // performs buffer swap (TODO: confirm)
 		curFrame = frameBuffer->getLasingFrame();
+	  } while (!curFrame->hasPoints());
 
-		Points pts = curFrame->copyPoints();
-
-		framePts = shared_ptr<Points>(new Points(pts));
-		curFrame->markGetPoints();
-
-	  } while (framePts->size() == 0);
+	  Points pts = curFrame->copyPoints();
+	  framePts = shared_ptr<Points>(new Points(pts));
 
 	  curFrame->markGotPoints();
 
@@ -504,12 +502,12 @@ void Dac::streamFrameBuffer()
 	  frameBuffer->doneLasing(); // TODO: Before or after?
 	}
 
-	auto before = streamBuffer.size();
+	//auto before = streamBuffer.size();
 
 	// We don't send large messages (~1000 points)
 	unique_ptr<vector<dac_point>> packetPoints = streamBuffer.get(send);
 
-	auto after = streamBuffer.size();
+	//auto after = streamBuffer.size();
 
 	/*cout << "Stream buffer size before get(): " 
 	  << before 

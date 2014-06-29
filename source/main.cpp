@@ -108,7 +108,7 @@ LE::Geometry make_circle(unsigned int radius,
 }
 
 void draw_thread() {
-  LE::Geometry circle = make_circle(5000, 500);
+  LE::Geometry circle = make_circle(5000, 50000);
   MatrixStack matStack;
 
   while (true) {

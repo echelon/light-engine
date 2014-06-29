@@ -15,7 +15,7 @@ namespace LE {
    */
   class StreamingPointBuffer {
 
-	static const unsigned int DEFAULT_SIZE = 10000;
+	static const unsigned int DEFAULT_SIZE = 100000;
 
 	protected:
 	  /** Storage */

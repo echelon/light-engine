@@ -31,6 +31,10 @@ namespace LE {
   Frame::~Frame() {
   }
 
+  bool Frame::hasPoints() const {
+	return points.size() != 0;
+  }
+
   unsigned int Frame::getNumberPoints() const {
 	return points.size();
   }

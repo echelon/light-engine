@@ -67,6 +67,9 @@ namespace LE {
 	  /** DTOR. */
 	  ~Frame();
 
+	  /** If the frame has any points in it. */
+	  bool hasPoints() const;
+
 	  unsigned int getNumberPoints() const;
 
 	  /** Clear the frame buffer of points. */
