@@ -12,11 +12,12 @@ INC_TEST= -I$(PWD)/source
 LIBS = -lstdc++
 #LIB_TEST = /usr/src/gtest/libgtest.a \
 #		   /usr/src/gtest/libgtest_main.a -lpthread
-LIB_TEST = -lpthread -lgtest -lgtest_main
+LIB_TEST = -lpthread -lgtest
 
 .PHONY: clean
 clean:
 	@$(RM) main 
+	@$(RM) test
 	@cd ./build && $(RM) *.o */*.o */*.so */*/*.o */*/*.so 
 
 
@@ -40,16 +41,19 @@ main: asset etherdream gfx network pipeline build/misc.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
 
-test: testing/test.o pipeline etherdream gfx network asset \
+test: pipeline etherdream gfx network asset \
 	build/game/entity.o \
-	build/lib/etherdream.o
+	build/lib/etherdream.o \
+	testing/test.o
 	@echo "[TESTING]"
-	@$(L) build/etherdream/*.o build/asset/*.o \
+	@$(L) build/etherdream/*.o \
+		build/asset/*.o \
 		build/gfx/*.o \
 		build/game/*.o \
 		build/network/*.o \
 		build/pipeline/*.o \
 		build/lib/etherdream.o \
+		build/test.o \
 		$(LIBS) -lrt -lm -o test $(LIB_TEST)
 	@chmod +x test
 
@@ -61,7 +65,6 @@ dac_report: asset etherdream gfx build/misc.o build/game/entity.o \
 		build/lib/etherdream.o \
 		$(LIBS) -lrt -lm -o dac_report
 	@chmod +x dac_report
-
 
 edtest: build/lib/etherdream.o build/lib/test.o
 	@echo "[linking] edtest"
@@ -87,13 +90,19 @@ testing/test.o: testing/test.cpp
 	@echo "[compile] testing/test.cpp"
 	@$(CD) ./build && $(C) $(INC) $(INC_TEST) -c ../testing/test.cpp
 
-#pipeline_test: test/pipeline/StreamingPointBufferTest.o
-#	@cd .
-#
-#test/pipeline/StreamingPointBufferTest.o: test/pipeline/#StreamingPointBufferTest.hpp
-#	@echo "[compile] test/pipeline/StreamingPointBufferTest"
-#	@$(CD) ./build/pipeline && $(C) $(INC) $(INC_TEST) \
-#		-c ../../test/pipeline/StreamingPointBufferTest.cpp
+testing: pipeline_test
+	@cd .
+
+pipeline_test: testing/pipeline/StreamingPointBufferTest.o
+	@cd .
+
+test/pipeline/StreamingPointBufferTest.o: \
+	testing/pipeline/StreamingPointBufferTest.hpp \
+	testing/pipeline/StreamingPointBufferTest.cpp
+	@echo "[compile] testing/pipeline/StreamingPointBufferTest"
+	$(CD) ./build/pipeline && $(C) $(INC) \
+		-I/home/bt/dev/laser/light-engine \
+		-c ../../testing/pipeline/StreamingPointBufferTest.cpp
 
 # =====================================================
 

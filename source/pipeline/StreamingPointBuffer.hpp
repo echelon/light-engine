@@ -15,13 +15,17 @@ namespace LE {
    */
   class StreamingPointBuffer {
 
-	static const unsigned int DEFAULT_SIZE = 200000;
+	public: 
+	  static const unsigned int DEFAULT_SIZE;
 
 	protected:
 	  /** Storage */
 	  vector<dac_point> pointBuffer;
 
-	  /** Allocated size of the buffer */
+	  /** Allocated size of the buffer (n) */
+	  unsigned int capacityLimit;
+
+	  /** Internal size of the buffer (n+1) */
 	  unsigned int allocation;
 
 	  /** Start of new data */
@@ -33,7 +37,7 @@ namespace LE {
 	public:
 	  /** CTORs */
 	  StreamingPointBuffer();
-	  StreamingPointBuffer(unsigned int allocateSize);
+	  StreamingPointBuffer(unsigned int sizeCapacity);
 
 	  /** DTOR. */
 	  ~StreamingPointBuffer();
@@ -52,6 +56,10 @@ namespace LE {
 
 	  /** Get the number of items in the buffer. */
 	  unsigned int size() const;
+
+	  /** Get the allotted size of the buffer. */
+	  unsigned int capacity() const 
+		  { return capacityLimit; };
   };
 }
 

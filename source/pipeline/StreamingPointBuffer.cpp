@@ -7,12 +7,25 @@ using namespace std;
 
 namespace LE {
 
+  const unsigned int StreamingPointBuffer::DEFAULT_SIZE = 200000;
+
   StreamingPointBuffer::StreamingPointBuffer() : 
-	allocation(DEFAULT_SIZE),
+	capacityLimit(DEFAULT_SIZE),
+	allocation(DEFAULT_SIZE + 1),
 	head(0),
 	tail(0)
   {
-	pointBuffer.resize(DEFAULT_SIZE + 1); // Empty slot
+	// TODO What about reserve() ?
+	pointBuffer.resize(allocation); // Empty slot
+  }
+
+  StreamingPointBuffer::StreamingPointBuffer(unsigned int sizeCapacity) :
+	capacityLimit(sizeCapacity),
+	allocation(sizeCapacity + 1),
+	head(0),
+	tail(0)
+  {
+	pointBuffer.resize(allocation); // Empty slot
   }
 
   StreamingPointBuffer::~StreamingPointBuffer() {
@@ -23,14 +36,13 @@ namespace LE {
 	  shared_ptr<vector<dac_point>> points) 
   {
 	unsigned int numAdded = points->size();
-	assert(numAdded <= allocation);
+	assert(numAdded <= capacityLimit);
 
 	for (dac_point p: *points) {
 	  pointBuffer[tail] = p; //dac_point(p);
 	  tail = (tail + 1) % allocation;
 	  if (tail == head) {
-		// Full, overwrite
-		// TODO: Make this more efficient / constant time
+		// Ring buffer is full, overwrite old
 		head = (head + 1) % allocation;
 	  }
 	}
@@ -39,7 +51,7 @@ namespace LE {
   unique_ptr<vector<dac_point>> StreamingPointBuffer::get(
 	  unsigned int numPoints) 
   {
-	assert(numPoints <= allocation);
+	assert(numPoints <= capacityLimit);
 
 	vector<dac_point>* outPts = new vector<dac_point>;
 	vector<dac_point>& outPtsRef = *outPts;
