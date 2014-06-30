@@ -41,16 +41,18 @@ namespace LE {
 	for (dac_point p: *points) {
 	  pointBuffer[tail] = p; //dac_point(p);
 	  tail = (tail + 1) % allocation;
-	  if (tail == head) {
-		// Ring buffer is full, overwrite old
-		head = (head + 1) % allocation;
-	  }
+	}
+
+	// Ring buffer is full, overwrite old
+    if (tail == head) {
+	  head = (head + 1) % allocation;
 	}
   }
 
   unique_ptr<vector<dac_point>> StreamingPointBuffer::get(
 	  unsigned int numPoints) 
   {
+	assert(numPoints > 0);
 	assert(numPoints <= capacityLimit);
 
 	vector<dac_point>* outPts = new vector<dac_point>;
@@ -58,31 +60,11 @@ namespace LE {
 
 	outPts->reserve(numPoints);
 
-	// Case 1 - fits into contiguous stretch
+	// TODO: Not most efficient copy.
 	for (unsigned int i = 0; i < numPoints; i++) {
-	  unsigned int j = (head + i) % allocation;
-	  outPtsRef.push_back(pointBuffer[j]);
+	  outPtsRef.push_back(pointBuffer[head]);
+	  head = (head + 1) % allocation;
 	}
-
-	head = (head + numPoints) % allocation;
-
-	/*if (head + numPoints <= allocation) {
-	}
-	else {
-	  // Case 2 - must wrap around end
-	  for (unsigned int i = 0; i < numPoints; i++) {
-		unsigned int j;
-
-		outPtsRef.push_back(pointBuffer[head + i]);
-	  }
-
-	  head = (head + numPoints) % allocation;
-
-	  cout << "TODO TODO TODO TODO 2" << endl;
-	  terminate();
-	}*/
-
-	//cout << "StreamBuffer.get() size is " << outPts->size() << endl;
 
 	return unique_ptr<vector<dac_point>>(outPts);
   }
@@ -106,7 +88,7 @@ namespace LE {
 	}
 	else {
 	  // Buffer wraps around
-	  return (allocation - tail) + head - 1;
+	  return (capacityLimit - head) + tail + 1;
 	}
   }
 

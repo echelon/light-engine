@@ -26,7 +26,7 @@ void fillFull(shared_ptr<StreamingPointBuffer> buf, unsigned int fillSize) {
 
   shared_ptr<vector<dac_point>> points(new vector<dac_point>());
   for (unsigned int i = 0; i < fillSize; i++) {
-	points->push_back(dac_point());
+	points->push_back(dac_point(i, i));
   }
 
   EXPECT_EQ(fillSize, points->size());
@@ -38,7 +38,8 @@ void fillFull(shared_ptr<StreamingPointBuffer> buf, unsigned int fillSize) {
   EXPECT_FALSE(buf->isEmpty());
 }
 
-void removePoints(shared_ptr<StreamingPointBuffer> buf, unsigned int numRemove) {
+unique_ptr<vector<dac_point>> removePoints(shared_ptr<StreamingPointBuffer> buf, 
+	unsigned int numRemove) {
   assert(numRemove > 0);
   assert(numRemove <= buf->capacity());
 
@@ -52,5 +53,7 @@ void removePoints(shared_ptr<StreamingPointBuffer> buf, unsigned int numRemove) 
   EXPECT_TRUE(buf->size() >= 0);
   EXPECT_TRUE(buf->size() < maxSize);
   EXPECT_FALSE(buf->isFull());
+
+  return pts;
 }
 

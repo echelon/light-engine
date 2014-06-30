@@ -106,6 +106,17 @@ struct dac_point {
 		u1(0),
 		u2(0) {};
 
+	dac_point(uint16_t x_, uint16_t y_):
+		control(0),
+		x(x_),
+		y(y_),
+		i(CMAX),
+		r(CMAX),
+		g(CMAX),
+		b(CMAX),
+		u1(0),
+		u2(0) {};
+
 	dac_point(const dac_point& o):
 		control(o.control),
 		x(o.x),
