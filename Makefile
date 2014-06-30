@@ -44,7 +44,8 @@ main: asset etherdream gfx network pipeline build/misc.o \
 test: pipeline etherdream gfx network asset \
 	build/game/entity.o \
 	build/lib/etherdream.o \
-	testing/test.o
+	testing/test.o \
+	pipeline_test
 	@echo "[TESTING]"
 	@$(L) build/etherdream/*.o \
 		build/asset/*.o \
@@ -90,18 +91,14 @@ testing/test.o: testing/test.cpp
 	@echo "[compile] testing/test.cpp"
 	@$(CD) ./build && $(C) $(INC) $(INC_TEST) -c ../testing/test.cpp
 
-testing: pipeline_test
-	@cd .
-
 pipeline_test: testing/pipeline/StreamingPointBufferTest.o
 	@cd .
 
-test/pipeline/StreamingPointBufferTest.o: \
+testing/pipeline/StreamingPointBufferTest.o: \
 	testing/pipeline/StreamingPointBufferTest.hpp \
 	testing/pipeline/StreamingPointBufferTest.cpp
 	@echo "[compile] testing/pipeline/StreamingPointBufferTest"
-	$(CD) ./build/pipeline && $(C) $(INC) \
-		-I/home/bt/dev/laser/light-engine \
+	@$(CD) ./build/pipeline && $(C) $(INC) $(INC_TEST) \
 		-c ../../testing/pipeline/StreamingPointBufferTest.cpp
 
 # =====================================================
