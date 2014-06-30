@@ -108,7 +108,7 @@ LE::Geometry make_circle(unsigned int radius,
 }
 
 void draw_thread() {
-  LE::Geometry circle = make_circle(5000, 50000);
+  LE::Geometry circle = make_circle(5000, 500);
   MatrixStack matStack;
 
   while (true) {
@@ -117,9 +117,9 @@ void draw_thread() {
 
 	// TODO: This will be wrapped up in the higher-level entity system
 
-	matStack.push(FourMatrix::translation(0, 5000, 1.0f));
-	//drawing->draw(circle, matStack);
-	drawing->draw(circle);
+	matStack.push(FourMatrix::translation(-5000, 5000, 1.0f));
+	drawing->draw(circle, matStack);
+	//drawing->draw(circle);
 	matStack.pop();
 
 	drawing->finishDrawing();

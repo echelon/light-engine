@@ -1,9 +1,11 @@
 #include "StreamingPointBufferTest.hpp"
 
+#include <random>
+
 shared_ptr<vector<dac_point>> makePoints(unsigned int number) {
   shared_ptr<vector<dac_point>> points(new vector<dac_point>());
   for (unsigned int i = 0; i < number; i++) {
-	points->push_back(dac_point());
+	points->push_back(dac_point(i, i));
   }
   return points;
 }
@@ -55,5 +57,25 @@ unique_ptr<vector<dac_point>> removePoints(shared_ptr<StreamingPointBuffer> buf,
   EXPECT_FALSE(buf->isFull());
 
   return pts;
+}
+
+shared_ptr<vector<dac_point>> dequeuePoints(shared_ptr<vector<dac_point>> original, 
+	unsigned int num) {
+  assert(num > 0);
+  assert(num <= original->size());
+
+  auto start = original->begin();
+  auto finish = original->begin() + num;
+
+  shared_ptr<vector<dac_point>> points(new vector<dac_point>(start, finish));
+  original->erase(start, finish);
+
+  return points;
+}
+
+int randomInt(int start, int finish) {
+  random_device rd;
+  mt19937 randgen(rd());
+  return uniform_int_distribution<>(start, finish)(randgen);
 }
 

@@ -7,7 +7,7 @@ namespace LE {
 
   shared_ptr<Points> Tracking::track(const Point& p1, 
 	  const Point& p2) const {
-	const unsigned int SAMPLE = 50000;
+	const unsigned int SAMPLE = 1500;
 	float lastX = p1.pos.x;
 	float lastY = p1.pos.y;
 	float xDiff = p1.pos.x - p2.pos.x;

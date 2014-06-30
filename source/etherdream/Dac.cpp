@@ -495,7 +495,7 @@ void Dac::streamFrameBuffer()
 	  lastPoint = curPoint;
 	  curPoint = framePts->back();
 
-	  cout << "Last Point - x: " 
+	  /*cout << "Last Point - x: " 
 		<< lastPoint.pos.x 
 		<< " y: " 
 		<< lastPoint.pos.y
@@ -505,7 +505,7 @@ void Dac::streamFrameBuffer()
 		<< curPoint.pos.x 
 		<< " y: " 
 		<< curPoint.pos.y
-		<< endl;
+		<< endl;*/
 
 	  shared_ptr<Points> trackPts = 
 		tracking->track(lastPoint, curPoint);
