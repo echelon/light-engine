@@ -475,7 +475,6 @@ void Dac::streamFrameBuffer()
 	// Only request a new frame when we're out of points to send.
 	// We stream from the buffer, not directly from the frame!
 	while (streamBuffer.size() < send) {
-	  cout << "Must fill stream buffer " << endl;
 	  shared_ptr<Frame> curFrame = frameBuffer->getLasingFrame();
 	  shared_ptr<Points> framePts;
 

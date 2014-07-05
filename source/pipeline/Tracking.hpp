@@ -14,7 +14,17 @@ namespace LE {
    * so that other implementations may be used.
    */
   class Tracking {
+  
 	public: 
+	  static const unsigned int DEFAULT_TRACKING_POINTS = 15;
+
+	  /** CTOR. Constant, default number of tracking points. */
+	  Tracking() : numberPoints(DEFAULT_TRACKING_POINTS) {};
+
+	  /** CTOR. Specify number of tracking points. */
+	  Tracking(unsigned int numberPoints) : 
+		  numberPoints(numberPoints) {};
+
 	  /** Generic tracking that does not distinguish intent. */
 	  virtual shared_ptr<Points> track(const Point& p1,
 		  const Point& p2) const;
@@ -26,6 +36,10 @@ namespace LE {
 	  /** Track from one frame to the start of the next. */
 	  virtual shared_ptr<Points> trackToFrame(const Point& p1,
 		  const Point& p2) const;
+
+	protected:
+	  /** A constant number of points to add. */
+	  unsigned int numberPoints;
   };
 }
 #endif

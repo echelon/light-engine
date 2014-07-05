@@ -7,17 +7,17 @@ namespace LE {
 
   shared_ptr<Points> Tracking::track(const Point& p1, 
 	  const Point& p2) const {
-	const unsigned int SAMPLE = 1500;
 	float lastX = p1.pos.x;
 	float lastY = p1.pos.y;
 	float xDiff = p1.pos.x - p2.pos.x;
 	float yDiff = p1.pos.y - p2.pos.y;
+	float divisor = numberPoints;
 
 	shared_ptr<Points> pts(new Points);
-	pts->reserve(SAMPLE);
+	pts->reserve(numberPoints);
 
-	for (unsigned int i = 0; i < SAMPLE; i++) {
-	  float percent = i / (float)SAMPLE;
+	for (unsigned int i = 0; i < numberPoints; i++) {
+	  float percent = i / divisor;
 	  float xb = lastX - xDiff * percent;
 	  float yb = lastY - yDiff * percent;
 
