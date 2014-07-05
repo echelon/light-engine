@@ -1,10 +1,10 @@
 #include "Frame.hpp"
+#include "SimpleTracking.hpp"
 #include <iostream>
 #include <string>
 #include <assert.h>
 #include <algorithm>    // std::move (ranges)
 #include <utility>      // std::move (objects)
-#include "../gfx/color.hpp" // TODO: Remove. Debug only.
 
 using namespace std;
 
@@ -24,7 +24,7 @@ namespace LE {
 	countToModeSwap(0),
 	countToModeLasing(0),
 	countToModeDrawing(0),
-	tracking(new Tracking()),
+	tracking(new SimpleTracking()),
 	lastPoint(),
 	hasLastPoint(false),
 	points()

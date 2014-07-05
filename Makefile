@@ -79,19 +79,19 @@ build/testing/test.o: testing/test.cpp
 
 pipeline: \
 	build/source/pipeline/Frame.o \
-	build/source/pipeline/Tracking.o \
+	build/source/pipeline/SimpleTracking.o \
 	build/source/pipeline/Geometry.o \
 	build/source/pipeline/MatrixStack.o \
 	build/source/pipeline/FourMatrix.o \
 	build/source/pipeline/FrameBuffers.o
 	@cd .
 
-build/source/pipeline/Tracking.o: \
-	source/pipeline/Tracking.hpp \
-	source/pipeline/Tracking.cpp
-	@echo "[compile] source/pipeline/Tracking"
+build/source/pipeline/SimpleTracking.o: \
+	source/pipeline/SimpleTracking.hpp \
+	source/pipeline/SimpleTracking.cpp
+	@echo "[compile] source/pipeline/SimpleTracking"
 	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/Tracking.cpp
+		-c ../../../source/pipeline/SimpleTracking.cpp
 
 build/source/pipeline/Frame.o: \
 	source/pipeline/Frame.hpp \

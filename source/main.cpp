@@ -29,6 +29,7 @@
 #include "game/entity.hpp"
 
 #include "pipeline/Tracking.hpp"
+#include "pipeline/SimpleTracking.hpp"
 #include "pipeline/Geometry.hpp"
 #include "pipeline/FourMatrix.hpp"
 #include "pipeline/FrameBuffers.hpp"
@@ -44,7 +45,7 @@ const Network::MacAddress MAC_B("00:04:A3:3D:0B:60");
 // Configure the projector to talk to by default
 const Network::MacAddress USE_MAC = MAC_A;
 
-shared_ptr<LE::Tracking> TRACKING(new LE::Tracking(15, 40, GREEN, RED));
+shared_ptr<LE::Tracking> TRACKING(new LE::SimpleTracking(15, 40, GREEN, RED));
 shared_ptr<LE::FrameBuffers> FRAME_BUFFERS(new LE::FrameBuffers);
 
 random_device rd;
