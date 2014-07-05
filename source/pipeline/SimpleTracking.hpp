@@ -27,14 +27,6 @@ namespace LE {
 	  SimpleTracking(unsigned int objectPoints, unsigned int framePoints,
 		  Color objectTracking, Color frameTracking);
 
-	  virtual ~SimpleTracking() {
-		cout << "DTOR ~SimpleTracking()" << endl;
-	  }
-
-	  virtual void foo() const {
-		cout << "SimpleTracking::foo()" << endl;
-	  }
-
 	  /** Generic tracking that does not distinguish intent. */
 	  virtual shared_ptr<Points> track(const Point& p1,
 		  const Point& p2) const;

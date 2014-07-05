@@ -3,7 +3,6 @@
 
 #include "../gfx/point.hpp"
 #include <memory>
-#include <iostream>
 
 using namespace std;
 
@@ -19,38 +18,19 @@ namespace LE {
   
 	public: 
 	  /** DTOR if needed by implementors. */
-	  Tracking() {
-		cout << "Tracking() CTOR" << endl;
-	  };
-
-	  virtual ~Tracking() {
-		cout << "~Tracking() DTOR" << endl;
-	  };
-
-	  virtual void foo() const {
-		cout << "Tracking::foo()" << endl;
-	  };
+	  virtual ~Tracking() {};
 
 	  /** Generic tracking that does not distinguish intent. */
 	  virtual shared_ptr<Points> track(const Point& p1,
-		  const Point& p2) const {
-		cout << "Tracking::track()" << endl;
-		return shared_ptr<Points>(new Points());
-	  };
+		  const Point& p2) const = 0;
 
 	  /** Track from one object to the next. */
 	  virtual shared_ptr<Points> trackToObject(const Point& p1,
-		  const Point& p2) const {
-		cout << "Tracking::trackToObject()" << endl;
-		return shared_ptr<Points>(new Points());
-	  };
+		  const Point& p2) const = 0;
 
 	  /** Track from one frame to the start of the next. */
 	  virtual shared_ptr<Points> trackToFrame(const Point& p1,
-		  const Point& p2) const {
-		cout << "Tracking::trackToFrame()" << endl;
-		return shared_ptr<Points>(new Points());
-	  };
+		  const Point& p2) const = 0; 
   };
 }
 

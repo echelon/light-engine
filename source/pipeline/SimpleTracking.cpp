@@ -1,6 +1,5 @@
 #include "SimpleTracking.hpp"
 #include "../etherdream/types.hpp"
-#include <iostream>
 
 namespace LE {
 
@@ -49,28 +48,18 @@ namespace LE {
 
   shared_ptr<Points> SimpleTracking::trackToObject(const Point& p1, 
 	  const Point& p2) const {
-	cout << "SimpleTracking::trackToObject()" << endl;
-
-
-	cout << "this = " << this << endl;
-	cout << "color = " << objectTrackingColor.r << endl;
-	cout << "Calling doTrack()..." << endl;
-	Points* p = doTrack(p1, p2, numberObjectPoints, objectTrackingColor);
-
-	cout << "Called doTrack()..." << endl;
-	return shared_ptr<Points>(p);
+	return shared_ptr<Points>(doTrack(p1, p2, numberObjectPoints,
+		  objectTrackingColor));
   }
 
   shared_ptr<Points> SimpleTracking::trackToFrame(const Point& p1, 
 	  const Point& p2) const {
-	cout << "SimpleTracking::trackToFrame()" << endl;
 	return shared_ptr<Points>(doTrack(p1, p2, numberFramePoints,
 	    frameTrackingColor));
   }
 
   Points* SimpleTracking::doTrack(const Point& p1, const Point& p2, 
 	  unsigned int trackingPoints, Color color) const {
-	cout << "SimpleTracking::doTrack()" << endl;
 	float lastX = p1.pos.x;
 	float lastY = p1.pos.y;
 	float xDiff = p1.pos.x - p2.pos.x;
@@ -91,3 +80,4 @@ namespace LE {
   }
 
 } // end namespace LE
+

@@ -29,7 +29,6 @@ namespace LE {
 	hasLastPoint(false),
 	points()
   {
-	cout << points.size() << endl;
   }
 
   Frame::~Frame() {
