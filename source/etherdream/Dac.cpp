@@ -1,4 +1,5 @@
 #include "Dac.hpp"
+#include "StreamingPointBuffer.hpp"
 #include "../gfx/object.hpp"
 #include "../gfx/point.hpp"
 #include "../gfx/streamer.hpp"
@@ -6,7 +7,6 @@
 #include "../network/mac_address.hpp"
 #include "../network/exceptions.hpp"
 #include "../pipeline/Frame.hpp"
-#include "../pipeline/StreamingPointBuffer.hpp"
 
 #include <string.h>
 #include <sys/types.h>

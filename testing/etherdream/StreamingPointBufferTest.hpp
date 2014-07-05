@@ -1,7 +1,7 @@
-#ifndef TEST_PIPELINE_STREAMINGPOINTBUFFER
-#define TEST_PIPELINE_STREAMINGPOINTBUFFER
+#ifndef TEST_ETHERDREAM_STREAMINGPOINTBUFFER
+#define TEST_ETHERDREAM_STREAMINGPOINTBUFFER
 
-#include "pipeline/StreamingPointBuffer.hpp"
+#include "etherdream/StreamingPointBuffer.hpp"
 #include "etherdream/commands.hpp"
 
 #include <iostream>

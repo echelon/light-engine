@@ -41,75 +41,50 @@ main: asset etherdream gfx network pipeline build/misc.o \
 		$(LIBS) -lrt -lm -o main 
 	@chmod +x main 
 
+build/main.o: source/main.cpp
+	@echo "[compile] main"
+	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
+
+# =====================================================
+
 test: pipeline etherdream gfx network asset \
 	build/game/entity.o \
 	build/lib/etherdream.o \
 	testing/test.o \
-	pipeline_test
-	@echo "[TESTING]"
-	@$(L) build/etherdream/*.o \
+	etherdream_test
+	@echo "[compile test]"
+	@$(L) \
+		build/etherdream/*.o \
 		build/asset/*.o \
 		build/gfx/*.o \
 		build/game/*.o \
 		build/network/*.o \
 		build/pipeline/*.o \
 		build/lib/etherdream.o \
-		build/test.o \
+		build/testing/test.o \
+		build/testing/etherdream/*.o \
 		$(LIBS) -lrt -lm -o test $(LIB_TEST)
 	@chmod +x test
 
-dac_report: asset etherdream gfx build/misc.o build/game/entity.o \
-	build/lib/etherdream.o build/dac_report.o 
-	@echo "[linking] dac_report"
-	@$(L) build/*.o build/etherdream/*.o build/asset/*.o \
-		build/gfx/*.o build/game/*.o \
-		build/lib/etherdream.o \
-		$(LIBS) -lrt -lm -o dac_report
-	@chmod +x dac_report
-
-edtest: build/lib/etherdream.o build/lib/test.o
-	@echo "[linking] edtest"
-	$(GCC) $(CFLAGS) -g build/lib/*o -lrt -lm -o edtest
-	@chmod +x edtest
-
-build/main.o: source/main.cpp
-	@echo "[compile] main"
-	@$(CD) ./build && $(C) $(INC) -c ../source/main.cpp
-
-build/dac_report.o: source/dac_report.cpp
-	@echo "[compile] dac_report"
-	@$(CD) ./build && $(C) $(INC) -c ../source/dac_report.cpp
-
-build/network_test.o: source/network_test.cpp
-	@echo "[compile] network_test"
-	@$(CD) ./build && $(C) $(INC) -c ../source/network_test.cpp
-
-
-# =====================================================
-
 testing/test.o: testing/test.cpp
 	@echo "[compile] testing/test.cpp"
-	@$(CD) ./build && $(C) $(INC) $(INC_TEST) -c ../testing/test.cpp
+	@$(CD) ./build/testing && $(C) $(INC) $(INC_TEST) -c ../../testing/test.cpp
 
-pipeline_test: testing/pipeline/StreamingPointBufferTest.o
+etherdream_test: testing/etherdream/StreamingPointBufferTest.o
 	@cd .
 
-testing/pipeline/StreamingPointBufferTest.o: \
-	testing/pipeline/StreamingPointBufferTest.hpp \
-	testing/pipeline/StreamingPointBufferTest.cpp
-	@echo "[compile] testing/pipeline/StreamingPointBufferTest"
-	@$(CD) ./build/pipeline && $(C) $(INC) $(INC_TEST) \
-		-c ../../testing/pipeline/StreamingPointBufferTest.cpp
+testing/etherdream/StreamingPointBufferTest.o: \
+	testing/etherdream/StreamingPointBufferTest.hpp \
+	testing/etherdream/StreamingPointBufferTest.cpp
+	@echo "[compile] testing/etherdream/StreamingPointBufferTest"
+	@$(CD) ./build/testing/etherdream && $(C) $(INC) $(INC_TEST) \
+		-c ../../../testing/etherdream/StreamingPointBufferTest.cpp
 
 # =====================================================
 
-pipeline: build/pipeline/Frame.o build/pipeline/Tracking.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o build/pipeline/StreamingPointBuffer.o
+pipeline: build/pipeline/Frame.o build/pipeline/Tracking.o build/pipeline/Geometry.o build/pipeline/MatrixStack.o build/pipeline/FourMatrix.o build/pipeline/FrameBuffers.o
 	@cd .
 
-build/pipeline/StreamingPointBuffer.o: source/pipeline/StreamingPointBuffer.hpp source/pipeline/StreamingPointBuffer.cpp
-	@echo "[compile] pipeline/StreamingPointBuffer"
-	@$(CD) ./build/pipeline && $(C) $(INC) \
-		-c ../../source/pipeline/StreamingPointBuffer.cpp
 
 build/pipeline/Tracking.o: source/pipeline/Tracking.hpp source/pipeline/Tracking.cpp
 	@echo "[compile] pipeline/Tracking"
@@ -160,8 +135,14 @@ build/asset/circle.o: source/asset/circle.cpp source/asset/circle.hpp
 	@$(CD) ./build/asset && $(C) $(INC) \
 		-c ../../source/asset/circle.cpp
 
-etherdream: build/etherdream/Dac.o
+etherdream: build/etherdream/Dac.o build/etherdream/StreamingPointBuffer.o
 	@cd .
+
+build/etherdream/StreamingPointBuffer.o: \
+	source/etherdream/StreamingPointBuffer.hpp source/etherdream/StreamingPointBuffer.cpp
+	@echo "[compile] etherdream/StreamingPointBuffer"
+	@$(CD) ./build/pipeline && $(C) $(INC) \
+		-c ../../source/etherdream/StreamingPointBuffer.cpp
 
 build/etherdream/Dac.o: source/etherdream/Dac.cpp source/etherdream/Dac.hpp
 	@echo "[compile] etherdream/dac"

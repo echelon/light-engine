@@ -1,7 +1,7 @@
-#ifndef LE_PIPELINE_STREAMINGPOINTBUFFER
-#define LE_PIPELINE_STREAMINGPOINTBUFFER
+#ifndef LE_ETHERDREAM_STREAMINGPOINTBUFFER
+#define LE_ETHERDREAM_STREAMINGPOINTBUFFER
 
-#include "../etherdream/commands.hpp"
+#include "commands.hpp"
 #include <vector>
 #include <memory>
 
