@@ -16,8 +16,6 @@ namespace LE {
 	numberLasesComplete(0),
 	numberLasingSwaps(0)
   {
-	frames = new std::shared_ptr<Frame>[3];
-
 	// Lasing
 	frames[lasing] = std::shared_ptr<Frame>(new Frame());
 	frames[lasing]->setFrameMode(Frame::LASING);
@@ -31,10 +29,16 @@ namespace LE {
   }
 
   FrameBuffers::~FrameBuffers() {
-	// DTOR
+	delete [] frames;
   }
 
-  std::shared_ptr<Frame> FrameBuffers::getLasingFrame() {
+  void FrameBuffers::setTracking(shared_ptr<Tracking> tracking) {
+	frames[0]->setTracking(tracking);
+	frames[1]->setTracking(tracking);
+	frames[2]->setTracking(tracking);
+  }
+
+  std::shared_ptr<Frame> FrameBuffers::getLasingFrame() const {
 	mutex.lock();
 	std::shared_ptr<Frame> frame = frames[lasing];
 	assert(frame->getFrameMode() == Frame::LASING);
@@ -42,7 +46,7 @@ namespace LE {
 	return frame;
   }
 
-  std::shared_ptr<Frame> FrameBuffers::getDrawingFrame() {
+  std::shared_ptr<Frame> FrameBuffers::getDrawingFrame() const {
 	mutex.lock();
 	std::shared_ptr<Frame> frame = frames[drawing];
 	assert(frame->getFrameMode() == Frame::DRAWING);

@@ -507,7 +507,7 @@ void Dac::streamFrameBuffer()
 		<< endl;*/
 
 	  shared_ptr<Points> trackPts = 
-		tracking->track(lastPoint, curPoint);
+		tracking->trackToFrame(lastPoint, curPoint);
 
 	  streamBuffer.add(convertPoints(trackPts, framePts));
 

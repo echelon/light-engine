@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <algorithm>    // std::move (ranges)
 #include <utility>      // std::move (objects)
+#include "../gfx/color.hpp" // TODO: Remove. Debug only.
 
 using namespace std;
 
@@ -23,6 +24,9 @@ namespace LE {
 	countToModeSwap(0),
 	countToModeLasing(0),
 	countToModeDrawing(0),
+	tracking(new Tracking()),
+	lastPoint(),
+	hasLastPoint(false),
 	points()
   {
 	cout << points.size() << endl;
@@ -41,28 +45,42 @@ namespace LE {
 
   void Frame::beginDrawing() {
 	assert(drawingState == DRAWING_STATE_DRAWING_READY);
+	assert(hasLastPoint == false);
 	numberBeginDrawCalls++;
 	drawingState = DRAWING_STATE_DRAWING_NOW;
 	points.resize(0); // Doesn't change space allocation!
   }
 
-  void Frame::draw(const Geometry& geo) {
+  // TODO: Could be a lot more efficient
+  void Frame::draw(const Geometry& geo, bool useTracking) {
 	assert(drawingState == DRAWING_STATE_DRAWING_NOW);
 	points.insert(points.begin(), geo.points.begin(), geo.points.end());
 	numberDrawCalls++;
   }
 
-  void Frame::draw(const Geometry& geo, const MatrixStack& matStack) {
+  // TODO: Could be a lot more efficient
+  void Frame::draw(const Geometry& geo, const MatrixStack& matStack, 
+	  bool useTracking) {
 	assert(drawingState == DRAWING_STATE_DRAWING_NOW);
-
 	const FourMatrix& mat = matStack.top();
 
-	for(Point p : geo.points) {
+	if (hasLastPoint) {
+	  Point firstPoint = geo.points.front(); // TODO: Inline
+	  firstPoint.pos = mat.multiply(firstPoint.pos);
+	  shared_ptr<Points> track = tracking->trackToObject(
+		  lastPoint, firstPoint);
+	  points.insert(points.end(), track->begin(), track->end());
+	}
+
+	for (Point p : geo.points) {
 	  p.pos = mat.multiply(p.pos);
 	  points.insert(points.end(), p);
 	}
 
-	//points.insert(points.begin(), geo.points.begin(), geo.points.end());
+	hasLastPoint = true;
+	lastPoint = geo.points.back();
+	lastPoint.pos = mat.multiply(lastPoint.pos);
+
 	numberDrawCalls++;
   }
 
@@ -70,6 +88,7 @@ namespace LE {
 	assert(drawingState == DRAWING_STATE_DRAWING_NOW);
 	numberFinishCalls++;
 	drawingState = DRAWING_STATE_DRAWING_FINISHED;
+	hasLastPoint = false;
   }
 
   void Frame::setFrameMode(FrameMode toMode) {
@@ -159,6 +178,14 @@ namespace LE {
 	  << numberGetPointsCalls << " get "
 	  << numberGotPointsCalls << " got)"
 	  << endl;
+  }
+
+  // XXX/FIXME: This is absolutely not threadsafe!
+  // Either pass this another way, or ensure it only gets set on
+  // non-drawing frames and gets propagated on frame swap
+  void Frame::setTracking(shared_ptr<Tracking> t) {
+	cout << "Warning: Frame::setTracking(T) is not threadsafe!" << endl;
+	tracking = t;
   }
 
 } // end namespace LE

@@ -44,8 +44,8 @@ const Network::MacAddress MAC_B("00:04:A3:3D:0B:60");
 // Configure the projector to talk to by default
 const Network::MacAddress USE_MAC = MAC_A;
 
+shared_ptr<LE::Tracking> TRACKING(new LE::Tracking(15, 40, GREEN, RED));
 shared_ptr<LE::FrameBuffers> FRAME_BUFFERS(new LE::FrameBuffers);
-shared_ptr<LE::Tracking> TRACKING(new LE::Tracking);
 
 random_device rd;
 mt19937 randgen(rd());
@@ -119,7 +119,10 @@ void draw_thread() {
 
 	matStack.push(FourMatrix::translation(-5000, 5000, 1.0f));
 	drawing->draw(circle, matStack);
-	//drawing->draw(circle);
+	matStack.pop();
+
+	matStack.push(FourMatrix::translation(5000, -5000, 1.0f));
+	drawing->draw(circle, matStack);
 	matStack.pop();
 
 	drawing->finishDrawing();
@@ -138,6 +141,8 @@ void laser_thread() {
 }
 
 int main() {
+  FRAME_BUFFERS->setTracking(TRACKING);
+
   thread animating(animation_thread);
   thread drawing(draw_thread);
   thread lasing(laser_thread);

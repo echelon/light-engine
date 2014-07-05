@@ -2,11 +2,14 @@
 #define LE_PIPELINE_TRACKING
 
 #include "../gfx/point.hpp"
+#include "../gfx/color.hpp"
 #include <memory>
 
 using namespace std;
 
-// TODO: Do a similar set of functions with Points instead of Point.
+// TODO: std::shared_ptr... Really??
+// TODO: Methods that set number of points, color, etc. probably
+// should not be in the base class. Implementors might be truly dynamic.
 namespace LE {
   /**
    * Tracking algorithms are used to track from one "object" to
@@ -18,12 +21,17 @@ namespace LE {
 	public: 
 	  static const unsigned int DEFAULT_TRACKING_POINTS = 15;
 
-	  /** CTOR. Constant, default number of tracking points. */
-	  Tracking() : numberPoints(DEFAULT_TRACKING_POINTS) {};
+	  /** Many CTORs. */
+	  Tracking();
 
-	  /** CTOR. Specify number of tracking points. */
-	  Tracking(unsigned int numberPoints) : 
-		  numberPoints(numberPoints) {};
+	  Tracking(unsigned int numberPoints);
+
+	  Tracking(unsigned int objectPoints, unsigned int framePoints);
+
+	  Tracking(unsigned int numberPoints, Color tracking);
+
+	  Tracking(unsigned int objectPoints, unsigned int framePoints,
+		  Color objectTracking, Color frameTracking);
 
 	  /** Generic tracking that does not distinguish intent. */
 	  virtual shared_ptr<Points> track(const Point& p1,
@@ -39,7 +47,19 @@ namespace LE {
 
 	protected:
 	  /** A constant number of points to add. */
-	  unsigned int numberPoints;
+	  unsigned int numberObjectPoints;
+	  unsigned int numberFramePoints;
+
+	  /** 
+	   * Blanking colors.
+	   * Typically the laser is off, but can be useful for debugging.
+	   */
+	  Color objectTrackingColor;
+	  Color frameTrackingColor;
+
+	  /** Internal algorithm implementation. */
+	  static Points* doTrack(const Point& p1, const Point& p2, 
+		  unsigned int trackingPoints, Color color);
   };
 }
 #endif
