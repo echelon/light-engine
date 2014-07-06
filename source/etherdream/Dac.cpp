@@ -1,8 +1,6 @@
 #include "Dac.hpp"
 #include "StreamingPointBuffer.hpp"
-#include "../gfx/object.hpp"
 #include "../gfx/point.hpp"
-#include "../gfx/streamer.hpp"
 #include "../network/ip_address.hpp"
 #include "../network/mac_address.hpp"
 #include "../network/exceptions.hpp"
@@ -469,6 +467,7 @@ void Dac::streamFrameBuffer()
 	// Sometimes we can flood the DAC
 	// if(started && lastStatus.buffer_fullness == 0) {
 	if (started && lastStatus.isDacFlooded()) {
+	  cout << "Refresh Stream" << endl;
 	  refreshStream();
 	}
 
@@ -478,9 +477,12 @@ void Dac::streamFrameBuffer()
 	  shared_ptr<Frame> curFrame = frameBuffer->getLasingFrame();
 	  shared_ptr<Points> framePts;
 
+	  //cout << "Attempt to get lasing frame..." << endl;
+
 	  // Keep swapping frame until we get one with points. 
 	  // (Should only occur at init.)
 	  do {
+		//cout << "Busy wait." << endl;
 		frameBuffer->doneLasing(); // performs buffer swap (TODO: confirm)
 		curFrame = frameBuffer->getLasingFrame();
 	  } while (!curFrame->hasPoints());

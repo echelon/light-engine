@@ -1,24 +1,15 @@
-#include <cstdlib>
-#include <iostream>
 #include <vector>
 #include <thread>
 #include <memory>
-#include <chrono>
+#include <iostream>
+#include <cstdlib>
 
 #include "network/ip_address.hpp"
 #include "network/mac_address.hpp"
+
 #include "etherdream/types.hpp"
 #include "etherdream/commands.hpp"
 #include "etherdream/Dac.hpp"
-#include "gfx/streamer.hpp"
-#include "gfx/surface.hpp"
-#include "gfx/color.hpp"
-#include "gfx/illuminator.hpp"
-#include "asset/shapes.hpp"
-#include "asset/illum/solid.hpp"
-#include "asset/illum/blink.hpp"
-#include "game/entity.hpp"
-#include "tools/BounceAnimation.hpp"
 
 #include "pipeline/Tracking.hpp"
 #include "pipeline/SimpleTracking.hpp"
@@ -27,6 +18,9 @@
 #include "pipeline/FrameBuffers.hpp"
 #include "pipeline/Frame.hpp"
 #include "pipeline/MatrixStack.hpp"
+
+#include "gfx/color.hpp"
+#include "tools/BounceAnimation.hpp"
 
 using namespace std;
 using namespace LE;

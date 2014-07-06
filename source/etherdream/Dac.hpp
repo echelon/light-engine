@@ -13,7 +13,6 @@
 #include "../pipeline/FrameBuffers.hpp"
 #include "../pipeline/Tracking.hpp"
 
-class Object;
 class Streamer;
 
 namespace LE {
@@ -24,6 +23,10 @@ namespace LE {
 
 using namespace LE;
 using namespace std;
+
+// 1250 pts/frame is equivalent to 24 fps @ 30kpps
+const unsigned int DEFAULT_POINTS_PER_SEND = 1250;
+const unsigned int MAX_POINTS_PER_SEND = 15000; // XXX: No basis 
 
 /**
  * DAC 

@@ -1,5 +1,7 @@
-#ifndef MISC
-#define MISC
+#ifndef LE_ETHERDREAM_GETFLAGS
+#define LE_ETHERDREAM_GETFLAGS
+
+#include <string>
 
 using namespace std;
 

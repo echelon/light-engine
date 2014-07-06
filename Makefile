@@ -18,7 +18,6 @@ clean:
 	@$(RM) test
 	@cd ./build && $(RM) *.o */*.o */*.so */*/*.o */*/*.so 
 
-
 # =====================================================
 
 .PHONY: stats
@@ -39,10 +38,7 @@ main: \
 	@chmod +x main 
 
 main_modules: \
-	asset \
 	etherdream \
-	game \
-	gfx \
 	network \
 	pipeline \
 	tools
@@ -130,37 +126,10 @@ build/source/pipeline/MatrixStack.o: \
 
 # =====================================================
 
-asset: \
-	build/source/asset/circle.o \
-	build/source/asset/rectangle.o
-	@cd .
-
-build/source/asset/rectangle.o: \
-	source/asset/rectangle.cpp \
-	source/asset/rectangle.hpp
-	@echo "[compile] source/asset/rectangle"
-	@$(CD) ./build/source/asset && $(C) $(INC) \
-		-c ../../../source/asset/rectangle.cpp
-
-build/source/asset/square.o: \
-	source/asset/square.cpp \
-	source/asset/square.hpp
-	@echo "[compile] source/asset/square"
-	@$(CD) ./build/source/asset && $(C) $(INC) \
-		-c ../../../source/asset/square.cpp
-
-build/source/asset/circle.o: \
-	source/asset/circle.cpp \
-	source/asset/circle.hpp
-	@echo "[compile] source/asset/circle"
-	@$(CD) ./build/source/asset && $(C) $(INC) \
-		-c ../../../source/asset/circle.cpp
-
-# =====================================================
-
 etherdream: \
 	build/source/etherdream/Dac.o \
-	build/source/etherdream/StreamingPointBuffer.o
+	build/source/etherdream/StreamingPointBuffer.o \
+	build/source/etherdream/get_flags.o
 	@cd .
 
 build/source/etherdream/StreamingPointBuffer.o: \
@@ -173,9 +142,16 @@ build/source/etherdream/StreamingPointBuffer.o: \
 build/source/etherdream/Dac.o: \
 	source/etherdream/Dac.cpp \
 	source/etherdream/Dac.hpp
-	@echo "[compile] source/etherdream/dac"
+	@echo "[compile] source/etherdream/Dac"
 	@$(CD) ./build/source/etherdream && $(C) $(INC) \
 		-c ../../../source/etherdream/Dac.cpp
+
+build/source/etherdream/get_flags.o: \
+	source/etherdream/get_flags.cpp \
+	source/etherdream/get_flags.hpp
+	@echo "[compile] source/etherdream/get_flags"
+	@$(CD) ./build/source/etherdream && $(C) $(INC) \
+		-c ../../../source/etherdream/get_flags.cpp
 
 # =====================================================
 
@@ -197,47 +173,6 @@ build/source/network/mac_address.o: \
 	@echo "[compile] source/network/mac_address"
 	@$(CD) ./build/source/network && $(C) $(INC) \
 		-c ../../../source/network/mac_address.cpp
-
-# =====================================================
-
-gfx: \
-	build/source/gfx/streamer.o \
-	build/source/gfx/tracking.o \
-	build/source/gfx/transformation.o 
-	@cd .
-
-build/source/gfx/streamer.o: \
-	source/gfx/streamer.cpp \
-	source/gfx/streamer.hpp
-	@echo "[compile] source/gfx/streamer"
-	@$(CD) ./build/source/gfx && $(C) $(INC) \
-		-c ../../../source/gfx/streamer.cpp
-
-build/source/gfx/tracking.o: \
-	source/gfx/tracking.cpp \
-	source/gfx/tracking.hpp
-	@echo "[compile] source/gfx/tracking"
-	@$(CD) ./build/source/gfx && $(C) $(INC) \
-		-c ../../../source/gfx/tracking.cpp
-
-build/source/gfx/transformation.o: \
-	source/gfx/transformation.cpp \
-	source/gfx/transformation.hpp
-	@echo "[compile] source/gfx/transformation"
-	@$(CD) ./build/source/gfx && $(C) $(INC) \
-		-c ../../../source/gfx/transformation.cpp
-
-# =====================================================
-
-game: \
-	build/source/game/entity.o
-
-build/source/game/entity.o: \
-	source/game/entity.cpp \
-	source/game/entity.hpp
-	@echo "[compile] source/game/entity"
-	@$(CD) ./build/source/game && $(C) $(INC) \
-		-c ../../../source/game/entity.cpp
 
 # =====================================================
 

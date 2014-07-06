@@ -1,7 +1,5 @@
+#include "get_flags.hpp"
 #include <bitset>
-#include "misc.hpp"
-
-using namespace std;
 
 string get_flags(uint16_t n)
 {

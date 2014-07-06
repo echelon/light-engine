@@ -1,9 +1,9 @@
 #ifndef LASER_RESPONSES_HPP
 #define LASER_RESPONSES_HPP
 
+#include "get_flags.hpp"
 #include <iostream>
 #include <vector>
-#include "../misc.hpp"
 
 using namespace std;
 

@@ -2,7 +2,6 @@
 #define LE_PIPELINE_GEOMETRY
 
 #include "../gfx/point.hpp"
-#include "../gfx/object.hpp"
 
 /**
  * TODO: The plan is to deprecate 'gfx/point' and 'gfx/object',
