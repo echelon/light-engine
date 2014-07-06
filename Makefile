@@ -1,15 +1,14 @@
 ### VARIABLES #############
+PWD = $(shell pwd)
 C = g++ -std=c++0x -pthread -g -Wall
-GCC = gcc -pthread -g -Wall 
-EDFLAGS = -Wall -Wextra -ansi -pedantic -std=c99 -lm -lpthread
 L = g++ -std=c++0x -pthread -g
+EDFLAGS = -Wall -Wextra -ansi -pedantic -std=c99 -lm -lpthread
+INC = 
+LIBS = -lstdc++
+INC_TEST= -I$(PWD)/source
+LIB_TEST = -lpthread -lgtest
 RM = /bin/rm -f
 CD = cd
-INC = 
-PWD = $(shell pwd)
-INC_TEST= -I$(PWD)/source
-LIBS = -lstdc++
-LIB_TEST = -lpthread -lgtest
 
 # =====================================================
 
@@ -45,7 +44,8 @@ main_modules: \
 	game \
 	gfx \
 	network \
-	pipeline
+	pipeline \
+	tools
 	@cd .
 
 build/source/main.o: source/main.cpp
@@ -238,6 +238,18 @@ build/source/game/entity.o: \
 	@echo "[compile] source/game/entity"
 	@$(CD) ./build/source/game && $(C) $(INC) \
 		-c ../../../source/game/entity.cpp
+
+# =====================================================
+
+tools: \
+	build/source/tools/BounceAnimation.o
+
+build/source/tools/BounceAnimation.o: \
+	source/tools/BounceAnimation.cpp \
+	source/tools/BounceAnimation.hpp
+	@echo "[compile] source/tools/BounceAnimation"
+	@$(CD) ./build/source/tools && $(C) $(INC) \
+		-c ../../../source/tools/BounceAnimation.cpp
 
 # =====================================================
 
