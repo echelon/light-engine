@@ -11,7 +11,6 @@
 using namespace std;
 
 /**
- * [Threadsafe]
  * Animate moving positions within a bounding box.
  * Mainly used as a tool to aid in debugging.
  */
@@ -25,30 +24,36 @@ namespace LE {
 	  /** DTOR. */
 	  ~BounceAnimation();
 
+	  /** 
+	   * Set the bounding box. Lasing coordinate space is weird: 
+	   * Top is (+), Bottom is (-), but Left is (+) and Right is (-).
+	   * Specified in CSS order. Cannot set Bottom > Top or Right > Left.
+	   */
+	  void setBoundaries(float boundaryTop, float boundaryRight, 
+		  float boundaryBottom, float boundaryLeft);
+
+	  /** Sets the boundaries to be a square with this side length. */
+	  void setBoundaries(float sideLength);
+
+	  /** Set the magnitude extrema. Min must be less than max. */
+	  void setVelocityMagnitudes(float minMagnitude, float maxMagnitude);
+
+	  /** Turn movement off/on. */
+	  void pause();
+	  void unpause();
+
 	  /** Set all positions to new, random values. */
 	  void randomizePositions();
 
 	  /** Set all velocities to new, random values. */
 	  void randomizeVelocities();
 
-	  /** 
-	   * Set the bounding box.
-	   * Lasing coordinate space is weird: 
-	   * Top is (+), Bottom is (-), but Left is (+) and Right is (-).
-	   * Specified in CSS order. Cannot set Bottom > Top, Right > Left 
-	   */
-	  void setBoundaries(float boundaryTop, float boundaryRight, 
-		  float boundaryBottom, float boundaryLeft);
-
-	  /** Set the magnitude extrema. Min must be less than max. */
-	  void setVelocityMagnitudes(float minMagnitude, float maxMagnitude);
-
 	  /** Get the current positions. */
 	  unique_ptr<vector<Position>> getPositionsUnique() const;
 	  shared_ptr<vector<Position>> getPositionsShared() const;
 
 	  /** 
-	   * Start the animation thread. 
+	   * Start the animation thread.
 	   * This updates the positions automatically.
 	   */
 	  bool start();
@@ -70,6 +75,9 @@ namespace LE {
 	  /** Velocity magnitude boundaries. */
 	  float minVelocityMagnitude;
 	  float maxVelocityMagnitude;
+
+	  /** True if velocities are removed. */
+	  bool paused;
 
 	  /** Random number generator and distributions. */
 	  random_device random;

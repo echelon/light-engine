@@ -22,6 +22,13 @@
 #include "gfx/color.hpp"
 #include "tools/BounceAnimation.hpp"
 
+// TODO: Build facilities for stats on draw framerate and play (lase) framerate!
+
+// TODO: Make an ILDA-file format player that works on this system. 
+// Probably the next immediate goal, and will validate my direction.
+
+// XXX/NOTE: Artifacts are probably just absense of blanking!
+
 using namespace std;
 using namespace LE;
 
@@ -34,7 +41,7 @@ const Network::MacAddress USE_MAC = MAC_A;
 shared_ptr<Tracking> TRACKING(new SimpleTracking(15, 40, GREEN, RED));
 shared_ptr<FrameBuffers> FRAME_BUFFERS(new FrameBuffers);
 
-BounceAnimation ANIMATION(4);
+BounceAnimation ANIMATION(5);
 
 Geometry make_circle(unsigned int radius, 
 	unsigned int sample_points) {
@@ -76,6 +83,7 @@ void draw_thread() {
 	drawing->finishDrawing();
 	FRAME_BUFFERS->doneDrawing();
 	//FRAME_BUFFERS->printFullStats();
+	ANIMATION.randomizePositions();
   }
 }
 
@@ -91,6 +99,9 @@ void laser_thread() {
 int main() {
   FRAME_BUFFERS->setTracking(TRACKING);
 
+  ANIMATION.setBoundaries(25000.0f, -25000.0f, 0.0f, 0.0f);
+  ANIMATION.setVelocityMagnitudes(25.0f, 50.0f);
+  ANIMATION.pause();
   ANIMATION.start();
 
   thread drawing(draw_thread);

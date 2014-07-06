@@ -2,7 +2,6 @@
 #include <thread>
 #include <chrono>
 #include <assert.h>
-#include <iostream>
 
 namespace LE {
 
@@ -23,6 +22,7 @@ BounceAnimation::BounceAnimation(unsigned int numPositions) :
   boundaryLeft(DEFAULT_BOUNDARY_LEFT),
   minVelocityMagnitude(DEFAULT_MIN_VELOCITY_MAGNITUDE),
   maxVelocityMagnitude(DEFAULT_MAX_VELOCITY_MAGNITUDE),
+  paused(false),
   random(),
   // Technically, distributions are over [A, B) / not inclusive.
   horizontal(boundaryLeft, boundaryRight),
@@ -33,6 +33,8 @@ BounceAnimation::BounceAnimation(unsigned int numPositions) :
   threadRunning(false),
   thread()
 {
+  assert(boundaryTop > boundaryBottom);
+  assert(boundaryLeft > boundaryRight);
   assert(minVelocityMagnitude > 0.0f);
   assert(maxVelocityMagnitude > 0.0f);
 
@@ -40,6 +42,44 @@ BounceAnimation::BounceAnimation(unsigned int numPositions) :
 }
 
 BounceAnimation::~BounceAnimation() {
+}
+
+void BounceAnimation::setBoundaries(float top_, float right, 
+	float bottom, float left) {
+  assert(top_ > bottom);
+  assert(left > right);
+  mutex.lock();
+  boundaryTop = top_;
+  boundaryRight = right;
+  boundaryBottom = bottom;
+  boundaryLeft = left;
+  mutex.unlock();
+}
+
+void BounceAnimation::setBoundaries(float sideLength) {
+  assert(sideLength > 0.0f);
+  float negative = sideLength * -1;
+  setBoundaries(sideLength, negative, negative, sideLength);
+}
+
+void BounceAnimation::setVelocityMagnitudes(float min_, float max_) {
+  assert(min_ < max_);
+  mutex.lock();
+  minVelocityMagnitude = min_;
+  maxVelocityMagnitude = max_;
+  mutex.unlock();
+}
+
+void BounceAnimation::pause() {
+  mutex.lock();
+  paused = true;
+  mutex.unlock();
+}
+
+void BounceAnimation::unpause() {
+  mutex.lock();
+  paused = false;
+  mutex.unlock();
 }
 
 void BounceAnimation::randomizePositions() {
@@ -57,26 +97,6 @@ void BounceAnimation::randomizeVelocities() {
 	vel.x = magnitude(random) * (sign(random) ? 1 : -1);
 	vel.y = magnitude(random) * (sign(random) ? 1 : -1);
   }
-  mutex.unlock();
-}
-
-void BounceAnimation::setBoundaries(float top_, float right, 
-	float bottom, float left) {
-  assert(top_ > bottom);
-  assert(left > right);
-  mutex.lock();
-  boundaryTop = top_;
-  boundaryRight = right;
-  boundaryRight = bottom;
-  boundaryRight = left;
-  mutex.unlock();
-}
-
-void BounceAnimation::setVelocityMagnitudes(float min_, float max_) {
-  assert(min_ < max_);
-  mutex.lock();
-  minVelocityMagnitude = min_;
-  maxVelocityMagnitude = max_;
   mutex.unlock();
 }
 
@@ -111,35 +131,36 @@ bool BounceAnimation::start() {
 void BounceAnimation::animationThread() {
   while (true) {
 	mutex.lock();
-	for (unsigned int i = 0; i < positions.size(); i++) {
-	  Position velocity = velocities[i];
-	  Position position = positions[i];
+	if (!paused) {
+	  for (unsigned int i = 0; i < positions.size(); i++) {
+		Position velocity = velocities[i];
+		Position position = positions[i];
 
-	  position.x += velocity.x;
-	  position.y += velocity.y;
+		position.x += velocity.x;
+		position.y += velocity.y;
 
-	  if (position.x >= boundaryLeft) {
-		position.x = boundaryLeft;
-		velocity.x = magnitude(random) * -1;
-	  }
-	  else if (position.x <= boundaryRight) {
-		position.x = boundaryRight;
-		velocity.x = magnitude(random);
-	  }
+		if (position.x >= boundaryLeft) {
+		  position.x = boundaryLeft;
+		  velocity.x = magnitude(random) * -1;
+		}
+		else if (position.x <= boundaryRight) {
+		  position.x = boundaryRight;
+		  velocity.x = magnitude(random);
+		}
 
-	  if (position.y >= boundaryTop) {
-		position.y = boundaryTop;
-		velocity.y = magnitude(random) * -1;
+		if (position.y >= boundaryTop) {
+		  position.y = boundaryTop;
+		  velocity.y = magnitude(random) * -1;
+		}
+		else if (position.y <= boundaryBottom) {
+		  position.y = boundaryBottom;
+		  velocity.y = magnitude(random);
+		}
+		
+		velocities[i] = velocity;
+		positions[i] = position;
 	  }
-	  else if (position.y <= boundaryBottom) {
-		position.y = boundaryBottom;
-		velocity.y = magnitude(random);
-	  }
-	  
-	  velocities[i] = velocity;
-	  positions[i] = position;
 	}
-
 	mutex.unlock();
 
 	// Sleep so not CPU-bound
