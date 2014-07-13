@@ -83,7 +83,7 @@ void draw_thread() {
 	drawing->finishDrawing();
 	FRAME_BUFFERS->doneDrawing();
 	//FRAME_BUFFERS->printFullStats();
-	ANIMATION.randomizePositions();
+	//ANIMATION.randomizePositions();
   }
 }
 
@@ -100,8 +100,8 @@ int main() {
   FRAME_BUFFERS->setTracking(TRACKING);
 
   ANIMATION.setBoundaries(25000.0f, -25000.0f, 0.0f, 0.0f);
-  ANIMATION.setVelocityMagnitudes(25.0f, 50.0f);
-  ANIMATION.pause();
+  ANIMATION.setVelocityMagnitudes(50.0f, 100.0f);
+  //ANIMATION.pause();
   ANIMATION.start();
 
   thread drawing(draw_thread);

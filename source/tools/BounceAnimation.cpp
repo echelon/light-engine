@@ -67,6 +67,9 @@ void BounceAnimation::setVelocityMagnitudes(float min_, float max_) {
   mutex.lock();
   minVelocityMagnitude = min_;
   maxVelocityMagnitude = max_;
+  magnitude = 
+	uniform_real_distribution<float>(minVelocityMagnitude,
+		maxVelocityMagnitude);
   mutex.unlock();
 }
 
