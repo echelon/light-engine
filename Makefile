@@ -1,22 +1,43 @@
-### VARIABLES #############
-PWD = $(shell pwd)
-C = g++ -std=c++0x -pthread -g -Wall
-L = g++ -std=c++0x -pthread -g
-EDFLAGS = -Wall -Wextra -ansi -pedantic -std=c99 -lm -lpthread
-INC = 
-LIBS = -lstdc++
-INC_TEST= -I$(PWD)/source
-LIB_TEST = -lpthread -lgtest
-RM = /bin/rm -f
-CD = cd
+# ==================== VARIABLES ======================
+RM := /bin/rm -f
+C  := g++ -std=c++0x -pthread -g -Wall -Wextra -pedantic
+L  := g++ -std=c++0x -pthread -g -Wall -Wextra -pedantic
+
+PROJECT_DIR := $(shell pwd)
+SOURCE_DIR  := "$(PROJECT_DIR)/source"
+BUILD_DIR   := "$(PROJECT_DIR)/build"
+
+INC_ALL  := 
+INC_MAIN := $(INC_ALL)
+INC_TEST := $(INC_ALL) -I$(PWD)/source
+
+LIB_ALL  := -lstdc++ -lrt -lm
+LIB_MAIN := $(LIB_ALL)
+LIB_TEST := $(LIB_ALL) -lpthread -lgtest
+
+# =====================================================
+
+# Compile a source file and output to the build dir.
+# $(call compile_, rel/path/to/file, file.cpp, includes)
+
+compile_ =                                            \
+	mkdir -p "$(BUILD_DIR)/$(1)" ;                    \
+	$(C) $(3) -c "$(1)/$(2)" -o                       \
+		"$(BUILD_DIR)/$(1)/$(patsubst %.cpp,%.o,$(2))"
+
+compile_main = $(call compile_,$(1),$(2),$(INC_MAIN))
+compile_test = $(call compile_,$(1),$(2),$(INC_TEST))
 
 # =====================================================
 
 .PHONY: clean
 clean:
-	@$(RM) main 
-	@$(RM) test
-	@cd ./build && $(RM) *.o */*.o */*.so */*/*.o */*/*.so 
+	@cd $(PROJECT_DIR) && \
+		$(RM) main &&     \
+		$(RM) test
+	@cd $(BUILD_DIR) &&            \
+		$(RM) *.o */*.o */*/*.o && \
+		$(RM) *.so */*.so */*/*.so
 
 # =====================================================
 
@@ -34,7 +55,7 @@ main: \
 	@$(L) \
 		build/source/main.o \
 		build/source/*/*.o \
-		$(LIBS) -lrt -lm -o main 
+		$(LIB_MAIN) -lrt -lm -o main 
 	@chmod +x main 
 
 main_modules: \
@@ -46,7 +67,7 @@ main_modules: \
 
 build/source/main.o: source/main.cpp
 	@echo "[compile] main"
-	@$(CD) ./build/source && $(C) $(INC) -c ../../source/main.cpp
+	@$(call compile_main,source,main.cpp)
 
 # =====================================================
 
@@ -59,7 +80,7 @@ test: \
 		build/testing/test.o \
 		build/testing/*/*.o \
 		build/source/*/*.o \
-		$(LIBS) -lrt -lm -o test $(LIB_TEST)
+		$(LIB_TEST) -lrt -lm -o test
 	@chmod +x test
 
 test_modules: \
@@ -68,8 +89,7 @@ test_modules: \
 
 build/testing/test.o: testing/test.cpp
 	@echo "[compile] testing/test.cpp"
-	@$(CD) ./build/testing && $(C) $(INC) $(INC_TEST) -c ../../testing/test.cpp
-
+	@$(call compile_test,testing,test.cpp)
 
 # =====================================================
 
@@ -86,43 +106,37 @@ build/source/pipeline/SimpleTracking.o: \
 	source/pipeline/SimpleTracking.hpp \
 	source/pipeline/SimpleTracking.cpp
 	@echo "[compile] source/pipeline/SimpleTracking"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/SimpleTracking.cpp
+	@$(call compile_main,source/pipeline,SimpleTracking.cpp)
 
 build/source/pipeline/Frame.o: \
 	source/pipeline/Frame.hpp \
 	source/pipeline/Frame.cpp
 	@echo "[compile] source/pipeline/Frame"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/Frame.cpp
+	@$(call compile_main,source/pipeline,Frame.cpp)
 
 build/source/pipeline/FrameBuffers.o: \
 	source/pipeline/FrameBuffers.hpp \
 	source/pipeline/FrameBuffers.cpp
 	@echo "[compile] source/pipeline/FrameBuffers"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/FrameBuffers.cpp
+	@$(call compile_main,source/pipeline,FrameBuffers.cpp)
 
 build/source/pipeline/FourMatrix.o: \
 	source/pipeline/FourMatrix.hpp \
 	source/pipeline/FourMatrix.cpp
 	@echo "[compile] source/pipeline/FourMatrix"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/FourMatrix.cpp
+	@$(call compile_main,source/pipeline,FourMatrix.cpp)
 
 build/source/pipeline/Geometry.o: \
 	source/pipeline/Geometry.hpp \
 	source/pipeline/Geometry.cpp
 	@echo "[compile] source/pipeline/Geometry"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/Geometry.cpp
+	@$(call compile_main,source/pipeline,Geometry.cpp)
 
 build/source/pipeline/MatrixStack.o: \
 	source/pipeline/MatrixStack.hpp \
 	source/pipeline/MatrixStack.cpp
 	@echo "[compile] source/pipeline/MatrixStack"
-	@$(CD) ./build/source/pipeline && $(C) $(INC) \
-		-c ../../../source/pipeline/MatrixStack.cpp
+	@$(call compile_main,source/pipeline,MatrixStack.cpp)
 
 # =====================================================
 
@@ -136,22 +150,19 @@ build/source/etherdream/StreamingPointBuffer.o: \
 	source/etherdream/StreamingPointBuffer.hpp \
 	source/etherdream/StreamingPointBuffer.cpp
 	@echo "[compile] source/etherdream/StreamingPointBuffer"
-	@$(CD) ./build/source/etherdream && $(C) $(INC) \
-		-c ../../../source/etherdream/StreamingPointBuffer.cpp
+	@$(call compile_main,source/etherdream,StreamingPointBuffer.cpp)
 
 build/source/etherdream/Dac.o: \
 	source/etherdream/Dac.cpp \
 	source/etherdream/Dac.hpp
 	@echo "[compile] source/etherdream/Dac"
-	@$(CD) ./build/source/etherdream && $(C) $(INC) \
-		-c ../../../source/etherdream/Dac.cpp
+	@$(call compile_main,source/etherdream,Dac.cpp)
 
 build/source/etherdream/get_flags.o: \
 	source/etherdream/get_flags.cpp \
 	source/etherdream/get_flags.hpp
 	@echo "[compile] source/etherdream/get_flags"
-	@$(CD) ./build/source/etherdream && $(C) $(INC) \
-		-c ../../../source/etherdream/get_flags.cpp
+	@$(call compile_main,source/etherdream,get_flags.cpp)
 
 # =====================================================
 
@@ -164,15 +175,13 @@ build/source/network/ip_address.o: \
 	source/network/ip_address.cpp \
 	source/network/ip_address.hpp
 	@echo "[compile] source/network/ip_address"
-	@$(CD) ./build/source/network && $(C) $(INC) \
-		-c ../../../source/network/ip_address.cpp
+	@$(call compile_main,source/network,ip_address.cpp)
 
 build/source/network/mac_address.o: \
 	source/network/mac_address.cpp \
 	source/network/mac_address.hpp
 	@echo "[compile] source/network/mac_address"
-	@$(CD) ./build/source/network && $(C) $(INC) \
-		-c ../../../source/network/mac_address.cpp
+	@$(call compile_main,source/network,mac_address.cpp)
 
 # =====================================================
 
@@ -183,8 +192,7 @@ build/source/tools/BounceAnimation.o: \
 	source/tools/BounceAnimation.cpp \
 	source/tools/BounceAnimation.hpp
 	@echo "[compile] source/tools/BounceAnimation"
-	@$(CD) ./build/source/tools && $(C) $(INC) \
-		-c ../../../source/tools/BounceAnimation.cpp
+	@$(call compile_main,source/tools,BounceAnimation.cpp)
 
 # =====================================================
 
@@ -196,6 +204,5 @@ build/testing/etherdream/StreamingPointBufferTest.o: \
 	testing/etherdream/StreamingPointBufferTest.hpp \
 	testing/etherdream/StreamingPointBufferTest.cpp
 	@echo "[compile] testing/etherdream/StreamingPointBufferTest"
-	@$(CD) ./build/testing/etherdream && $(C) $(INC) $(INC_TEST) \
-		-c ../../../testing/etherdream/StreamingPointBufferTest.cpp
+	@$(call compile_test,testing/etherdream,StreamingPointBufferTest.cpp)
 
