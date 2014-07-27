@@ -102,41 +102,11 @@ pipeline: \
 	build/source/pipeline/FrameBuffers.o
 	@cd .
 
-build/source/pipeline/SimpleTracking.o: \
-	source/pipeline/SimpleTracking.hpp \
-	source/pipeline/SimpleTracking.cpp
-	@echo "[compile] source/pipeline/SimpleTracking"
-	@$(call compile_main,source/pipeline,SimpleTracking.cpp)
-
-build/source/pipeline/Frame.o: \
-	source/pipeline/Frame.hpp \
-	source/pipeline/Frame.cpp
-	@echo "[compile] source/pipeline/Frame"
-	@$(call compile_main,source/pipeline,Frame.cpp)
-
-build/source/pipeline/FrameBuffers.o: \
-	source/pipeline/FrameBuffers.hpp \
-	source/pipeline/FrameBuffers.cpp
-	@echo "[compile] source/pipeline/FrameBuffers"
-	@$(call compile_main,source/pipeline,FrameBuffers.cpp)
-
-build/source/pipeline/FourMatrix.o: \
-	source/pipeline/FourMatrix.hpp \
-	source/pipeline/FourMatrix.cpp
-	@echo "[compile] source/pipeline/FourMatrix"
-	@$(call compile_main,source/pipeline,FourMatrix.cpp)
-
-build/source/pipeline/Geometry.o: \
-	source/pipeline/Geometry.hpp \
-	source/pipeline/Geometry.cpp
-	@echo "[compile] source/pipeline/Geometry"
-	@$(call compile_main,source/pipeline,Geometry.cpp)
-
-build/source/pipeline/MatrixStack.o: \
-	source/pipeline/MatrixStack.hpp \
-	source/pipeline/MatrixStack.cpp
-	@echo "[compile] source/pipeline/MatrixStack"
-	@$(call compile_main,source/pipeline,MatrixStack.cpp)
+build/source/pipeline/%.o : \
+	source/pipeline/%.cpp \
+	source/pipeline/%.hpp
+	@echo "[compile $(<D)] $(*F)"
+	@$(call compile_main,$(<D),$(<F))
 
 # =====================================================
 
@@ -146,23 +116,11 @@ etherdream: \
 	build/source/etherdream/get_flags.o
 	@cd .
 
-build/source/etherdream/StreamingPointBuffer.o: \
-	source/etherdream/StreamingPointBuffer.hpp \
-	source/etherdream/StreamingPointBuffer.cpp
-	@echo "[compile] source/etherdream/StreamingPointBuffer"
-	@$(call compile_main,source/etherdream,StreamingPointBuffer.cpp)
-
-build/source/etherdream/Dac.o: \
-	source/etherdream/Dac.cpp \
-	source/etherdream/Dac.hpp
-	@echo "[compile] source/etherdream/Dac"
-	@$(call compile_main,source/etherdream,Dac.cpp)
-
-build/source/etherdream/get_flags.o: \
-	source/etherdream/get_flags.cpp \
-	source/etherdream/get_flags.hpp
-	@echo "[compile] source/etherdream/get_flags"
-	@$(call compile_main,source/etherdream,get_flags.cpp)
+build/source/etherdream/%.o : \
+	source/etherdream/%.cpp \
+	source/etherdream/%.hpp
+	@echo "[compile $(<D)] $(*F)"
+	@$(call compile_main,$(<D),$(<F))
 
 # =====================================================
 
@@ -171,28 +129,22 @@ network: \
 	build/source/network/ip_address.o
 	@cd .
 
-build/source/network/ip_address.o: \
-	source/network/ip_address.cpp \
-	source/network/ip_address.hpp
-	@echo "[compile] source/network/ip_address"
-	@$(call compile_main,source/network,ip_address.cpp)
-
-build/source/network/mac_address.o: \
-	source/network/mac_address.cpp \
-	source/network/mac_address.hpp
-	@echo "[compile] source/network/mac_address"
-	@$(call compile_main,source/network,mac_address.cpp)
+build/source/network/%.o : \
+	source/network/%.cpp \
+	source/network/%.hpp
+	@echo "[compile $(<D)] $(*F)"
+	@$(call compile_main,$(<D),$(<F))
 
 # =====================================================
 
 tools: \
 	build/source/tools/BounceAnimation.o
 
-build/source/tools/BounceAnimation.o: \
-	source/tools/BounceAnimation.cpp \
-	source/tools/BounceAnimation.hpp
-	@echo "[compile] source/tools/BounceAnimation"
-	@$(call compile_main,source/tools,BounceAnimation.cpp)
+build/source/tools/%.o : \
+	source/tools/%.cpp \
+	source/tools/%.hpp
+	@echo "[compile $(<D)] $(*F)"
+	@$(call compile_main,$(<D),$(<F))
 
 # =====================================================
 
@@ -200,9 +152,9 @@ test_etherdream: \
 	build/testing/etherdream/StreamingPointBufferTest.o
 	@cd .
 
-build/testing/etherdream/StreamingPointBufferTest.o: \
-	testing/etherdream/StreamingPointBufferTest.hpp \
-	testing/etherdream/StreamingPointBufferTest.cpp
-	@echo "[compile] testing/etherdream/StreamingPointBufferTest"
-	@$(call compile_test,testing/etherdream,StreamingPointBufferTest.cpp)
+build/testing/etherdream/%.o : \
+	source/testing/etherdream/%.cpp \
+	source/testing/etherdream/%.hpp
+	@echo "[compile $(<D)] $(*F)"
+	@$(call compile_test,$(<D),$(<F))
 
